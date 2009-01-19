@@ -1,0 +1,21 @@
+<script src="hashdom.js"></script>
+
+<div id="root">
+	<ul>
+		<li>item 1</li>
+		<li>item 2</li>
+		<li>item 3</li>
+		<li>item 4</li>
+		<li>item 5</li>
+	</ul>
+	<div>text to remove</div>
+</div>
+
+<script>
+var dom = hashdom(document.getElementById('root')),
+	li = document.createElement('li');
+dom.add(li, 'DIV0UL0');
+dom.add(document.createTextNode('item 6'),'DIV0UL0LI5');
+
+dom.del('DIV0DIV0', 'DIV0');
+</script>
