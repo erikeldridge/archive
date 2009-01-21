@@ -1,4 +1,4 @@
-<script src="hashdom.js"></script>
+<script src="hdom.js"></script>
 
 <div id="root">
 	<ul>
@@ -8,14 +8,16 @@
 		<li>item 4</li>
 		<li>item 5</li>
 	</ul>
-	<div>text to remove</div>
 </div>
 
 <script>
-var dom = hashdom(document.getElementById('root')),
+var root = document.getElementById('root'),
+	h = hdom(root),
+	ul = h.table['div0_ul0'],//get the ul element
 	li = document.createElement('li');
-dom.add(li, 'DIV0UL0');
-dom.add(document.createTextNode('item 6'),'DIV0UL0LI5');
-
-dom.del('DIV0DIV0', 'DIV0');
+li.appendChild(document.createTextNode('orale!'));//maintain the dom tree by using dom methods instead of innerHTML
+ul.appendChild(li);//add a new item to the list
+h = hdom(root);//refresh the table
+h.table['div0_ul0_li5_#text0'].data = 'new data';//change the text in the new item
+console.log(h.table);
 </script>
