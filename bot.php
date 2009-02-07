@@ -1,16 +1,4 @@
 <?
-// credit: http://php.codenewbie.com/articles/php/1566/How_To_Make_a_Simple_IRC_Bot_From_Scratch_In_PHP-Page_1.html
-// ref: http://publib.boulder.ibm.com/infocenter/pseries/v5r3/index.jsp?topic=/com.ibm.aix.cmds/doc/aixcmds4/nohup.htm for discussion of nohup usage
-// requires:
-// - php5
-// usage: 
-// - put file someplace where a process can run for an arbitrary amount of time.  Note: a personal machine, eg a laptop, may loggoff and quit the process if left unattended
-// - set the $end var to a time and date the logging should end
-// - run the bot from the command line using php as follows: "nice -n 15 nohup /usr/local/php5/bin/php bot.php > nohup.out &".  Nice will run the bot at low priority.  Nohup will allow the bot to run unattended even if the user logs off.  The '> nohup.out' part channels the bot's output to a file arbitrarily called nohup.out.  The trailing '&' launches the bot in the background.
-// - Be sure to note process pid, as it won't show up in ps after we logout.  If we need to kill the bot, we'll have to reference it by pid.  
-// - use "tail -f nohup.out" to monitor traffic thru bot
-// - confirm the bot is in the chatroom by looking for it's nickname
-// - send a message to the chatroom and confirm that the bot has created a 'log.txt' file and written the message in it.
 //BEGIN: params
 //irc
 $host = "irc.freenode.net";
