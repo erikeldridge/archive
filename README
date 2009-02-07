@@ -15,4 +15,5 @@ usage:
 	- send a message to the chatroom and confirm that the bot has created a 'log.txt' file and written the message in it.
 
 known issues:
+	- the bot is currently coupled with logging functionality
 	- Only 128 bytes of data are read in at a time, truncating the data written to the log file.  
