@@ -8,7 +8,7 @@ $desc = "this is a description";//not sure where this shows up, but it seems to 
 $chan = '#asdf';//"#asdf";//the chatroom name
 //log
 $file = 'log.txt';//the file to write IRC traffic to.  Note: new traffic will be appended to whatever's in the file
-$end = strtotime('00:00 2/9/2009');//the date you want logging to end
+$end = strtotime('00:00 2/9/2009');//the date you want logging to stop
 //END: params
 //BEGIN: logging
 // open a socket connection to the IRC server
