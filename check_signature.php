@@ -1,9 +1,33 @@
 <?php
-//This file references OAuth.php and Yahoo.inc from the Yahoo! PHP SDK (http://developer.yahoo.com/social/sdk/), but does not rely on those files.
-//My hope is that this PHP code is low-level enough to illustrate the signature generation so as to be comparable to 
-//signature generators in other languages
-//Note: this does not validate the timestamp.  Be aware that the timestamp field passed from YAP is called yap_time, not oauth_timestamp
-$secret='{YAP app secret from developer.yahoo.com/dashboard}';
+/*
+Motivation:
+- To demonstrate signature generation with as simple code as possible in the hope that it illustrates the process in a manner somewhat comparable to signature generators in other languages
+
+Preconditions:
+- PHP 5
+- Familiarity with YAP
+- A pre-existing YAP app
+- Server space to host this file
+
+Usage:
+- Copy this code and paste it into a file on your server
+- Edit the code to use your app's consumer secret
+- In the developer dashboard, preview your app
+- In the preview, you should see the two keys formated like:
+YQ8d7DAg8d0mSLt1yCMVPCpVF1o=
+
+YQ8d7DAg8d0mSLt1yCMVPCpVF1o=
+
+1
+
+- The trailing '1' indicates that the keys match
+
+Notes:
+- This file references OAuth.php and Yahoo.inc from the Yahoo! PHP SDK (http://developer.yahoo.com/social/sdk/), but does not rely on those files.
+- This does not validate the timestamp.  Be aware that the timestamp field passed from YAP is called yap_time, not oauth_timestamp
+*/
+
+$secret='e75af55c075d11b61d2a4c1b124b6af80803f9cb';//'{YAP app secret from developer.yahoo.com/dashboard}';
 
 //ref: OAuthUtil::urlencodeRFC3986, OAuth.php
 function urlencodeRFC3986($string) {
