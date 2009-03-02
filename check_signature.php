@@ -28,7 +28,7 @@ Notes:
 - This does not validate the timestamp.  Be aware that the timestamp field passed from YAP is called yap_time, not oauth_timestamp
 */
 
-$secret='e75af55c075d11b61d2a4c1b124b6af80803f9cb';//'{YAP app secret from developer.yahoo.com/dashboard}';
+$secret='{YAP app secret from developer.yahoo.com/dashboard}';
 
 //ref: OAuthUtil::urlencodeRFC3986, OAuth.php
 function urlencodeRFC3986($string) {
