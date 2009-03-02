@@ -1,13 +1,14 @@
 <?php
 /*
 Motivation:
-- To demonstrate signature generation with as simple code as possible in the hope that it illustrates the process in a manner somewhat comparable to signature generators in other languages
+- To demonstrate signature generation with as simple code as possible in the hope that it illustrates the process in a manner somewhat comparable to signature generators in other languages.
 
 Preconditions:
-- PHP 5
+- Familiarity with OAuth
 - Familiarity with YAP
 - A pre-existing YAP app
 - Server space to host this file
+- PHP 5
 
 Usage:
 - Copy this code and paste it into a file on your server
