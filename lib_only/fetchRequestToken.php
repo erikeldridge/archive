@@ -3,12 +3,13 @@
 Introduction:
 This script is the first of a four-part series that demonstrates how to perform the 3-legged oauth authentication routine (parts 1 and 2), with a couple examples of how to use the resulting access token (parts 3 and 4), for a desktop app.  This script will perform the first leg of the routine by fetching the request token.  The script also produces a url that the user should go to in a browser to complete the second leg of the routine.  The end result is a request token stored locally in a text file.  
 
-If you are not interested in the internal details of the routine, and are willing to use the Yahoo! PHP SDK <link to sdk>, the SDK provides a much simpler means to accomplish OAuth authentication.
+If you are not interested in the internal details of the routine, and are willing to use the Yahoo! PHP SDK (http://developer.yahoo.com/social/sdk/), the SDK provides a much simpler means to accomplish OAuth authentication.
  
 Prerequisites:
 - PHP5
 - Familiarity with the OAuth authentication flow
-- An OAuth "desktop" application registered in the Yahoo! Developer Dashboard <link to dashboard>
+- An OAuth "desktop" application registered in the Yahoo! Developer Dashboard (http://developer.yahoo.com/dashboard/)
+- The OAuth lib from the Yahoo! PHP SDK
 
 Overview:
 - Include the PHP OAuth library shipped with the PHP SDK.  The 'requier' function is used because it will fail fatally if the library cannot be found, and the library is required for the script to operate.
@@ -20,13 +21,14 @@ Overview:
 
 Usage:
 - Save this code on your local machine
+- Edit the include path for the OAuth lib to match the location on your server
 - Edit the key and secret variables so they hold the key and secret associated with the app
-- run the script as follows
+- Run the script as follows
     - on the command line: "$php ./fetchRequestToken.php
     - in a browser, just navigate to "http://{path to script directory}/fetchRequestToken.php"
-- note the creation of a text file, requestToken.txt, in the same directory as the script
-- copy the url printed by the script
-- navigate to the address in a browser to complete the second leg of the OAuth routine
+- Note the creation of a text file, requestToken.txt, in the same directory as the script
+- Copy the url printed by the script
+- Navigate to the address in a browser to complete the second leg of the OAuth routine
 */
 require('yosdk/lib/OAuth.php');
 
