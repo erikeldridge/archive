@@ -8,7 +8,8 @@
 </style>
 <div id="output"><br/></div>
 <script>
-var foreach = function(collection, callback){
+var cajaUnit = function(){
+    var foreach = function(collection, callback){
     	if(collection.length){//array or node list
     		for(var i = 0; i < collection.length; i++){
     			callback(i, collection[i]);
@@ -36,66 +37,68 @@ var foreach = function(collection, callback){
 			}
 		});
 		return pieces.join('');
-	},
-	createTestSuite = function(settings){
-		settings.outputId = 'output';
-		settings.passClassName = 'pass';
-		settings.failClassName = 'fail';
-		var tests = [];
-        return {
-            'addTest':function(fn){
-				foreach(settings, function(settingName, settingValue){
-					fn.settings[settingName] = settingValue;
-				});
-				tests.push(fn);
-			},
-			'run':function(){
-				foreach(tests, function(i, test){
-					test.run();
-				});
-			}
-        };
-    },
-    createTest = function(settings){
-		return {
-			'settings':settings,
-			'run':function(){
-				if(settings.setUp){
-					var setUpResults = settings.setUp();
-				}
-				if(settings.test(setUpResults)){
-					// console.log('true');
-					var html = sprintf('<div class="%%">%%: %%</div>', settings.passClassName, settings.suiteName, settings.testName);
-					document.getElementById(settings.outputId).innerHTML += html;
-				}else{console.log(settings);
-					var html = sprintf('<div class="%%">%%: %%</div>', settings.failClassName, settings.suiteName, settings.testName);
-					document.getElementById(settings.outputId).innerHTML += html;
-				}
-				if(settings.tearDown){
-					settings.tearDown(setUpResults);
-				}
-			}
-		};
 	};
-var suite = createTestSuite({'suiteName':'addClass'}),
-    test1 = createTest({
-		'testName':'no starting class',
-        'setUp':function(){
-            var div = document.createElement('div');
-			div.className = 'output';
-			return {//setUpResults
-				'div':div
-			};
+	return {
+    	'createSuite':function(settings){
+    	    //default settings
+			settings = settings || {};
+    		settings.outputId = 'output';
+    		settings.passClassName = 'pass';
+    		settings.failClassName = 'fail';
+    		var tests = [];
+            return {
+				'settings':settings,// not req'd, but included for debugging
+                'addTest':function(fn){
+    				foreach(settings, function(settingName, settingValue){
+    					fn.settings[settingName] = settingValue;
+    				});
+    				tests.push(fn);
+    			},
+    			'run':function(){
+    				foreach(tests, function(i, test){
+    					test.run();
+    				});
+    			}
+            };
         },
-        'tearDown':function(setUpResults){
-			delete setUpResults.div;
-            console.log(setUpResults);
-        },
-        'test':function(setUpResults){
-            console.log('test');
-			return false;
-        }
-    });
-    suite.addTest(test1);
-	suite.run();
+        'createTest':function(settings){
+    		return {
+    			'settings':settings,
+    			'run':function(){
+    				if(settings.setUp){
+    					var setUpResults = settings.setUp();
+    				}
+    				if(settings.test(setUpResults)){
+    					var html = sprintf('<div class="%%">%%: %%</div>', settings.passClassName, settings.suiteName, settings.testName);
+    					document.getElementById(settings.outputId).innerHTML += html;
+    				}else{
+    					var html = sprintf('<div class="%%">%%: %%</div>', settings.failClassName, settings.suiteName, settings.testName);
+    					document.getElementById(settings.outputId).innerHTML += html;
+    				}
+    				if(settings.tearDown){
+    					settings.tearDown(setUpResults);
+    				}
+    			}
+    		};
+    	}
+    };
+}();
+//test the test unit
+//BEGIN: suite
+//test default settings
+var suite = cajaUnit.createSuite();
+if('output' === suite.settings.outputId && 'pass' === suite.settings.passClassName && 'fail' === suite.settings.failClassName){
+    document.getElementById('output').innerHTML += '<div class="pass">createSuite() :  test default settings</div>';
+}else{
+    document.getElementById('output').innerHTML += '<div class="fail">createSuite() :  test default settings</div>';
+}
+
+//test custom settings
+var suite = cajaUnit.createSuite({'suiteName':'suite 1'});
+if('suite 1' === suite.settings.suiteName){
+    document.getElementById('output').innerHTML += '<div class="pass">createSuite() :  test custom settings</div>';
+}else{
+    document.getElementById('output').innerHTML += '<div class="fail">createSuite() :  test custom settings</div>';
+}
+//END: suite
 </script>
