@@ -30,12 +30,10 @@ var cajaUnit = function(){
 	};
 	return {
     	'createSuite':function(settings){
-    	    //default settings
-    		settings.outputId = 'output';
-    		settings.passClassName = 'pass';
-    		settings.failClassName = 'fail';
+			settings = settings || {};
     		var tests = [];
             return {
+				'settings':settings,// not req'd, but included for debugging
                 'addTest':function(fn){
     				foreach(settings, function(settingName, settingValue){
     					fn.settings[settingName] = settingValue;
@@ -50,6 +48,11 @@ var cajaUnit = function(){
             };
         },
         'createTest':function(settings){
+    	    //default settings
+			settings = settings || {};
+    		settings.outputId = 'output';
+    		settings.passClassName = 'pass';
+    		settings.failClassName = 'fail';
     		return {
     			'settings':settings,
     			'run':function(){
@@ -59,7 +62,7 @@ var cajaUnit = function(){
     				if(settings.test(setUpResults)){
     					var html = sprintf('<div class="%%">%%: %%</div>', settings.passClassName, settings.suiteName, settings.testName);
     					document.getElementById(settings.outputId).innerHTML += html;
-    				}else{console.log(settings);
+    				}else{
     					var html = sprintf('<div class="%%">%%: %%</div>', settings.failClassName, settings.suiteName, settings.testName);
     					document.getElementById(settings.outputId).innerHTML += html;
     				}

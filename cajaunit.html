@@ -40,11 +40,7 @@ var cajaUnit = function(){
 	};
 	return {
     	'createSuite':function(settings){
-    	    //default settings
 			settings = settings || {};
-    		settings.outputId = 'output';
-    		settings.passClassName = 'pass';
-    		settings.failClassName = 'fail';
     		var tests = [];
             return {
 				'settings':settings,// not req'd, but included for debugging
@@ -62,6 +58,11 @@ var cajaUnit = function(){
             };
         },
         'createTest':function(settings){
+    	    //default settings
+			settings = settings || {};
+    		settings.outputId = 'output';
+    		settings.passClassName = 'pass';
+    		settings.failClassName = 'fail';
     		return {
     			'settings':settings,
     			'run':function(){
@@ -87,7 +88,7 @@ var cajaUnit = function(){
 //BEGIN: suite
 //test default settings
 var suite = cajaUnit.createSuite();
-if('output' === suite.settings.outputId && 'pass' === suite.settings.passClassName && 'fail' === suite.settings.failClassName){
+if('object' === typeof suite.settings){
     document.getElementById('output').innerHTML += '<div class="pass">createSuite() :  test default settings</div>';
 }else{
     document.getElementById('output').innerHTML += '<div class="fail">createSuite() :  test default settings</div>';
@@ -101,4 +102,28 @@ if('suite 1' === suite.settings.suiteName){
     document.getElementById('output').innerHTML += '<div class="fail">createSuite() :  test custom settings</div>';
 }
 //END: suite
+
+//BEGIN: createTest
+//test default settings
+var suite = cajaUnit.createSuite({'suiteName':'suite 2'}),
+    test1 = cajaUnit.createTest();
+suite.addTest(test1);
+if('object' === typeof suite.settings && 
+	'output' === test1.settings.outputId && 
+	'pass' === test1.settings.passClassName && 
+	'fail' === test1.settings.failClassName){
+    document.getElementById('output').innerHTML += '<div class="pass">createTest() :  test default settings</div>';
+}else{
+    document.getElementById('output').innerHTML += '<div class="fail">createTest() :  test default settings</div>';
+}
+
+//test custom settings
+var suite = cajaUnit.createSuite(),
+    test1 = cajaUnit.createTest({'testName':'test 1'});
+suite.addTest(test1);
+if('test 1' === test1.settings.testName){
+    document.getElementById('output').innerHTML += '<div class="pass">createTest() :  test custom settings</div>';
+}else{
+    document.getElementById('output').innerHTML += '<div class="fail">createTest() :  test custom settings</div>';
+}
 </script>
