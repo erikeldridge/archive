@@ -7,7 +7,7 @@
 }
 </style>
 <div id="output"><br/></div>
-<script>
+<script>//js included via php because yap requires js to be inline
 	<?= file_get_contents('cajaUnit.js') ?>
 </script>
 
@@ -71,7 +71,7 @@ if('object' === typeof suite.settings &&
     document.getElementById('output').innerHTML += '<div class="fail">createTest() :  test default settings</div>';
 }
 
-// //custom settings
+//custom settings
 var suite = cajaUnit.createSuite(),
     test1 = cajaUnit.createTest({'testName':'test 1'});
 suite.addTest(test1);
@@ -81,7 +81,7 @@ if('test 1' === test1.settings.testName){
     document.getElementById('output').innerHTML += '<div class="fail">createTest() :  test custom settings</div>';
 }
 
-// //setUpResults
+//setUpResults
 var suite = cajaUnit.createSuite(),
     test1 = cajaUnit.createTest({
 	'testName':'test 1',
@@ -103,4 +103,29 @@ var suite = cajaUnit.createSuite(),
 });
 suite.addTest(test1);
 suite.run();
+
+//tearDown runs after test
+var suite = cajaUnit.createSuite(),
+    test1 = cajaUnit.createTest({
+	'testName':'test 1',
+	'setUp':function(){
+		var div = document.createElement('div');
+		div.id = 'test';
+		document.getElementById('output').appendChild(div);
+		return {};
+	},
+	'test':function(setUpResults){
+		return true;
+	},
+	'tearDown':function(setUpResults){
+		document.getElementById('output').removeChild(document.getElementById('test'));
+	}
+});
+suite.addTest(test1);
+suite.run();
+if(!document.getElementById('test')){
+    document.getElementById('output').innerHTML += '<div class="pass">tearDown runs after test</div>';
+}else{
+    document.getElementById('output').innerHTML += '<div class="fail">tearDown runs after test</div>';
+}
 </script>
