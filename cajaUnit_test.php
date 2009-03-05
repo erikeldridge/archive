@@ -7,7 +7,9 @@
 }
 </style>
 <div id="output"><br/></div>
-<script src="cajaUnit.js"></script>
+<script>
+	<?= file_get_contents('cajaUnit.js') ?>
+</script>
 
 <script>
 //test the test unit
