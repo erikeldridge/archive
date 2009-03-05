@@ -7,91 +7,42 @@
 }
 </style>
 <div id="output"><br/></div>
+<script src="cajaUnit.js"></script>
+
 <script>
-var cajaUnit = function(){
-    var foreach = function(collection, callback){
-    	if(collection.length){//array or node list
-    		for(var i = 0; i < collection.length; i++){
-    			callback(i, collection[i]);
-    		}
-    	}else if(collection.hasOwnProperty){
-    		for(var key in collection){
-    			if(collection.hasOwnProperty(key)){
-    				callback(key, collection[key]);
-    			}
-    		}
-    	}else{
-    		throw('foreach() error: collection (' + collection + ') is neither an array nor an object');
-    	}
-    },
-	sprintf = function (/*format, arg1, arg2  ...*/) {
-		var params = Array.prototype.slice.apply(arguments),//cache arguments quasi-array as actual array.  ref: http://www.hunlock.com/blogs/Functional_Javascript#quickIDX11
-			format = params[0],
-			args = params.slice(1),
-			pieces = format.split('%%');
-		foreach(args, function (index, arg) {
-			if (!arg) {
-				throw('sprintf() error: expecting string, but received'+arg+', which is a'+typeof arg+'Context: '+params.toString());
-			} else {
-				pieces[index] = pieces[index] + arg.toString();
-			}
-		});
-		return pieces.join('');
-	};
-	return {
-    	'createSuite':function(settings){
-			settings = settings || {};
-    		var tests = [];
-            return {
-				'settings':settings,// not req'd, but included for debugging
-                'addTest':function(fn){
-    				foreach(settings, function(settingName, settingValue){
-    					fn.settings[settingName] = settingValue;
-    				});
-    				tests.push(fn);
-    			},
-    			'run':function(){
-    				foreach(tests, function(i, test){
-    					test.run();
-    				});
-    			}
-            };
-        },
-        'createTest':function(settings){
-    	    //default settings
-			settings = settings || {};
-    		settings.outputId = 'output';
-    		settings.passClassName = 'pass';
-    		settings.failClassName = 'fail';
-    		return {
-    			'settings':settings,
-    			'run':function(){
-    				if(settings.setUp){
-    					var setUpResults = settings.setUp();
-    				}
-    				if(settings.test(setUpResults)){
-    					var html = sprintf('<div class="%%">%%: %%</div>', settings.passClassName, settings.suiteName, settings.testName);
-    					document.getElementById(settings.outputId).innerHTML += html;
-    				}else{
-    					var html = sprintf('<div class="%%">%%: %%</div>', settings.failClassName, settings.suiteName, settings.testName);
-    					document.getElementById(settings.outputId).innerHTML += html;
-    				}
-    				if(settings.tearDown){
-    					settings.tearDown(setUpResults);
-    				}
-    			}
-    		};
-    	}
-    };
-}();
 //test the test unit
-//BEGIN: suite
-//test default settings
+//BEGIN: createSuite
+//test output
+// var suite = cajaUnit.createSuite();
+// suite.run();
+// if(document.getElementById('output').innerHTML.match('<br/>[\t\n]*<div class="suite">New Suite</div>')){
+//     document.getElementById('output').innerHTML += '<div class="pass">createSuite() :  test output</div>';
+// }else{
+//     document.getElementById('output').innerHTML += '<div class="fail">createSuite() :  test output</div>';
+// }
+
+// test default settings
 var suite = cajaUnit.createSuite();
-if('object' === typeof suite.settings){
+if('New Suite' === suite.settings.suiteName && 'output' === suite.settings.outputId){
     document.getElementById('output').innerHTML += '<div class="pass">createSuite() :  test default settings</div>';
 }else{
     document.getElementById('output').innerHTML += '<div class="fail">createSuite() :  test default settings</div>';
+}
+
+//test name prints correctly
+var suite = cajaUnit.createSuite();
+suite.run();
+var divs = document.getElementsByTagName('div'),
+	numSuites = 0;
+for(var i = 0; i < divs.length; i++){
+	if('suite' === divs[i].className){
+		numSuites++;
+	}
+}
+if(1 === numSuites){
+    document.getElementById('output').innerHTML += '<div class="pass">test name prints correctly</div>';
+}else{
+    document.getElementById('output').innerHTML += '<div class="fail">test name prints correctly</div>';
 }
 
 //test custom settings
@@ -101,23 +52,24 @@ if('suite 1' === suite.settings.suiteName){
 }else{
     document.getElementById('output').innerHTML += '<div class="fail">createSuite() :  test custom settings</div>';
 }
-//END: suite
+//END: createSuite
 
 //BEGIN: createTest
-//test default settings
-var suite = cajaUnit.createSuite({'suiteName':'suite 2'}),
+//default settings
+var suite = cajaUnit.createSuite(),
     test1 = cajaUnit.createTest();
 suite.addTest(test1);
 if('object' === typeof suite.settings && 
 	'output' === test1.settings.outputId && 
 	'pass' === test1.settings.passClassName && 
-	'fail' === test1.settings.failClassName){
+	'fail' === test1.settings.failClassName && 
+	'New Test' === test1.settings.testName){
     document.getElementById('output').innerHTML += '<div class="pass">createTest() :  test default settings</div>';
 }else{
     document.getElementById('output').innerHTML += '<div class="fail">createTest() :  test default settings</div>';
 }
 
-//test custom settings
+// //custom settings
 var suite = cajaUnit.createSuite(),
     test1 = cajaUnit.createTest({'testName':'test 1'});
 suite.addTest(test1);
@@ -126,4 +78,27 @@ if('test 1' === test1.settings.testName){
 }else{
     document.getElementById('output').innerHTML += '<div class="fail">createTest() :  test custom settings</div>';
 }
+
+// //setUpResults
+var suite = cajaUnit.createSuite(),
+    test1 = cajaUnit.createTest({
+	'testName':'test 1',
+	'setUp':function(){
+		var div = document.createElement('div');
+		div.id = 'test';
+		return {
+	        'div':div
+		};
+	},
+	'test':function(setUpResults){
+		if('test' === setUpResults.div.id){
+		    document.getElementById('output').innerHTML += '<div class="pass">createTest() :  setUpResults</div>';
+		}else{
+		    document.getElementById('output').innerHTML += '<div class="fail">createTest() :  setUpResults</div>';
+		}
+		return true;
+	}
+});
+suite.addTest(test1);
+suite.run();
 </script>

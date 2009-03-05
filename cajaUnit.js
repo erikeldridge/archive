@@ -1,10 +1,10 @@
 var cajaUnit = function(){
     var foreach = function(collection, callback){
-    	if(collection.length){//array or node list
+		if(collection && collection.length){//array or node list
     		for(var i = 0; i < collection.length; i++){
     			callback(i, collection[i]);
     		}
-    	}else if(collection.hasOwnProperty){
+    	}else if(collection && collection.hasOwnProperty){
     		for(var key in collection){
     			if(collection.hasOwnProperty(key)){
     				callback(key, collection[key]);
@@ -29,41 +29,62 @@ var cajaUnit = function(){
 		return pieces.join('');
 	};
 	return {
-    	'createSuite':function(settings){
-			settings = settings || {};
+    	'createSuite':function(customSettings){
+    	    //define default settings
+			var settings = {};
+    		settings.suiteName = 'New Suite';
+    		settings.outputId = 'output';
+			//override defaults w/ custom, if defined
+			if(customSettings){
+				foreach(customSettings, function(name, value){
+					settings[name] = value;
+				});
+			}
     		var tests = [];
             return {
 				'settings':settings,// not req'd, but included for debugging
                 'addTest':function(fn){
-    				foreach(settings, function(settingName, settingValue){
-    					fn.settings[settingName] = settingValue;
+					//override test's defaults
+    				foreach(settings, function(name, value){
+    					fn.settings[name] = value;
     				});
+					//add test to run queue
     				tests.push(fn);
     			},
     			'run':function(){
+    			    //print header
+					var html = sprintf('<div class="suite">%%</div>', settings.suiteName);
+					document.getElementById(settings.outputId).innerHTML += html;
+					//run tests
     				foreach(tests, function(i, test){
     					test.run();
     				});
     			}
             };
         },
-        'createTest':function(settings){
+        'createTest':function(customSettings){
     	    //default settings
-			settings = settings || {};
-    		settings.outputId = 'output';
+			var settings = settings || {};
     		settings.passClassName = 'pass';
     		settings.failClassName = 'fail';
+    		settings.testName = 'New Test';
+			//override defaults w/ custom, if defined
+			if(customSettings){
+				foreach(customSettings, function(name, value){
+					settings[name] = value;
+				});
+			}
     		return {
-    			'settings':settings,
+    			'settings':settings,//made public so it can be set by suite w/o set method
     			'run':function(){
     				if(settings.setUp){
     					var setUpResults = settings.setUp();
     				}
     				if(settings.test(setUpResults)){
-    					var html = sprintf('<div class="%%">%%: %%</div>', settings.passClassName, settings.suiteName, settings.testName);
+    					var html = sprintf('<div class="%%">%%</div>', settings.passClassName, settings.testName);
     					document.getElementById(settings.outputId).innerHTML += html;
     				}else{
-    					var html = sprintf('<div class="%%">%%: %%</div>', settings.failClassName, settings.suiteName, settings.testName);
+    					var html = sprintf('<div class="%%">%%</div>', settings.failClassName, settings.testName);
     					document.getElementById(settings.outputId).innerHTML += html;
     				}
     				if(settings.tearDown){
