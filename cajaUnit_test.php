@@ -22,6 +22,16 @@
 // }else{
 //     document.getElementById('output').innerHTML += '<div class="fail">createSuite() :  test output</div>';
 // }
+// make sure cajaUnit settings stick through normal operation
+cajaUnit.settings.failClassName = 'failed';
+var suite = cajaUnit.createSuite(),
+	test1 = cajaUnit.createTest();
+suite.addTest(test1);
+if('failed' === cajaUnit.settings.failClassName){
+    document.getElementById('output').innerHTML += '<div class="pass">make sure cajaUnit settings stick through normal operation</div>';
+}else{
+    document.getElementById('output').innerHTML += '<div class="fail">make sure cajaUnit settings stick through normal operation</div>';
+}
 
 // test default settings
 var suite = cajaUnit.createSuite();
@@ -62,9 +72,6 @@ var suite = cajaUnit.createSuite(),
     test1 = cajaUnit.createTest();
 suite.addTest(test1);
 if('object' === typeof suite.settings && 
-	'output' === test1.settings.outputId && 
-	'pass' === test1.settings.passClassName && 
-	'fail' === test1.settings.failClassName && 
 	'New Test' === test1.settings.testName){
     document.getElementById('output').innerHTML += '<div class="pass">createTest() :  test default settings</div>';
 }else{

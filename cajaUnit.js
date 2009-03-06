@@ -2,8 +2,7 @@ var cajaUnit = function(){
     var settings = {
             'outputId':'output',
     		'passClassName':'pass',
-    		'failClassName':'fail',
-    		'testName':'New Test'
+    		'failClassName':'fail'
         },
         foreach = function(collection, callback){
 		if(collection && collection.length){//array or node list
@@ -35,6 +34,7 @@ var cajaUnit = function(){
 		return pieces.join('');
 	};
 	return {
+		'settings':settings,
     	'createSuite':function(customSettings){
     	    //define default settings
             settings.suiteName = 'New Suite';
