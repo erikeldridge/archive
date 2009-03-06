@@ -115,6 +115,11 @@ var suite = cajaUnit.createSuite(),
 		return {};
 	},
 	'test':function(setUpResults){
+		if(document.getElementById('test')){
+		    document.getElementById('output').innerHTML += '<div class="pass">- sub-test - tearDown runs after test</div>';
+		}else{
+		    document.getElementById('output').innerHTML += '<div class="fail">- sub-test - tearDown runs after test</div>';
+		}
 		return true;
 	},
 	'tearDown':function(setUpResults){
@@ -128,4 +133,16 @@ if(!document.getElementById('test')){
 }else{
     document.getElementById('output').innerHTML += '<div class="fail">tearDown runs after test</div>';
 }
+
+//stand alone test
+var test1 = cajaUnit.createTest({
+	'outputId':'output',
+	'testName':'this is my sample test',
+	'test':function(){
+		var foo = 1,
+			bar = 1;
+		return (foo === bar);
+	}
+});
+test1.run();
 </script>

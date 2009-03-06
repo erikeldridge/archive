@@ -1,5 +1,11 @@
 var cajaUnit = function(){
-    var foreach = function(collection, callback){
+    var settings = {
+            'outputId':'output',
+    		'passClassName':'pass',
+    		'failClassName':'fail',
+    		'testName':'New Test'
+        },
+        foreach = function(collection, callback){
 		if(collection && collection.length){//array or node list
     		for(var i = 0; i < collection.length; i++){
     			callback(i, collection[i]);
@@ -31,9 +37,7 @@ var cajaUnit = function(){
 	return {
     	'createSuite':function(customSettings){
     	    //define default settings
-			var settings = {};
-    		settings.suiteName = 'New Suite';
-    		settings.outputId = 'output';
+            settings.suiteName = 'New Suite';
 			//override defaults w/ custom, if defined
 			if(customSettings){
 				foreach(customSettings, function(name, value){
@@ -64,10 +68,7 @@ var cajaUnit = function(){
         },
         'createTest':function(customSettings){
     	    //default settings
-			var settings = settings || {};
-    		settings.passClassName = 'pass';
-    		settings.failClassName = 'fail';
-    		settings.testName = 'New Test';
+            settings.testName = 'New Test';
 			//override defaults w/ custom, if defined
 			if(customSettings){
 				foreach(customSettings, function(name, value){
