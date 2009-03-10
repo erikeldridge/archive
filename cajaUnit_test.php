@@ -8,7 +8,7 @@
 </style>
 <div id="output"><br/></div>
 <script>//js included via php because yap requires js to be inline
-	<?= file_get_contents('cajaUnit.js') ?>
+	//<?= file_get_contents('cajaUnit.js') ?>//using js comment to avoid php throwing errors in js lint
 </script>
 
 <script>
@@ -35,34 +35,20 @@ if('failed' === cajaUnit.settings.failClassName){
 
 // test default settings
 var suite = cajaUnit.createSuite();
-if('New Suite' === suite.settings.suiteName && 'output' === suite.settings.outputId){
+if('output' === suite.suiteSettings.outputId){
     document.getElementById('output').innerHTML += '<div class="pass">createSuite() :  test default settings</div>';
 }else{
     document.getElementById('output').innerHTML += '<div class="fail">createSuite() :  test default settings</div>';
 }
 
 //test name prints correctly
-var suite = cajaUnit.createSuite();
+var suite = cajaUnit.createSuite({'suiteName':'test suite'});
 suite.run();
-var divs = document.getElementsByTagName('div'),
-	numSuites = 0;
-for(var i = 0; i < divs.length; i++){
-	if('suite' === divs[i].className){
-		numSuites++;
-	}
-}
-if(1 === numSuites){
+var div = document.getElementById(suite.suiteSettings.suiteId);
+if('test suite' === div.innerHTML){
     document.getElementById('output').innerHTML += '<div class="pass">test name prints correctly</div>';
 }else{
     document.getElementById('output').innerHTML += '<div class="fail">test name prints correctly</div>';
-}
-
-//test custom settings
-var suite = cajaUnit.createSuite({'suiteName':'suite 1'});
-if('suite 1' === suite.settings.suiteName){
-    document.getElementById('output').innerHTML += '<div class="pass">createSuite() :  test custom settings</div>';
-}else{
-    document.getElementById('output').innerHTML += '<div class="fail">createSuite() :  test custom settings</div>';
 }
 //END: createSuite
 
@@ -71,8 +57,7 @@ if('suite 1' === suite.settings.suiteName){
 var suite = cajaUnit.createSuite(),
     test1 = cajaUnit.createTest();
 suite.addTest(test1);
-if('object' === typeof suite.settings && 
-	'New Test' === test1.settings.testName){
+if('object' === typeof test1.testSettings){
     document.getElementById('output').innerHTML += '<div class="pass">createTest() :  test default settings</div>';
 }else{
     document.getElementById('output').innerHTML += '<div class="fail">createTest() :  test default settings</div>';
@@ -82,14 +67,14 @@ if('object' === typeof suite.settings &&
 var suite = cajaUnit.createSuite(),
     test1 = cajaUnit.createTest({'testName':'test 1'});
 suite.addTest(test1);
-if('test 1' === test1.settings.testName){
+if('test 1' === test1.testSettings.testName){
     document.getElementById('output').innerHTML += '<div class="pass">createTest() :  test custom settings</div>';
 }else{
     document.getElementById('output').innerHTML += '<div class="fail">createTest() :  test custom settings</div>';
 }
 
 //setUpResults
-var suite = cajaUnit.createSuite(),
+var suite = cajaUnit.createSuite({'suiteName':'test suite'}),
     test1 = cajaUnit.createTest({
 	'testName':'test 1',
 	'setUp':function(){
@@ -112,7 +97,7 @@ suite.addTest(test1);
 suite.run();
 
 //tearDown runs after test
-var suite = cajaUnit.createSuite(),
+var suite = cajaUnit.createSuite({'suiteName':'test suite'}),
     test1 = cajaUnit.createTest({
 	'testName':'test 1',
 	'setUp':function(){
