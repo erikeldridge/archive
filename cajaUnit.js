@@ -1,98 +1,91 @@
-var cajaUnit = function(){
-    var settings = {
-            'outputId':'output',
-    		'passClassName':'pass',
-    		'failClassName':'fail'
-        },
-        foreach = function(collection, callback){
+
+var foreach = function(collection, callback){
 		if(collection && collection.length){//array or node list
-    		for(var i = 0; i < collection.length; i++){
-    			callback(i, collection[i]);
-    		}
-    	}else if(collection && collection.hasOwnProperty){
-    		for(var key in collection){
-    			if(collection.hasOwnProperty(key)){
-    				callback(key, collection[key]);
-    			}
-    		}
-    	}else{
-    		throw('foreach() error: collection (' + collection + ') is neither an array nor an object');
-    	}
-    },
-	sprintf = function (/*format, arg1, arg2  ...*/) {
-		var params = Array.prototype.slice.apply(arguments),//cache arguments quasi-array as actual array.  ref: http://www.hunlock.com/blogs/Functional_Javascript#quickIDX11
-			format = params[0],
-			args = params.slice(1),
-			pieces = format.split('%%');
-		foreach(args, function (index, arg) {
-			if (!arg) {
-				throw('sprintf() error: expecting string, but received'+arg+', which is a'+typeof arg+'Context: '+params.toString());
-			} else {
-				pieces[index] = pieces[index] + arg.toString();
+			for(var i = 0; i < collection.length; i++){
+				callback(i, collection[i]);
 			}
-		});
-		return pieces.join('');
-	};
-	return {
-		'settings':settings,
-    	'createSuite':function(customSettings){
-    	    //define default settings
-            settings.suiteName = 'New Suite';
-			//override defaults w/ custom, if defined
-			if(customSettings){
-				foreach(customSettings, function(name, value){
-					settings[name] = value;
+		}else if(collection && collection.hasOwnProperty){
+			for(var key in collection){
+				if(collection.hasOwnProperty(key)){
+					callback(key, collection[key]);
+				}
+			}
+		}else{
+			throw('foreach() error: collection (' + collection + ') is neither an array nor an object');
+		}
+	},
+	cajaUnit = function(){
+		var settings = {
+			'outputId':'output',
+			'passColor':'green',
+			'failColor':'red'
+		};
+		return {
+			'settings':settings,
+			'createSuite':function(customSettings){
+				var tests = [],
+					suiteSettings = {},
+					div = document.createElement('div');
+				suiteSettings.suiteId = ('suite' + new Date().getTime()/1000).replace('.','');
+				foreach(cajaUnit.settings, function(name, value){
+					suiteSettings[name] = value;
 				});
-			}
-    		var tests = [];
-            return {
-				'settings':settings,// not req'd, but included for debugging
-                'addTest':function(fn){
-					//override test's defaults
-    				foreach(settings, function(name, value){
-    					fn.settings[name] = value;
-    				});
-					//add test to run queue
-    				tests.push(fn);
-    			},
-    			'run':function(){
-    			    //print header
-					var html = sprintf('<div class="suite">%%</div>', settings.suiteName);
-					document.getElementById(settings.outputId).innerHTML += html;
-					//run tests
-    				foreach(tests, function(i, test){
-    					test.run();
-    				});
-    			}
-            };
-        },
-        'createTest':function(customSettings){
-    	    //default settings
-            settings.testName = 'New Test';
-			//override defaults w/ custom, if defined
-			if(customSettings){
-				foreach(customSettings, function(name, value){
-					settings[name] = value;
+				if(customSettings){
+					foreach(customSettings, function(name, value){
+						suiteSettings[name] = value;
+					});
+				}
+				return{
+					'suiteSettings':suiteSettings,
+					'addTest':function(fn){
+						foreach(suiteSettings, function(name, value){
+							fn.testSettings[name] = value;
+						});
+						fn.testSettings.outputId = suiteSettings.suiteId;
+						tests.push(fn);
+					},
+					'run':function(){
+						div.appendChild(
+							document.createTextNode(suiteSettings.suiteName));
+						div.id = suiteSettings.suiteId;
+						document.getElementById(suiteSettings.outputId).appendChild(div);
+						foreach(tests, function(index, test){
+							test.run();
+						});
+					}
+				};
+			},
+			'createTest':function(customSettings){
+				var testSettings = {};
+				foreach(cajaUnit.settings, function(name, value){
+					testSettings[name] = value;
 				});
+				if(customSettings){
+					foreach(customSettings, function(name, value){
+						testSettings[name] = value;
+					});
+				}
+				return{
+					'testSettings':testSettings,
+					'run':function(){
+						var div = document.createElement('div'),
+							setUpResults;
+	    				if(testSettings.setUp){
+							setUpResults = testSettings.setUp();
+	    				}
+	    				if(testSettings.test(setUpResults)){//pass
+							div.style.color = testSettings.passColor;
+	    				}else{
+	    					div.style.color = testSettings.failColor;
+	    				}
+						div.appendChild(
+							document.createTextNode(testSettings.testName));
+	    				if(testSettings.tearDown){
+	    					testSettings.tearDown(setUpResults);
+	    				}
+						document.getElementById(testSettings.outputId).appendChild(div);
+					}
+				};
 			}
-    		return {
-    			'settings':settings,//made public so it can be set by suite w/o set method
-    			'run':function(){
-    				if(settings.setUp){
-    					var setUpResults = settings.setUp();
-    				}
-    				if(settings.test(setUpResults)){
-    					var html = sprintf('<div class="%%">%%</div>', settings.passClassName, settings.testName);
-    					document.getElementById(settings.outputId).innerHTML += html;
-    				}else{
-    					var html = sprintf('<div class="%%">%%</div>', settings.failClassName, settings.testName);
-    					document.getElementById(settings.outputId).innerHTML += html;
-    				}
-    				if(settings.tearDown){
-    					settings.tearDown(setUpResults);
-    				}
-    			}
-    		};
-    	}
-    };
-}();
+		};
+	}();
