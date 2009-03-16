@@ -30,7 +30,7 @@ var foreach = function(collection, callback){//a convenient loop pattern
 					suiteSettings = {},
 					div = document.createElement('div');//the suite's output wrapper
 				//create quasi-unique id for the suite so we can find it through the dom latr
-				suiteSettings.suiteId = ('suite' + new Date().getTime()/1000).replace('.','');
+				suiteSettings.suiteId = ('suite' + Math.random()).replace('.','');
 				//load global settings into local suite settings
 				foreach(cajaUnit.settings, function(name, value){
 					suiteSettings[name] = value;
@@ -95,10 +95,12 @@ var foreach = function(collection, callback){//a convenient loop pattern
 							setUpResults = testSettings.setUp();
 	    				}
 						//this is the core of everything: the test to run.  Pass in the results (may be undefined) of the set up function
-	    				if(testSettings.test(setUpResults)){//test passes
+	    				try{
+							testSettings.test(setUpResults);
+							//test passes
 							div.style.color = testSettings.passColor;//you could also define a className here
-	    				}else{//test fails
-	    					div.style.color = testSettings.failColor;
+	    				}catch(e){//test fails
+	    					div.style.color = testSettings.failColor;console.log(e);
 	    				}
 						//print the test's name
 						div.appendChild(
@@ -111,6 +113,21 @@ var foreach = function(collection, callback){//a convenient loop pattern
 						document.getElementById(testSettings.outputId).appendChild(div);
 					}
 				};
+			},
+			'assertTrue':function(val){
+				if(true !== val){
+					throw('');
+				}
+			},
+			'assertFalse':function(val){
+				if(false !== val){
+					throw('');
+				}
+			},
+			'assertEqual':function(val1, val2){
+				if(val1 !== val2){
+					throw('');
+				}
 			}
 		};
 	}();
