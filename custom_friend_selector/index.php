@@ -94,7 +94,7 @@ ul{
 	background-color:#F3F7FD;
 	float:left;
 	margin:0.5ex;
-	background-image:url('http://example.erikeldridge.com/yap/remove.png');
+	background-image:url('http://farm4.static.flickr.com/3382/3427472376_344a16f47f_o.png');
 	background-position: right center;
 	background-repeat:no-repeat;
 }
@@ -109,7 +109,7 @@ ul{
 li.suggested:hover{
 	background-color:#F3F7FD;
 	border: 1px solid #BBD8FB;
-	background-image:url('http://example.erikeldridge.com/yap/add.png');
+	background-image:url('http://farm4.static.flickr.com/3324/3427472400_25d81b8108_o.png');
 	background-position: right center;
 	background-repeat:no-repeat;
 }
