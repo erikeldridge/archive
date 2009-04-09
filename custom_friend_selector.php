@@ -1,9 +1,10 @@
 <?php
 require('config.inc');
 require('yosdk/Yahoo.inc');
-$session = YahooSession::requireSession(KEY, SECRET, NULL, '');
+$session = YahooSession::requireSession(KEY, SECRET, NULL, '');//kludge: passing in empty string for callback to prevent unverified domain error
 $yql = 'select guid, nickname from social.profile where guid in (select guid from social.connections(0) where owner_guid = me)';
 $profiles = $session->query($yql)->query->results->profile;
+//reformat results as an array of names keyed by guid
 foreach($profiles as $profile){
 	$connections[$profile->guid] = $profile->nickname;
 }
@@ -13,14 +14,6 @@ foreach($profiles as $profile){
 form{
 	font-family:arial;
 	font-size:12px;
-}
-ul{
-	padding:0;
-	margin-top:1.5ex;
-}
-ul li{
-	list-style-type:none;
-	padding:1ex 0.5ex;
 }
 #selector{
 	border: 1px solid black;
@@ -39,9 +32,14 @@ ul li{
 }
 #suggestions{
 	padding:0.5ex;
+	margin-top:1.5ex;
+}
+#suggestions li{
+	list-style-type:none;
+	padding:1ex 0.5ex;
 }
 .selected{
-	padding:0.5ex 0.5ex 0.5ex 0.5ex;
+	padding:0.5ex;
 	border: 1px solid #BBD8FB;
 	background-color:#F3F7FD;
 	float:left;
@@ -51,7 +49,7 @@ ul li{
 	margin-left:0.5ex;
 }
 .suggested{
-	border: 1px solid white;
+	border: 1px solid white;/* prevent jumpy display changes when hover adds border */
 }
 li.suggested:hover{
 	background-color:#F3F7FD;
@@ -67,9 +65,9 @@ li.suggested:hover{
 				<input/>
 				<ul id="suggestions"></ul>
 			</div>
-			<span style="color:white">a</span>
+			<span style="color:white">a</span><!-- kludge: empty elements are not seen by JS in FF3 -->
 		</div>
-		<input type="hidden" id="guids"/>
+		<input type="hidden" id="guids"/><!-- storage location for selected guids -->
 	</form>
 </div>
 <script>
@@ -80,7 +78,6 @@ var connections = <?= json_encode($connections) ?>,
 	input = selector.getElementsByTagName('input')[0],
 	suggestions = document.getElementById('suggestions'),
 	guids = document.getElementById('guids'),
-	matches = null,
 	handleKeyUp = function(event){
 		var event = event || window.event,
 			value = event.target.value,
@@ -108,7 +105,8 @@ var connections = <?= json_encode($connections) ?>,
 			html += '<li class="suggested" id="' + id + '">' + name + '</li>';
 		}
 		suggestions.innerHTML = html;
-		if(html){			
+		//if there are any suggestions, frame the display w/ a border	
+		if(html){	
 			suggestions.style.border = '1px solid black';
 		}else{
 			suggestions.style.border = '';
@@ -136,21 +134,19 @@ var connections = <?= json_encode($connections) ?>,
 			div.appendChild(img);
 			selected.appendChild(div);
 			//append guid to selected data
-			guids.value += ','+guid;
+			guids.value += ',' + guid;//always add comma because it makes adding/removing guids easy. form handler will need to trim.
 			//clear input & suggestions
 			input.value = '';
 			suggestions.innerHTML = '';
 			suggestions.style.border = '';
-			//reset focus on input
-			input.focus();
 		}else if(className && 'remove' === className){
 			//remove item from suggestions display
 			selected.removeChild(event.target.parentNode);
 			//remove guid from selected guids
 			guids.value = guids.value.replace(',' + guid, ' ');
-			input.focus();
 		}
-		console.log(event.target.tagName);
+		//reset focus on input
+		input.focus();
 	};
 	form.onkeyup = handleKeyUp;
 	form.onclick = handleClick;
