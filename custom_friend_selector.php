@@ -1,13 +1,18 @@
 <?php
-require('config.inc');
-require('yosdk/Yahoo.inc');
-$session = YahooSession::requireSession(KEY, SECRET, NULL, '');//kludge: passing in empty string for callback to prevent unverified domain error
-$yql = 'select guid, nickname from social.profile where guid in (select guid from social.connections(0) where owner_guid = me)';
-$profiles = $session->query($yql)->query->results->profile;
-//reformat results as an array of names keyed by guid
-foreach($profiles as $profile){
-	$connections[$profile->guid] = $profile->nickname;
-}
+// require('config.inc');
+// require('yosdk/Yahoo.inc');
+// $session = YahooSession::requireSession(KEY, SECRET, NULL, '');//kludge: passing in empty string for callback to prevent unverified domain error
+// $yql = 'select guid, nickname from social.profile where guid in (select guid from social.connections(0) where owner_guid = me)';
+// $profiles = $session->query($yql)->query->results->profile;
+// //reformat results as an array of names keyed by guid
+// foreach($profiles as $profile){
+// 	$connections[$profile->guid] = $profile->nickname;
+// }
+$connections = array(
+	'123asd'=>'huebert',
+	'456gdf'=>'erik',
+	'xcv789'=>'hhjoe'
+);
 ?>
 
 <style>
@@ -37,23 +42,35 @@ form{
 #suggestions li{
 	list-style-type:none;
 	padding:1ex 0.5ex;
+	position:relative;
 }
 .selected{
-	padding:0.5ex;
+	padding:0.5ex 20px 0.5ex 0.5ex;
 	border: 1px solid #BBD8FB;
 	background-color:#F3F7FD;
 	float:left;
 	margin:0.5ex;
+	position:relative;
 }
 .selected img{
-	margin-left:0.5ex;
+	position:absolute;
+	top:5px;
+	right:5px;
 }
 .suggested{
 	border: 1px solid white;/* prevent jumpy display changes when hover adds border */
 }
+.suggested img{
+	position:absolute;
+	top:0px;
+	right:0px;
+}
 li.suggested:hover{
 	background-color:#F3F7FD;
 	border: 1px solid #BBD8FB;
+	background-image:url('add_15.png');
+	background-position:center right;
+	background-repeat:no-repeat;
 }
 </style>
 
@@ -102,7 +119,9 @@ var connections = <?= json_encode($connections) ?>,
 		for(i = 0; i < matches.length; i++){
 			id = 'guid_' + matches[i];
 			name = connections[matches[i]];
-			html += '<li class="suggested" id="' + id + '">' + name + '</li>';
+			html += '<li class="suggested" id="' + id + '">' + name;
+			// html += '<img src="add_10.png" align="right"/>';
+			html += '</li>';
 		}
 		suggestions.innerHTML = html;
 		//if there are any suggestions, frame the display w/ a border	
@@ -130,7 +149,7 @@ var connections = <?= json_encode($connections) ?>,
 			img = document.createElement('img');
 			img.id = event.target.id;
 			img.className = 'remove';
-			img.src = 'http://gfx1.hotmail.com/mail/uxp/w3/m3/pr05/cp/DeleteContact.png';
+			img.src = 'remove_10.png';
 			div.appendChild(img);
 			selected.appendChild(div);
 			//append guid to selected data
