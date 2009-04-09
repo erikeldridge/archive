@@ -10,7 +10,9 @@ foreach($profiles as $profile){
 }
 
 if($_POST['submit']){
-	print_r($_POST);
+	$guids_csv = ltrim($_POST['guids'], ',');//note removal of leading comma
+	$guids = explode(',', $guids_csv);
+	var_dump($guids);
 }
 ?>
 
@@ -19,12 +21,19 @@ form{
 	font-family:arial;
 	font-size:12px;
 }
+ul{
+	margin:0;
+	padding:0;
+}
+#submit{/*making space for the drop-down in the demo*/
+	float:right;
+}
 #selector{
 	border: 1px solid black;
 	height:2.5em;
 }
 #selector input {
-	border:none;
+	border-width:0;
 	font-size:inherit;
 	width: 20em;
 	padding:0.5ex 0.5ex 0.5ex 1ex;
@@ -37,6 +46,9 @@ form{
 #suggestions{
 	padding:0.5ex;
 	margin-top:1.5ex;
+	<yml:if-env ua="ie">
+	margin-top:0px;
+	</yml:if-env>
 }
 #suggestions li{
 	list-style-type:none;
@@ -81,7 +93,7 @@ li.suggested:hover{
 			<span style="color:white">a</span><!-- kludge: empty elements are not seen by JS in FF3 -->
 		</div>
 		<input type="hidden" id="guids" name="guids"/><!-- storage location for selected guids -->
-		<input type="submit" name="submit"/>
+		<input type="submit" name="submit" id="submit" />
 	</yml:form>
 </div>
 
@@ -115,7 +127,7 @@ var connections = <?= json_encode($connections) ?>,
 		}
 		// build suggestion display
 		for(i = 0; i < matches.length; i++){
-			id = 'guid_' + matches[i];
+			id = 'suggested_' + matches[i];
 			name = connections[matches[i]];
 			html += '<li class="suggested" id="' + id + '">' + name;
 			// html += '<img src="add_10.png" align="right"/>';
@@ -135,13 +147,16 @@ var connections = <?= json_encode($connections) ?>,
 		var event = event || window.event,
 			div,
 			text,
-			className = event.target.className,
-			guid = event.target.id.substr(5);
-		if(className && 'suggested' === className){
+			//kludge: using id instead of class for identifier because className is not readable by YAP in IE
+			suggestedElement = (event.target.id && (0 === event.target.id.indexOf('suggested_'))),
+			selectedElement = (event.target.id && (0 === event.target.id.indexOf('selected_'))),
+			guid;
+		if(suggestedElement){
+			guid = event.target.id.substr(10);
 			//append item to selected display
 			div = document.createElement('div');
 			div.className = 'selected';
-			div.id = event.target.id;
+			div.id = 'selected_' + guid;
 			text = document.createTextNode(event.target.firstChild.data);
 			div.appendChild(text);
 			selected.appendChild(div);
@@ -153,7 +168,8 @@ var connections = <?= json_encode($connections) ?>,
 			input.value = '';
 			suggestions.innerHTML = '';
 			suggestions.style.border = '';
-		}else if(className && 'selected' === className){
+		}else if(selectedElement){
+			guid = event.target.id.substr(9);
 			//remove item from suggestions display
 			selected.removeChild(event.target);
 			//remove guid from selected guids
