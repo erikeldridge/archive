@@ -1,12 +1,16 @@
 <?php
 require('config.inc');
 require('yosdk/Yahoo.inc');
-$session = YahooSession::requireSession(KEY, SECRET, NULL, '');
+$session = YahooSession::requireSession(KEY, SECRET);
 $yql = 'select guid, nickname from social.profile where guid in (select guid from social.connections(0) where owner_guid = me)';
 $profiles = $session->query($yql)->query->results->profile;
 //reformat results as an array of names keyed by guid
 foreach($profiles as $profile){
 	$connections[$profile->guid] = $profile->nickname;
+}
+
+if($_POST['submit']){
+	print_r($_POST);
 }
 ?>
 
@@ -45,8 +49,8 @@ form{
 	background-color:#F3F7FD;
 	float:left;
 	margin:0.5ex;
-	background-image:url('remove.png');
-	background-position:center right;
+	background-image:url('http://example.erikeldridge.com/yap/remove.png');
+	background-position: right center;
 	background-repeat:no-repeat;
 }
 .suggested{
@@ -60,14 +64,14 @@ form{
 li.suggested:hover{
 	background-color:#F3F7FD;
 	border: 1px solid #BBD8FB;
-	background-image:url('add.png');
-	background-position:center right;
+	background-image:url('http://example.erikeldridge.com/yap/add.png');
+	background-position: right center;
 	background-repeat:no-repeat;
 }
 </style>
 
 <div id="form">
-	<form>
+	<yml:form params="custom_friend_selector_demo.php" method="POST">
 		<div id="selector">
 			<span id="selected"></span>
 			<div id="wrapper">
@@ -76,9 +80,11 @@ li.suggested:hover{
 			</div>
 			<span style="color:white">a</span><!-- kludge: empty elements are not seen by JS in FF3 -->
 		</div>
-		<input type="hidden" id="guids"/><!-- storage location for selected guids -->
-	</form>
+		<input type="hidden" id="guids" name="guids"/><!-- storage location for selected guids -->
+		<input type="submit" name="submit"/>
+	</yml:form>
 </div>
+
 <script>
 var connections = <?= json_encode($connections) ?>,
 	form = document.getElementById('form'),
@@ -118,7 +124,9 @@ var connections = <?= json_encode($connections) ?>,
 		suggestions.innerHTML = html;
 		//if there are any suggestions, frame the display w/ a border	
 		if(html){	
-			suggestions.style.border = '1px solid black';
+			suggestions.style.borderColor = '#000';
+			suggestions.style.borderStyle = 'solid';
+			suggestions.style.borderWidth = '1px';
 		}else{
 			suggestions.style.border = '';
 		}
@@ -130,8 +138,6 @@ var connections = <?= json_encode($connections) ?>,
 			className = event.target.className,
 			guid = event.target.id.substr(5);
 		if(className && 'suggested' === className){
-			//remove item from suggestions display
-			event.target.parentNode.removeChild(event.target);
 			//append item to selected display
 			div = document.createElement('div');
 			div.className = 'selected';
@@ -139,6 +145,8 @@ var connections = <?= json_encode($connections) ?>,
 			text = document.createTextNode(event.target.firstChild.data);
 			div.appendChild(text);
 			selected.appendChild(div);
+			//remove item from suggestions display
+			event.target.parentNode.removeChild(event.target);
 			//append guid to selected data
 			guids.value += ',' + guid;//always add comma because it makes adding/removing guids easy. form handler will need to trim.
 			//clear input & suggestions
@@ -154,7 +162,7 @@ var connections = <?= json_encode($connections) ?>,
 		//reset focus on input
 		input.focus();
 	};
-	form.onkeyup = handleKeyUp;
-	form.onclick = handleClick;
+	form.addEventListener('keyup', handleKeyUp, false);
+	form.addEventListener('click', handleClick, false);
 </script>
 
