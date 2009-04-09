@@ -16,6 +16,7 @@ Usage:
 - Click on a name that appears below the input box to add its associated guid to the hidden "guids" input field in the form.  The clicked name will disappear form the dropdown and appear to the left of the input box
 - To remove a name (that's been added), click on it to the left of the input box
 - click the submit button to send the form data.  Note: the form submits to itself.  Assuming you added some names, you will see their guids printed at the top of the page.  Serving suggestions: you can plug these guids directly into a yml:name tag to get their names or a yml:profile-pic tag to see their pic, request data for a guid using Yahoo!'s social APIs (http://developer.yahoo.com/social/social), etc.
+- play with this app live here: http://apps.yahoo.com/-HvSOMW30
 
 License:
 Software License Agreement (BSD License)
