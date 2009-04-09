@@ -1,7 +1,7 @@
 <?php
 // require('config.inc');
 // require('yosdk/Yahoo.inc');
-// $session = YahooSession::requireSession(KEY, SECRET, NULL, '');//kludge: passing in empty string for callback to prevent unverified domain error
+// $session = YahooSession::requireSession(KEY, SECRET);
 // $yql = 'select guid, nickname from social.profile where guid in (select guid from social.connections(0) where owner_guid = me)';
 // $profiles = $session->query($yql)->query->results->profile;
 // //reformat results as an array of names keyed by guid
@@ -154,7 +154,7 @@ var connections = <?= json_encode($connections) ?>,
 			//remove item from suggestions display
 			selected.removeChild(event.target);
 			//remove guid from selected guids
-			guids.value = guids.value.replace(',' + guid, ' ');console.log
+			guids.value = guids.value.replace(',' + guid, ' ');
 		}
 		//reset focus on input
 		input.focus();
