@@ -94,7 +94,7 @@ ul{
 	background-color:#F3F7FD;
 	float:left;
 	margin:0.5ex;
-	background-image:url('http://github.com/erikeldridge/example/raw/ae82c0c0124dbb0af99e19849a2d11bb19406028/custom_friend_selector/add.png');
+	background-image:url('http://github.com/erikeldridge/example/raw/ae82c0c0124dbb0af99e19849a2d11bb19406028/custom_friend_selector/remove.png');
 	background-position: right center;
 	background-repeat:no-repeat;
 }
@@ -109,7 +109,7 @@ ul{
 li.suggested:hover{
 	background-color:#F3F7FD;
 	border: 1px solid #BBD8FB;
-	background-image:url('http://github.com/erikeldridge/example/raw/ae82c0c0124dbb0af99e19849a2d11bb19406028/custom_friend_selector/remove.png');
+	background-image:url('http://github.com/erikeldridge/example/raw/ae82c0c0124dbb0af99e19849a2d11bb19406028/custom_friend_selector/add.png');
 	background-position: right center;
 	background-repeat:no-repeat;
 }
