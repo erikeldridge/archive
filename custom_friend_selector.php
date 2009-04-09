@@ -50,12 +50,9 @@ form{
 	background-color:#F3F7FD;
 	float:left;
 	margin:0.5ex;
-	position:relative;
-}
-.selected img{
-	position:absolute;
-	top:5px;
-	right:5px;
+	background-image:url('remove.png');
+	background-position:center right;
+	background-repeat:no-repeat;
 }
 .suggested{
 	border: 1px solid white;/* prevent jumpy display changes when hover adds border */
@@ -68,7 +65,7 @@ form{
 li.suggested:hover{
 	background-color:#F3F7FD;
 	border: 1px solid #BBD8FB;
-	background-image:url('add_15.png');
+	background-image:url('add.png');
 	background-position:center right;
 	background-repeat:no-repeat;
 }
@@ -135,7 +132,6 @@ var connections = <?= json_encode($connections) ?>,
 		var event = event || window.event,
 			div,
 			text,
-			img,
 			className = event.target.className,
 			guid = event.target.id.substr(5);
 		if(className && 'suggested' === className){
@@ -144,13 +140,9 @@ var connections = <?= json_encode($connections) ?>,
 			//append item to selected display
 			div = document.createElement('div');
 			div.className = 'selected';
+			div.id = event.target.id;
 			text = document.createTextNode(event.target.firstChild.data);
 			div.appendChild(text);
-			img = document.createElement('img');
-			img.id = event.target.id;
-			img.className = 'remove';
-			img.src = 'remove_10.png';
-			div.appendChild(img);
 			selected.appendChild(div);
 			//append guid to selected data
 			guids.value += ',' + guid;//always add comma because it makes adding/removing guids easy. form handler will need to trim.
@@ -158,11 +150,11 @@ var connections = <?= json_encode($connections) ?>,
 			input.value = '';
 			suggestions.innerHTML = '';
 			suggestions.style.border = '';
-		}else if(className && 'remove' === className){
+		}else if(className && 'selected' === className){
 			//remove item from suggestions display
-			selected.removeChild(event.target.parentNode);
+			selected.removeChild(event.target);
 			//remove guid from selected guids
-			guids.value = guids.value.replace(',' + guid, ' ');
+			guids.value = guids.value.replace(',' + guid, ' ');console.log
 		}
 		//reset focus on input
 		input.focus();
