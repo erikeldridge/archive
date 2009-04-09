@@ -1,18 +1,13 @@
 <?php
-// require('config.inc');
-// require('yosdk/Yahoo.inc');
-// $session = YahooSession::requireSession(KEY, SECRET);
-// $yql = 'select guid, nickname from social.profile where guid in (select guid from social.connections(0) where owner_guid = me)';
-// $profiles = $session->query($yql)->query->results->profile;
-// //reformat results as an array of names keyed by guid
-// foreach($profiles as $profile){
-// 	$connections[$profile->guid] = $profile->nickname;
-// }
-$connections = array(
-	'123asd'=>'huebert',
-	'456gdf'=>'erik',
-	'xcv789'=>'hhjoe'
-);
+require('config.inc');
+require('yosdk/Yahoo.inc');
+$session = YahooSession::requireSession(KEY, SECRET, NULL, '');
+$yql = 'select guid, nickname from social.profile where guid in (select guid from social.connections(0) where owner_guid = me)';
+$profiles = $session->query($yql)->query->results->profile;
+//reformat results as an array of names keyed by guid
+foreach($profiles as $profile){
+	$connections[$profile->guid] = $profile->nickname;
+}
 ?>
 
 <style>
