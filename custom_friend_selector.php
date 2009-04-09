@@ -114,7 +114,7 @@ li.suggested:hover{
 </style>
 
 <div id="form">
-	<yml:form params="custom_friend_selector_demo.php" method="POST">
+	<yml:form method="POST">
 		<div id="selector">
 			<span id="selected"></span>
 			<div id="wrapper">
