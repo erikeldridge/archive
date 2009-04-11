@@ -42,10 +42,10 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 // 	$connections[$profile->guid] = $profile->nickname;
 // }
 
-$connections['123qwe'] = 'aardvark 1';
-$connections['asd456'] = 'aardvark 2';
-$connections['lkj453'] = 'earwig 1';
-$connections['45df6e'] = 'eerwig 1';
+$connections['123qwe'] = 'Aardvark Eps (aardvark 1)';
+$connections['asd456'] = 'Jon Shmo (aardvark 2)';
+$connections['lkj453'] = 'Bilbo Baggins (earwig 1)';
+$connections['45df6e'] = 'Ludwig S. (eerwig 1)';
 
 if($_POST['submit']){
 	$guids_csv = ltrim($_POST['guids'], ',');//note removal of leading comma
@@ -157,7 +157,7 @@ var connections = <?= json_encode($connections) ?>,
 			guid;
 		//build suggestion list
 		for(guid in connections) if(connections.hasOwnProperty(guid)){
-			match = (0 === connections[guid].indexOf(value));
+			match = (-1 !== connections[guid].indexOf(value));
 			notSelected = (-1 === guids.value.indexOf(guid));
 			if(nonBlankValue && match && notSelected){
 				matches.push(guid);
@@ -216,5 +216,7 @@ var connections = <?= json_encode($connections) ?>,
 	};
 	form.addEventListener('keyup', handleKeyUp, false);
 	form.addEventListener('click', handleClick, false);
+	input.focus();
+	// document.writeln('UuUu'.lcase());
 </script>
 
