@@ -167,8 +167,8 @@ var connections = <?= json_encode($connections) ?>,
 		for(i = 0; i < matches.length; i++){
 			id = 'suggested_' + matches[i];
 			name = connections[matches[i]];
-			html += '<li class="suggested" id="' + id + '">' + name.replace(value, '<b>'+value+'</b>');
-			// html += '<img src="add_10.png" align="right"/>';
+			html += '<li class="suggested" id="' + id + '">';
+			html += name.replace(value, '<b>'+value+'</b>');
 			html += '</li>';
 		}
 		suggestions.innerHTML = html;
