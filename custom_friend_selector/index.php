@@ -184,7 +184,6 @@ var connections = <?= json_encode($connections) ?>,
 	handleClick = function(event){
 		var event = event || window.event,
 			div,
-			text,
 			//kludge: using id instead of class for identifier because className is not readable by YAP in IE
 			suggestedElement = (event.target.id && (0 === event.target.id.indexOf('suggested_'))),
 			selectedElement = (event.target.id && (0 === event.target.id.indexOf('selected_'))),
@@ -195,8 +194,7 @@ var connections = <?= json_encode($connections) ?>,
 			div = document.createElement('div');
 			div.className = 'selected';
 			div.id = 'selected_' + guid;
-			text = document.createTextNode(connections[guid]);
-			div.appendChild(text);
+			div.innerHTML = connections[guid];
 			selected.appendChild(div);
 			//remove item from suggestions display
 			event.target.parentNode.removeChild(event.target);
