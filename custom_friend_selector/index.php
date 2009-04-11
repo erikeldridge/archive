@@ -32,15 +32,20 @@ Redistribution and use of this software in source and binary forms, with or with
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-require('config.inc');
-require('yosdk/Yahoo.inc');
-$session = YahooSession::requireSession(KEY, SECRET);
-$yql = 'select guid, nickname from social.profile where guid in (select guid from social.connections(0) where owner_guid = me)';
-$profiles = $session->query($yql)->query->results->profile;
-//reformat results as an array of names keyed by guid
-foreach($profiles as $profile){
-	$connections[$profile->guid] = $profile->nickname;
-}
+// require('config.inc');
+// require('yosdk/Yahoo.inc');
+// $session = YahooSession::requireSession(KEY, SECRET);
+// $yql = 'select guid, nickname from social.profile where guid in (select guid from social.connections(0) where owner_guid = me)';
+// $profiles = $session->query($yql)->query->results->profile;
+// //reformat results as an array of names keyed by guid
+// foreach($profiles as $profile){
+// 	$connections[$profile->guid] = $profile->nickname;
+// }
+
+$connections['123qwe'] = 'aardvark 1';
+$connections['asd456'] = 'aardvark 2';
+$connections['lkj453'] = 'earwig 1';
+$connections['45df6e'] = 'eerwig 1';
 
 if($_POST['submit']){
 	$guids_csv = ltrim($_POST['guids'], ',');//note removal of leading comma
@@ -162,7 +167,7 @@ var connections = <?= json_encode($connections) ?>,
 		for(i = 0; i < matches.length; i++){
 			id = 'suggested_' + matches[i];
 			name = connections[matches[i]];
-			html += '<li class="suggested" id="' + id + '">' + name;
+			html += '<li class="suggested" id="' + id + '">' + name.replace(value, '<b>'+value+'</b>');
 			// html += '<img src="add_10.png" align="right"/>';
 			html += '</li>';
 		}
@@ -190,7 +195,7 @@ var connections = <?= json_encode($connections) ?>,
 			div = document.createElement('div');
 			div.className = 'selected';
 			div.id = 'selected_' + guid;
-			text = document.createTextNode(event.target.firstChild.data);
+			text = document.createTextNode(connections[guid]);
 			div.appendChild(text);
 			selected.appendChild(div);
 			//remove item from suggestions display
