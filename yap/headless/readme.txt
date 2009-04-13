@@ -14,6 +14,10 @@ usage:
 
 notes:
 - By default, the access token data is written to a cookie.  We are overriding this behavior by implementing the YahooSessionStore interface in the CustomSessionStore class.  This code stores the access token for each user in a text file so we can use it without access to a browser.  The access token could also be stored in a database.
+- you can see part_1.php running here:
+http://apps.yahoo.com/-9Rjzif52
+- The access token will need to be refreshed periodically.  This is discussed in step 5 of the Yahoo! OAuth documentation here:
+http://developer.yahoo.com/oauth/guide/oauth-auth-flow.html
 
 license:
 Software License Agreement (BSD License)
