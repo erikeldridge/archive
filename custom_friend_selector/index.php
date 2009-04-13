@@ -154,10 +154,26 @@ var connections = <?= json_encode($connections) ?>,
 			i,
 			id,
 			name,
-			guid;
+			guid,
+			caseRespectiveReplace = function(string, value){
+				var remainder = string,
+					value = value.toLowerCase(),
+					length = value.length,
+					i = remainder.toLowerCase().indexOf(value),
+					output = '',
+					target = '';
+				while(-1 !== i){
+					output += target.bold() + remainder.substring(0,i);
+					target = remainder.substr(i,length);
+					remainder = remainder.substr(i+length);
+					i = remainder.toLowerCase().indexOf(value);
+				}
+				output += target.bold() + remainder;
+				return output;
+			};
 		//build suggestion list
 		for(guid in connections) if(connections.hasOwnProperty(guid)){
-			match = (-1 !== connections[guid].indexOf(value));
+			match = (-1 !== connections[guid].toLowerCase().indexOf(value.toLowerCase()));
 			notSelected = (-1 === guids.value.indexOf(guid));
 			if(nonBlankValue && match && notSelected){
 				matches.push(guid);
@@ -168,17 +184,23 @@ var connections = <?= json_encode($connections) ?>,
 			id = 'suggested_' + matches[i];
 			name = connections[matches[i]];
 			html += '<li class="suggested" id="' + id + '">';
-			html += name.replace(value, '<b>'+value+'</b>');
+			html += caseRespectiveReplace(name, value);
 			html += '</li>';
 		}
 		suggestions.innerHTML = html;
 		//if there are any suggestions, frame the display w/ a border	
-		if(html){	
+		if(html){
 			suggestions.style.borderColor = '#000';
 			suggestions.style.borderStyle = 'solid';
 			suggestions.style.borderWidth = '1px';
 		}else{
 			suggestions.style.border = '';
+		}
+	},
+	handleKeyDown = function(event){
+		var event = event || window.event;
+		if(40 === event.keyCode){
+			console.log(suggestions.childNodes[0]);			
 		}
 	},
 	handleClick = function(event){
@@ -214,9 +236,9 @@ var connections = <?= json_encode($connections) ?>,
 		//reset focus on input
 		input.focus();
 	};
+	form.addEventListener('keydown', handleKeyDown, false);
 	form.addEventListener('keyup', handleKeyUp, false);
 	form.addEventListener('click', handleClick, false);
 	input.focus();
-	// document.writeln('UuUu'.lcase());
 </script>
 
