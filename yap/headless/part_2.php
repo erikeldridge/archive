@@ -5,7 +5,7 @@ require_once("CustomSessionStore.inc");
 $applicationId = '';
 $redirect = TRUE; 
 $callback = ''; 
-$guid = 'BG5BMUK24OOYGHWKTJBCX2TN5E';//app logic would provide this
+$guid = '{guid}';//app logic would provide this
 $sessionStore = new CustomSessionStore($guid);
 $session = YahooSession::initSession(KEY, SECRET, $applicationId, $redirect, $callback, $sessionStore);
 $user = $session->getSessionedUser(); 
