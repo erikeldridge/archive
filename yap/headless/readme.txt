@@ -1,6 +1,7 @@
 usage:
 - upload the "headless" directory and its contents to a server
-- in the YDN dashboard, create an "Open App"
+- in the YDN dashboard, create an "Open App" and set the base url to:
+"{url to server}/headless/part_1.php".  This will allow the file to run when the app is loaded.
 - create a file called "config.inc" in the "headless" directory and define() your Open app key and secret in it
 - upload the YOSDK (http://developer.yahoo.com/social/sdk/) to your server 
 - edit the include paths in "part_1.php", "part_2.php", and "CustomSessionStore.inc" to reflect the location of the YOSDK
