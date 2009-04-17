@@ -1,3 +1,6 @@
+<?php
+require('config.inc');
+?>
 <head>
 	<link rel="stylesheet" type="text/css" href="style.css">
 </head>
@@ -19,7 +22,7 @@ Suppose this is an account settings page.
 <script>
 	var launchPopup = function(event){
 			event = event || window.event;
-			var url = 'http://example.erikeldridge.com/oauth/using_sdk/popup.php';
+			var url = '<?= BASE_URL ?>/popup.php';
 			if(event.target.checked){
 				window.open(url, 'auth', 'toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=800,height=650,left = 450,top = 250');
 			}

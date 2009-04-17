@@ -1,14 +1,14 @@
 <?php
 require('config.inc');
-require('../yosdk/lib/Yahoo.inc');
+require(YOSDK_PATH);
 $session_store = new CookieSessionStore();
-$session = YahooSession::initSession(KEY, SECRET, APPID, TRUE, CALLBACK, $session_store);
+$session = YahooSession::initSession(KEY, SECRET, APP_ID, TRUE, BASE_URL.'/callback.php', $session_store);
 $access_token_readable = print_r($session->accessToken, true);
 //send an update
 $user = $session->getSessionedUser();
 $suid = 'update'.time();//just a unique string
 $title = 'this is an update';
-$link = 'http://github.com/erikeldridge/example/';
+$link = 'http://developer.yahoo.com/social/updates/';
 $user->insertUpdate($suid, $title, $link);
 //create a link to the logged-in user's profile page
 $profile_url = 'http://profiles.yahoo.com/u/'.$user->guid;

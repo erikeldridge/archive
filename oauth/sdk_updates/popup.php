@@ -1,9 +1,9 @@
 <?php
 require('config.inc');
-require('../yosdk/lib/Yahoo.inc');
-$token = YahooAuthentication::createRequestToken(KEY, SECRET, APPID, CALLBACK);
+require(YOSDK_PATH);
+$token = YahooAuthentication::createRequestToken(KEY, SECRET, APP_ID, BASE_URL.'/callback.php');
 CookieSessionStore::storeRequestToken($token);
-$url = YahooAuthentication::createAuthorizationUrl($token, CALLBACK);
+$url = YahooAuthentication::createAuthorizationUrl($token, BASE_URL.'/callback.php');
 ?>
 <head>
 	<link rel="stylesheet" type="text/css" href="style.css">
