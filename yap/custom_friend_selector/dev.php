@@ -139,13 +139,14 @@ var connections = <?= json_encode($connections) ?>,
 	suggestions = document.getElementById('suggestions'),
 	guids = document.getElementById('guids'),
 	highlighted = null,
-	moveSuggestedToSelected = function(suggested){
+	selectItem = function(suggested){
 		var guid = suggested.id.substr(10),			
-			//append item to selected display
 			div = document.createElement('div');
+		//create entry in selected for selected item
 		div.className = 'selected';
 		div.id = 'selected_' + guid;
 		div.innerHTML = connections[guid];
+		//append item to selected display
 		selected.appendChild(div);
 		//clear input & suggestions
 		input.value = '';
@@ -153,6 +154,13 @@ var connections = <?= json_encode($connections) ?>,
 		suggestions.style.border = '';
 		//append guid to selected data
 		guids.value += ',' + guid;//always add comma because it makes adding/removing guids easy. form handler will need to trim.
+	},
+	unselectItem = function(item){
+		var guid = item.id.substr(9);
+		//remove item from suggestions display
+		selected.removeChild(item);
+		//remove guid from selected guids
+		guids.value = guids.value.replace(',' + guid, ' ');
 	},
 	handleKeyUp = function(event){
 		//do nothing if key is the up or down arrow
@@ -258,28 +266,27 @@ var connections = <?= json_encode($connections) ?>,
 					}
 				}
 				break;	
-			case 13:
+			case 13://return key
 				if(highlighted){
-					moveSuggestedToSelected(highlighted);
+					selectItem(highlighted);
 				}
+				break;
+			case 8://backspace
+				// if(selected.childNodes.length > 0){
+				// 	moveSuggestedToSelected(highlighted);
+				// }
 				break;
 		}
 	},
 	handleClick = function(event){
 		var event = event || window.event,
-			div,
 			//kludge: using id instead of class for identifier because className is not readable by YAP in IE
-			isSuggestedElement = (event.target.id && (0 === event.target.id.indexOf('suggested_'))),
-			isSelectedElement = (event.target.id && (0 === event.target.id.indexOf('selected_'))),
-			guid;
-		if(isSuggestedElement){
-			moveSuggestedToSelected(event.target);
-		}else if(isSelectedElement){
-			guid = event.target.id.substr(9);
-			//remove item from suggestions display
-			selected.removeChild(event.target);
-			//remove guid from selected guids
-			guids.value = guids.value.replace(',' + guid, ' ');
+			isSuggestedItem = (event.target.id && (0 === event.target.id.indexOf('suggested_'))),
+			isSelectedItem = (event.target.id && (0 === event.target.id.indexOf('selected_')));
+		if(isSuggestedItem){
+			selectItem(event.target);
+		}else if(isSelectedItem){
+			unselectItem(event.target);
 		}
 		//reset focus on input
 		input.focus();
