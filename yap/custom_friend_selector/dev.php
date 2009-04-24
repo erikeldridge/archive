@@ -272,9 +272,10 @@ var connections = <?= json_encode($connections) ?>,
 				}
 				break;
 			case 8://backspace
-				// if(selected.childNodes.length > 0){
-				// 	moveSuggestedToSelected(highlighted);
-				// }
+				if(selected.childNodes.length > 0){
+					// remove the last item in the list
+					unselectItem(selected.childNodes[selected.childNodes.length - 1]);
+				}
 				break;
 		}
 	},
