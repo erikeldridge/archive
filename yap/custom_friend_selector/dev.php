@@ -138,7 +138,27 @@ var connections = <?= json_encode($connections) ?>,
 	input = selector.getElementsByTagName('input')[0],
 	suggestions = document.getElementById('suggestions'),
 	guids = document.getElementById('guids'),
+	highlighted = null,
+	moveSuggestedToSelected = function(suggested){
+		var guid = suggested.id.substr(10),			
+			//append item to selected display
+			div = document.createElement('div');
+		div.className = 'selected';
+		div.id = 'selected_' + guid;
+		div.innerHTML = connections[guid];
+		selected.appendChild(div);
+		//clear input & suggestions
+		input.value = '';
+		suggestions.innerHTML = '';
+		suggestions.style.border = '';
+		//append guid to selected data
+		guids.value += ',' + guid;//always add comma because it makes adding/removing guids easy. form handler will need to trim.
+	},
 	handleKeyUp = function(event){
+		//do nothing if key is the up or down arrow
+		if(38 === event.keyCode || 40 === event.keyCode){
+			return;
+		}
 		var event = event || window.event,
 			value = event.target.value,
 			matches = [],
@@ -191,37 +211,70 @@ var connections = <?= json_encode($connections) ?>,
 		}else{
 			suggestions.style.border = '';
 		}
+		//we've generated a new suggestions list so clear pointer to highlighted
+		highlighted = null;
 	},
-	handleKeyDown = function(event){
-		var event = event || window.event;
-		if(40 === event.keyCode){
-			console.log(suggestions.childNodes[0]);			
+	handleKeyDown = function(event){console.log(event.keyCode);
+		event = event || window.event
+		var getSiblingByTagName = function(el, tagName, direction){
+			var methodName = direction + 'Sibling';
+			if(!el[methodName]){
+				return;
+			}
+			el = el[methodName];
+			while(el[methodName] && tagName !== el[methodName].tagName){
+				el = el[methodName];
+			}
+			if(tagName === el.tagName){
+				return el;
+			}
+		},
+		sibling = null,
+		siblings = null;
+		switch(event.keyCode){
+			case 40:
+				if(highlighted){
+					sibling = getSiblingByTagName(highlighted, 'LI', 'next');
+					if(sibling){
+						highlighted.style.border = '';
+						highlighted = sibling;
+					}
+				}else{
+					highlighted = suggestions.getElementsByTagName('li')[0];
+				}
+				highlighted.style.borderColor = 'red';
+				highlighted.style.borderStyle = 'solid';
+				highlighted.style.borderWidth = '1px';	
+				break;	
+			case 38:
+				if(highlighted){
+					sibling = getSiblingByTagName(highlighted, 'LI', 'previous');
+					if(sibling){
+						highlighted.style.border = '';
+						highlighted = sibling;
+						highlighted.style.borderColor = 'red';
+						highlighted.style.borderStyle = 'solid';
+						highlighted.style.borderWidth = '1px';
+					}
+				}
+				break;	
+			case 13:
+				if(highlighted){
+					moveSuggestedToSelected(highlighted);
+				}
+				break;
 		}
 	},
 	handleClick = function(event){
 		var event = event || window.event,
 			div,
 			//kludge: using id instead of class for identifier because className is not readable by YAP in IE
-			suggestedElement = (event.target.id && (0 === event.target.id.indexOf('suggested_'))),
-			selectedElement = (event.target.id && (0 === event.target.id.indexOf('selected_'))),
+			isSuggestedElement = (event.target.id && (0 === event.target.id.indexOf('suggested_'))),
+			isSelectedElement = (event.target.id && (0 === event.target.id.indexOf('selected_'))),
 			guid;
-		if(suggestedElement){
-			guid = event.target.id.substr(10);
-			//append item to selected display
-			div = document.createElement('div');
-			div.className = 'selected';
-			div.id = 'selected_' + guid;
-			div.innerHTML = connections[guid];
-			selected.appendChild(div);
-			//remove item from suggestions display
-			event.target.parentNode.removeChild(event.target);
-			//append guid to selected data
-			guids.value += ',' + guid;//always add comma because it makes adding/removing guids easy. form handler will need to trim.
-			//clear input & suggestions
-			input.value = '';
-			suggestions.innerHTML = '';
-			suggestions.style.border = '';
-		}else if(selectedElement){
+		if(isSuggestedElement){
+			moveSuggestedToSelected(event.target);
+		}else if(isSelectedElement){
 			guid = event.target.id.substr(9);
 			//remove item from suggestions display
 			selected.removeChild(event.target);
