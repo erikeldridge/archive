@@ -162,7 +162,18 @@ var connections = <?= json_encode($connections) ?>,
 		//remove guid from selected guids
 		guids.value = guids.value.replace(',' + guid, ' ');
 	},
-	handleKeyUp = function(event){
+	highlight = function(item){
+		item.style.borderColor = '#BBD8FB';
+		item.style.borderStyle = 'solid';
+		item.style.borderWidth = '1px';	
+		item.style.backgroundColor = '#F3F7FD';
+		highlighted = item;
+	},
+	unhighlight = function(item){
+		item.style.borderColor = 'white';
+		item.style.backgroundColor = 'white';
+	},
+	handleKeyUp = function(event){console.log(event);
 		//do nothing if key is the up or down arrow
 		if(38 === event.keyCode || 40 === event.keyCode){
 			return;
@@ -222,7 +233,7 @@ var connections = <?= json_encode($connections) ?>,
 		//we've generated a new suggestions list so clear pointer to highlighted
 		highlighted = null;
 	},
-	handleKeyDown = function(event){console.log(event.keyCode);
+	handleKeyDown = function(event){
 		event = event || window.event
 		var getSiblingByTagName = function(el, tagName, direction){
 			var methodName = direction + 'Sibling';
@@ -244,28 +255,22 @@ var connections = <?= json_encode($connections) ?>,
 				if(highlighted){
 					sibling = getSiblingByTagName(highlighted, 'LI', 'next');
 					if(sibling){
-						highlighted.style.border = '';
-						highlighted = sibling;
+						unhighlight(highlighted);
+						highlight(sibling);
 					}
 				}else{
-					highlighted = suggestions.getElementsByTagName('li')[0];
+					highlight(suggestions.getElementsByTagName('li')[0]);
 				}
-				highlighted.style.borderColor = 'red';
-				highlighted.style.borderStyle = 'solid';
-				highlighted.style.borderWidth = '1px';	
 				break;	
 			case 38:
 				if(highlighted){
 					sibling = getSiblingByTagName(highlighted, 'LI', 'previous');
 					if(sibling){
-						highlighted.style.border = '';
-						highlighted = sibling;
-						highlighted.style.borderColor = 'red';
-						highlighted.style.borderStyle = 'solid';
-						highlighted.style.borderWidth = '1px';
+						unhighlight(highlighted);
+						highlight(sibling);
 					}
 				}
-				break;	
+				break;
 			case 13://return key
 				if(highlighted){
 					selectItem(highlighted);
@@ -291,10 +296,21 @@ var connections = <?= json_encode($connections) ?>,
 		}
 		//reset focus on input
 		input.focus();
+	},
+	handleMouseover = function(event){
+		var event = event || window.event,
+			isSuggestedItem = (event.target.id && (0 === event.target.id.indexOf('suggested_')));
+		if(isSuggestedItem){
+			if(highlighted){
+				unhighlight(highlighted);
+			}
+			highlight(event.target);
+		}
 	};
 	form.addEventListener('keydown', handleKeyDown, false);
 	form.addEventListener('keyup', handleKeyUp, false);
 	form.addEventListener('click', handleClick, false);
+	form.addEventListener('mouseover', handleMouseover, false);
 	input.focus();
 </script>
 
