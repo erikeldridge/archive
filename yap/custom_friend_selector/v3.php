@@ -6,17 +6,16 @@ Demonstrate how to create a friend selector that's caja-safe
 Usage:
 - upload this file to your server
 - download Yahoo! PHP SDK (http://developer.yahoo.com/social/sdk/), if you don't have it already
-- adjust Yahoo.inc include to reflect path to SDK
 - create YAP application
 - set the app url to this file on your server
-- create config.inc file and define YAP key and secret using values from YAP app definition
+- edit config.inc file to define YAP key and secret using values from YAP app definition and YOSDK_PATH to reflect path to Yahoo.inc from the SDK
 - preview the YAP app
 - click on the left side of the rectangle with the black border to set the focus on the input box
 - start typing a connection's nickname.  If you don't know your connections' nicknames, visit your Yahoo! profile and view your connections.  Their nicknames appear below their pictures.
 - Click on a name that appears below the input box to add its associated guid to the hidden "guids" input field in the form.  The clicked name will disappear form the dropdown and appear to the left of the input box
 - To remove a name (that's been added), click on it to the left of the input box
 - click the submit button to send the form data.  Note: the form submits to itself.  Assuming you added some names, you will see their guids printed at the top of the page.  Serving suggestions: you can plug these guids directly into a yml:name tag to get their names or a yml:profile-pic tag to see their pic, request data for a guid using Yahoo!'s social APIs (http://developer.yahoo.com/social/social), etc.
-- play with this app live here: http://apps.yahoo.com/-HvSOMW30
+- play with this app live here: http://apps.yahoo.com/-NuP7FT36
 
 License:
 Software License Agreement (BSD License)
@@ -33,7 +32,7 @@ Redistribution and use of this software in source and binary forms, with or with
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 require('config.inc');
-require('yosdk/Yahoo.inc');
+require(YOSDK_PATH);
 $session = YahooSession::requireSession(KEY, SECRET);
 $yql = 'select guid, nickname from social.profile where guid in (select guid from social.connections(0) where owner_guid = me)';
 $profiles = $session->query($yql)->query->results->profile;
@@ -171,8 +170,7 @@ var connections = <?= json_encode($connections) ?>,
 		if(38 === event.keyCode || 40 === event.keyCode){
 			return;
 		}
-		var event = event || window.event,
-			value = event.target.value,
+		var value = event.target.value,
 			matches = [],
 			html = '',
 			nonBlankValue = ('' !== value),
@@ -190,12 +188,12 @@ var connections = <?= json_encode($connections) ?>,
 					output = '',
 					target = '';
 				while(-1 !== i){
-					output += target.bold() + remainder.substring(0,i);
+					output += '<b>' + target + '</b>' + remainder.substring(0,i);
 					target = remainder.substr(i,length);
 					remainder = remainder.substr(i+length);
 					i = remainder.toLowerCase().indexOf(value);
 				}
-				output += target.bold() + remainder;
+				output += '<b>' + target + '</b>' + remainder;
 				return output;
 			};
 		//build suggestion list
@@ -225,9 +223,10 @@ var connections = <?= json_encode($connections) ?>,
 		}
 		//we've generated a new suggestions list so clear pointer to highlighted
 		highlighted = null;
+		//sometimes the focus is stolen when the list is generated, so put it back
+		input.focus();
 	},
 	handleKeyDown = function(event){
-		event = event || window.event
 		var getSiblingByTagName = function(el, tagName, direction){
 			var methodName = direction + 'Sibling';
 			if(!el[methodName]){
@@ -269,6 +268,8 @@ var connections = <?= json_encode($connections) ?>,
 				if(highlighted){
 					selectItem(highlighted);
 				}
+				//stop the form from submitting when we hit enter to select an item
+				event.preventDefault();
 				break;
 			case 8://backspace
 				if(blankValue && selected.childNodes.length > 0){
@@ -279,9 +280,8 @@ var connections = <?= json_encode($connections) ?>,
 		}
 	},
 	handleClick = function(event){
-		var event = event || window.event,
-			//kludge: using id instead of class for identifier because className is not readable by YAP in IE
-			isSuggestedItem = (event.target.id && (0 === event.target.id.indexOf('suggested_'))),
+		//kludge: using id instead of class for identifier because className is not readable by YAP in IE
+		var isSuggestedItem = (event.target.id && (0 === event.target.id.indexOf('suggested_'))),
 			isSelectedItem = (event.target.id && (0 === event.target.id.indexOf('selected_')));
 		if(isSuggestedItem){
 			selectItem(event.target);
@@ -292,8 +292,7 @@ var connections = <?= json_encode($connections) ?>,
 		input.focus();
 	},
 	handleMouseover = function(event){
-		var event = event || window.event,
-			isSuggestedItem = (event.target.id && (0 === event.target.id.indexOf('suggested_')));
+		var isSuggestedItem = (event.target.id && (0 === event.target.id.indexOf('suggested_')));
 		if(isSuggestedItem){
 			if(highlighted){
 				unhighlight(highlighted);
@@ -307,4 +306,3 @@ var connections = <?= json_encode($connections) ?>,
 	form.addEventListener('mouseover', handleMouseover, false);
 	input.focus();
 </script>
-
