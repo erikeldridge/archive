@@ -106,13 +106,6 @@ ul{
 	top:0px;
 	right:0px;
 }
-li.suggested:hover{
-	background-color:#F3F7FD;
-	border: 1px solid #BBD8FB;
-	background-image:url('http://github.com/erikeldridge/example/raw/ae82c0c0124dbb0af99e19849a2d11bb19406028/custom_friend_selector/add.png');
-	background-position: right center;
-	background-repeat:no-repeat;
-}
 </style>
 
 <div id="form">
@@ -155,7 +148,7 @@ var connections = <?= json_encode($connections) ?>,
 		//append guid to selected data
 		guids.value += ',' + guid;//always add comma because it makes adding/removing guids easy. form handler will need to trim.
 	},
-	unselectItem = function(item){
+	unselect = function(item){
 		var guid = item.id.substr(9);
 		//remove item from suggestions display
 		selected.removeChild(item);
@@ -249,7 +242,8 @@ var connections = <?= json_encode($connections) ?>,
 			}
 		},
 		sibling = null,
-		siblings = null;
+		siblings = null,
+		blankValue = ('' === event.target.value);
 		switch(event.keyCode){
 			case 40:
 				if(highlighted){
@@ -277,9 +271,9 @@ var connections = <?= json_encode($connections) ?>,
 				}
 				break;
 			case 8://backspace
-				if(selected.childNodes.length > 0){
+				if(blankValue && selected.childNodes.length > 0){
 					// remove the last item in the list
-					unselectItem(selected.childNodes[selected.childNodes.length - 1]);
+					unselect(selected.childNodes[selected.childNodes.length - 1]);
 				}
 				break;
 		}
@@ -292,7 +286,7 @@ var connections = <?= json_encode($connections) ?>,
 		if(isSuggestedItem){
 			selectItem(event.target);
 		}else if(isSelectedItem){
-			unselectItem(event.target);
+			unselect(event.target);
 		}
 		//reset focus on input
 		input.focus();
