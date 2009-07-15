@@ -19,7 +19,7 @@ class Curl
 
     protected $error = '';
     protected $handle;
-	protected $in_multi = false;
+    protected $in_multi = false;
 
     public function __construct() 
     {
