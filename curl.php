@@ -19,7 +19,7 @@ class Curl
 
     protected $error = '';
     protected $handle;
-
+	protected $in_multi = false;
 
     public function __construct() 
     {
@@ -58,6 +58,59 @@ class Curl
         return $this->request('PUT', $url, $vars);
     }
 
+	/**
+	@credit: http://www.phpied.com/simultaneuos-http-requests-in-php-with-curl/
+	*/
+	public function multi($requests)
+	{
+		// array of curl handles
+		$curly = array();
+		// data to be returned
+		$result = array();
+		// multi handle
+		$mh = curl_multi_init();
+		
+		foreach($requests as $id => $request){
+		
+			$method = strtolower($request[0]);
+			$url = $request[1];
+			$vars = isset($request[2]) ? $request[2] : array();
+			$headers = isset($request[3]) ? $request[3] : false;//array of k:v strings
+			
+			$curl = new Curl;
+			$curl->in_multi = true;
+			
+			if($headers){
+				array_merge($curl->headers, $headers);
+			}
+			
+			$curly[$id] = $curl->$method($url, $vars);
+			curl_multi_add_handle($mh, $curly[$id]);
+		}
+		
+		// execute the handles
+		$running = null;
+		do {
+			curl_multi_exec($mh, $running);
+		} while($running > 0);
+		
+		// get content and remove handles
+		foreach($curly as $id => $c) {
+			$result[$id] = curl_multi_getcontent($c);
+			if($result[$id]){
+				$result[$id] = new CurlResponse($result[$id]);
+			} else {
+				$result[$id] = 'Error: '.curl_errno($this->handle).' - '.curl_error($this->handle);
+			}
+			curl_multi_remove_handle($mh, $c);
+		}
+		
+		// all done
+		curl_multi_close($mh);
+		
+		return $result;
+	}
+	
     protected function request($method, $url, $vars = array()) 
     {
         $this->handle = curl_init();
@@ -95,6 +148,10 @@ class Curl
         # Set any custom CURL options
         foreach ($this->options as $option => $value) {
             curl_setopt($this->handle, constant('CURLOPT_'.str_replace('CURLOPT_', '', strtoupper($option))), $value);
+        }
+
+        if($this->in_multi){//this object was instantiated in the Curl::multi() fn, so return the handle for later exec
+        	return $this->handle;
         }
         
         $response = curl_exec($this->handle);
