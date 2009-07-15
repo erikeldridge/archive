@@ -19,7 +19,7 @@ class Curl
 
     protected $error = '';
     protected $handle;
-    protected $in_multi = false;
+    protected $in_multi = false;//set this to true inside Curl::multi so Curl::request returns the handle for Curl::multi to exec
 
     public function __construct() 
     {
