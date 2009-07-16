@@ -33,7 +33,13 @@ The Curl object supports 4 types of requests: GET, POST, PUT, and DELETE. You mu
 	$response = $curl->post($url, $vars = array());
 	$response = $curl->put($url, $vars = array());
 	$response = $curl->delete($url, $vars = array());
-
+	$response = $curl->multi(array(
+		array('get', $url, $vars = array()),
+		array('post', $url, $vars = array()),
+		array('put', $url, $vars = array()),
+		array('delete', $url, $vars = array())
+	));
+	
 Examples
 
 	$response = $curl->get('google.com?q=test');
@@ -43,6 +49,10 @@ Examples
 	
 	$response = $curl->post('test.com/posts', array('title' => 'Test', 'body' => 'This is a test'));
 
+	$response = $curl->multi(array(
+		array('get', 'http://www.google.com/search?', $vars = array('q' => 'thisthat')),
+		array('get', 'http://search.yahoo.com/search?', array('p' => 'thisthat')),
+	));
 All requests return a CurlResponse object (see below)
 
 ### The CurlResponse Object
@@ -104,6 +114,11 @@ You can set custom headers to send with the request
 	$curl->headers['Host'] = 12.345.678.90;
 	$curl->headers['Some-Custom-Header'] = 'Some Custom Value';
 
+For multi-curl requests, you can set the headers for each request
+	$curl->multi(array(
+		array('get', 'http://example.com', $vars = array(), $headers = array('Accept' => 'application/json'))
+	));
+	
 ### Setting Custom CURL request options
 
 You can set/override many different options for CURL requests (see the [curl_setopt documentation](http://php.net/curl_setopt) for a list of them)
