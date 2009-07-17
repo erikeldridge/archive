@@ -4,14 +4,10 @@ require_once("php_sdk/Yahoo.inc");
 require_once("CustomSessionStore.inc");
 
 //capture POST data for update
-/*$title = $_POST['title'];
+$title = $_POST['title'];
 $description = $_POST['description'];
 $link = $_POST['link'];
-$token = $_POST['token'];*/
-
-$title = "test";
-$description = "test description";
-$link = "http://nakedtechnologist.com";
+$token = $_POST['token'];
 
 //initialize session
 $sessionStore = new CustomSessionStore();
