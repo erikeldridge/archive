@@ -1,17 +1,19 @@
 //init widget
 var widget = document.getElementById('widget'),
 	token = YAHOO.util.Cookie.get("yosAccessToken"),
+	url = 'index.php',
 	launchPopup = function(event){
-			var url = 'test.php?auth';
-			window.open(url, 'auth', 'toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=800,height=650,left=450,top=250');
+			window.open(url+'?auth', 'auth', 'toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=800,height=650,left=450,top=250');
 		},
 	postComment = function(){
+		if(!token){
+			return;
+		}
 		var href = encodeURIComponent(document.location.href),
 			text = widget.getElementsByTagName('textarea')[0].value,
 			title = ' left a comment at '+href,
 			body = encodeURIComponent(text.substr(0,9)+'...'),//title will be the first 10 char from comment w/ trailing elipses
-			url = "test.php?submit",
-			params = 'link='+href+'&title='+title+'&body='+body,
+			params = 'link='+href+'&title='+title+'&body='+body+'&token='+token,
 			callback = {
 				success: function(o){
 					if (o.responseText){
@@ -20,9 +22,9 @@ var widget = document.getElementById('widget'),
 				},
 				failure: function(o){}
 			};
-		YAHOO.util.Connect.asyncRequest('POST', url, callback, params);
+		YAHOO.util.Connect.asyncRequest('POST', url+'?submit', callback, params);
 	},
-	html = null;
+	html = '';
 
 //build widget html
 if(token){
