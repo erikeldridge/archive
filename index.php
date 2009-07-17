@@ -16,8 +16,8 @@ $yahoo_user = $session->getSessionedUser();
 
 //create new update
 if ($title && $description && $link){
-	$suid = $yahoo_user->guid . time();
-	$yahoo_user->insertUpdate($suid, $title, $link, $description);
-	echo "Update Successful";
+    $suid = $yahoo_user->guid . time();
+    $yahoo_user->insertUpdate($suid, $title, $link, $description);
+    echo "Update Successful";
 }
 ?>
