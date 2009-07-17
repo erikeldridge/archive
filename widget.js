@@ -21,7 +21,7 @@ var widget = document.getElementById('widget'),
 			};
 		YAHOO.util.Connect.asyncRequest('POST', url+'?submit', callback, params);
 	},
-	html = null;
+	html = '';
 
 //build widget html
 if(token){
