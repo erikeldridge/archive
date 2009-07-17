@@ -1,6 +1,6 @@
 //init widget
 var widget = document.getElementById('widget'),
-	token = YAHOO.util.Cookie.get("yoisAccessToken"),
+	token = YAHOO.util.Cookie.get("yosAccessToken"),
 	launchPopup = function(event){
 			var url = 'test.php?auth';
 			window.open(url, 'auth', 'toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=800,height=650,left=450,top=250');
