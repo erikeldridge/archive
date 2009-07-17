@@ -9,10 +9,10 @@ var widget = document.getElementById('widget'),
 			return;
 		}
 		var href = encodeURIComponent(document.location.href),
-			text = widget.getElementsByTagName('textarea')[0].value,
 			title = ' left a comment at '+href,
-			body = encodeURIComponent(text.substr(0,9)+'...'),//title will be the first 10 char from comment w/ trailing elipses
-			params = 'link='+href+'&title='+title+'&body='+body+'&token='+encodeURIComponent(token),
+			text = widget.getElementsByTagName('textarea')[0].value,
+			description = encodeURIComponent(text.substr(0,9)+'...'),//title will be the first 10 char from comment w/ trailing elipses
+			params = 'link='+href+'&title='+title+'&description='+description+'&token='+encodeURIComponent(token),
 			callback = {
 				success: function(o){
 					if (o.responseText){
