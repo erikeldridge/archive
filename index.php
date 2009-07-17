@@ -15,9 +15,10 @@ $session = YahooSession::initSession(KEY, SECRET, APPID, TRUE, CALLBACK, $sessio
 $yahoo_user = $session->getSessionedUser();
 
 //create new update
-if ($title && $description && $link){
-    $suid = $yahoo_user->guid . time();
-    $yahoo_user->insertUpdate($suid, $title, $link, $description);
-    echo "Update Successful";
+if ($title){
+	$suid = $yahoo_user->guid . time();
+	if ($yahoo_user->insertUpdate($suid, $title, $link, $description)){
+		echo "Update Successful";
+	}
 }
 ?>
