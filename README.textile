@@ -1,1 +1,36 @@
-README
+h2. docs_oauth_reseller
+
+This project demonstrates how one entity (a "reseller") could package a set of files that would enable another entity (a "publisher") to add Yahoo!'s Updates API event notifications to a given file with very little technical interaction.  A user ("user") of the publisher's site can then authorize the publisher's site to publish updates on the user's behalf via OAuth.
+
+The example use-case this project is modeled after is as follows: a company produces a Yahoo!-Updates-enabled comment box that another company can install to easily enhance its blog by allowing readers to update their friends when they leave comments on the blog.  The files in this project would be of greatest interest to those providing a service like the comment box producer in the example.
+
+h3. Installation
+
+* Register an 'OAuth app' with the Yahoo! Developer Network (YDN, developer.yahoo.com)
+* Define the 'KEY', 'SECRET', and 'APPID' in config.php using the values provided by the YDN app dashboard
+* Define 'CALLBACK' in config.php as the installation domain
+* Upload this code to a server
+* Load demo.html in a browser
+* Click the "Share via Yahoo!" button to authorize the publisher's site to publish updates to Yahoo!
+* Trigger publication by clicking the "Post Comment" button
+
+h3. Code Contributions
+
+This project only accepts contributions licensed under the BSD open source license. See the Open Source Initiative's approved template below.<br>
+
+Each file submitted should contain the following information in the header:<br>
+// Created by [contributor]<br>
+// Copyright (c) [enter owning person entity, year].  All Rights Reserved.<br>
+// Licensed under the BSD (revised) open source license.<br>
+
+Below is the Open Source Initiative BSD License Template (http://opensource.org/licenses/bsd-license.php):<br>
+
+Copyright (c) &lt;YEAR&gt;, &lt;OWNER&gt;<br>
+All rights reserved.<br>
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+* Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+* Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+* Neither the name of the <ORGANIZATION> nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.<br>
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
