@@ -2,7 +2,18 @@ var widget = document.getElementById('widget'),
 	token = null,
 	url = 'index.php',
 	launchPopup = function () {
-			window.open(url+'?auth', 'auth', 'toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=800,height=650,left=450,top=250');
+			var popup = window.open(url+'?auth', 'auth', 'toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=800,height=650,left=450,top=250'),
+			interval = setInterval(function(){
+				token = YAHOO.util.Cookie.get("yosAccessToken");
+				if(token){
+					clearInterval(interval);
+					var authButton = widget.getElementsByTagName('a')[0],
+						authConf = widget.getElementsByTagName('span')[0];
+					authButton.style.display = 'none';
+					authConf.style.display = 'block';
+					popup.close();
+				}
+			}, 1000);
 		},
 	postComment = function () {
 		if(!token){
@@ -24,17 +35,11 @@ var widget = document.getElementById('widget'),
 		YAHOO.util.Connect.asyncRequest('POST', url+'?submit', callback, params);
 	},
 	buildWidget = function () {
-		var html = '';
-		if(token){
-			html+=''
-			+'<span>publishing updates to Yahoo!</span>';
-		}else{
-			html+=''
-			+'<a href="" onclick="launchPopup()">'
+		var html =''
+			+'<span style="display:'+(token ? 'block' : 'none')+'">publishing updates to Yahoo!</span>'
+			+'<a style="display:'+(token ? 'none' : 'block')+'" href="#" onclick="launchPopup(); return false;">'
 				+'<img src="http://l.yimg.com/a/i/ydn/social/updt-spurp.png" style="border-width:0px;"/>'
-			+'</a>';
-		}
-		html+=''
+			+'</a>'
 			+'<form>'
 				+'<textarea></textarea><br/>'
 				+'<button onclick="postComment(); return false">Post Comment</button>'
