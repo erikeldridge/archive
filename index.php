@@ -1,4 +1,8 @@
 <?php 
+/*
+Copyright (c) 2009 Yahoo! Inc. All rights reserved.
+The copyrights embodied in the content of this file are licensed under the BSD (revised) open source license
+*/
 require_once("config.php");
 require_once("php_sdk/Yahoo.inc");
 require_once("CustomSessionStore.inc");
