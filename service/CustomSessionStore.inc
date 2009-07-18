@@ -4,18 +4,18 @@ Copyright (c) 2009 Yahoo! Inc. All rights reserved.
 The copyrights embodied in the content of this file are licensed under the BSD (revised) open source license
 */
 class CustomSessionStore{
-	function CustomSessionStore(){}
+	function CustomSessionStore($guid){
+		$this->guid = $guid;
+		if (!$this->db = new SQLiteDatabase('sqlite')) {
+			//error
+		}
+	}
 	/**
 	* Indicates if the session store has a request token.
 	*
 	* @return True if a request token is present, false otherwise.
 	*/
 	function hasRequestToken(){
-		if($_COOKIE["yosRequestToken"]){
-			return true;
-		}else{
-			return false;
-		}
 	}
 
 	/**
@@ -24,7 +24,9 @@ class CustomSessionStore{
 	* @return True if an access token is present, false otherwise.
 	*/
 	function hasAccessToken(){
-		if($_COOKIE["yosAccessToken"] || $_POST['token']){
+		$sql = sprintf('SELECT token FROM tokens WHERE key = \'%s\';', $this->guid);
+		$result = $this->db->query($sql)->fetch();
+		if($result[0]){
 			return true;
 		}else{
 			return false;
@@ -39,11 +41,6 @@ class CustomSessionStore{
 	* @return True on success, false otherwise.
 */
 	function storeRequestToken($token){
-		if (setcookie("yosRequestToken", serialize($token), time()+3600)){
-			return true;
-		}else{
-			return false;
-		}
 	}
 
 	/**
@@ -52,8 +49,6 @@ class CustomSessionStore{
 	* @return The request token.
 */
 	function fetchRequestToken(){
-		$contents = $_COOKIE["yosRequestToken"];
-		return unserialize(stripslashes($contents));
 	}
 
 	/**
@@ -62,7 +57,6 @@ class CustomSessionStore{
 	* @return True on success, false otherwise.
 */
 	function clearRequestToken(){
-		setcookie("yosRequestToken", "", time()-3600);
 	}
 
 	/**
@@ -73,11 +67,9 @@ class CustomSessionStore{
 	* @return True on success, false otherwise.
 */
 	function storeAccessToken($token){
-		if(setcookie("yosAccessToken", serialize($token), time()+3600)){
-			return true;
-		}else{
-			return false;
-		}
+		$sql = sprintf('INSERT INTO tokens (key, token) VALUES (\'%s\', \'%s\');', 
+			$token->guid, serialize($token));
+		return $this->db->queryExec($sql);
 	}
 
 	/**
@@ -86,8 +78,9 @@ class CustomSessionStore{
 	* @return The access token.
 */
 	function fetchAccessToken(){
-		$contents = ($_COOKIE["yosAccessToken"]) ? $_COOKIE["yosAccessToken"] : $_POST['token'];
-		return unserialize(stripslashes($contents));
+		$sql = sprintf('SELECT token FROM tokens WHERE key = \'%s\';', $this->guid);
+		$result = $this->db->query($sql)->fetch();
+		return unserialize($result[0]);
 	}
 
 	/**
@@ -96,7 +89,8 @@ class CustomSessionStore{
 	* @return True on success, false otherwise.
 */
 	function clearAccessToken(){
-		setcookie("yosAccessToken", "", time()-3600);
+		$sql = sprintf('DELETE FROM token WHERE key = \'%s\';', $this->guid);
+		return $this->db->queryExec($sql);
 	}
 }
 ?>
