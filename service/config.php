@@ -6,5 +6,5 @@ The copyrights embodied in the content of this file are licensed under the BSD (
 define('KEY',"{YDN OAuth app key}");
 define('SECRET',"YDN OAuth app secret");   
 define('APPID',"{YDN OAuth app id}");
-define('CALLBACK',"http://www.example.com");
+define('CALLBACK',"{reseller domain}/docs_oauth_reseller/service/index.php");
 ?>
