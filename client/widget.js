@@ -6,8 +6,8 @@ var widget = document.getElementById('widget'),//the dom element to contain widg
 	guid = null,
 	launchPopup = function () {//launch a popup in which the user can authorize widget via Yahoo!
 			var params = 'toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=800,height=650,left=450,top=250',
-				third_party_callback = encodeURIComponent('{3rd party domain}/docs_oauth_reseller/client/proxy.php'),
-				popup_url = '{2nd party domain}/docs_oauth_reseller/service/request.php?third_party_callback='+third_party_callback,
+				third_party_callback = encodeURIComponent('{this domain}/docs_oauth_reseller/client/proxy.php}'),
+				popup_url = '{reseller domain}/docs_oauth_reseller/service/index.php?third_party_callback='+third_party_callback,
 				popup = window.open(popup_url, 'auth', params),
 				interval = setInterval(function(){//After spawning popup, 
 					guid = YAHOO.util.Cookie.get("yahoo_guid");//periodically check for existence of guid cookie.
