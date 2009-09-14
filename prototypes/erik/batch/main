@@ -1,0 +1,33 @@
+#!/usr/bin/python
+
+"""
+purpose
+
+* monitor job queue
+* pop jobs off queue and run
+
+motivation
+
+* by using a job queue, we decouple the local and batch processes
+
+process
+
+* research Amazon's SQS usage (http://aws.amazon.com/sqs/)
+* pop job def from queue
+* fetch file from ftp/clean or ftp/raw depending on the job type specified in job def
+
+* if type is "clean"
+** load file into hdfs/tmp from ftp/raw
+** run clean hadoop job on file w/ map and reduce scripts specified in job def, and save output to hdfs/clean/{dept}/{date}/{file} based on values specified in job def
+
+* if job type is "convert"
+** load file into hdfs/clean/{dept}/{date}/{file} from ftp/clean/{dept}/{date}/{file}
+
+* convert file to default file types, eg xml, json, etc and export this to ftp/clean/{dept}/{date}/{file}
+* update meta db with new file metadata
+
+notes
+
+* it may make sense to run a stand-alone meta service that reads from sqs and just push a readiness def onto the queue instead of this process updating data on another server
+"""
+

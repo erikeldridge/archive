@@ -1,0 +1,44 @@
+#!/usr/bin/python
+
+"""
+purpose
+* on a cron job, run this script to pull in files from user-specified URIs and drop them in the ftp/raw/ directory
+
+process
+* fetch the file definitions from wherever they're stored, eg db, flat file, etc
+* loop through the defs, pulling down each file from the specified uri
+* from the metadata in the file def, determine the file name
+* save each file as /ftp/raw/{filename}
+
+notes
+* files may be input via web upload, scp, or other method, but this script only handles actively pulling in files
+* this script uses a flat file for purposes of example
+related
+* local/triage.py
+"""
+
+import csv, urllib2
+
+reader = csv.reader(open('../example/urls.txt', 'r'))
+urls = reader.next()
+i = 0
+# loop through urls
+for url in urls:  
+    url = url.rstrip(',\n')
+    request = urllib2.Request(url)
+    # fetch file from each url
+    response = urllib2.urlopen(request)
+    # determine handling based on size
+    # if small
+    raw = open('../ftp/raw/dept%d' % i, 'w')
+    raw.write(response.read())
+    raw.close()
+    i += 1
+
+
+### clean file locally
+### convert file to default formats locally
+### save files to ftp/clean
+## if large
+### define job
+### push job def to sqs
