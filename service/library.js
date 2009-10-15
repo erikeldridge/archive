@@ -1,9 +1,7 @@
 var sdk = (function () {
 	
 		var totalQtyChunks = qtyChunksCollected = chunkStr = iframe = null,
-			completeCallback = function (data, fn) {
-		        fn(data);
-		    },
+			completeCallback = console.log,
 		
 			//todo: make iframe callback name dynamic
 		    iframeCallback = function (chunk) {
@@ -33,7 +31,7 @@ var sdk = (function () {
 		               var data = decodeURIComponent(chunkStr);
 
 		               //do something when data's completely loaded
-		               completeCallback(data, console.log);
+		               completeCallback(data);
 
 		               //clear affiliate vars for next use
 		               totalQtyChunks = qtyChunksCollected = chunkStr = null;
