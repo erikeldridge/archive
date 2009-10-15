@@ -32,7 +32,7 @@ var sdk = (function () {
 		                //decode and cache data
 		               var data = decodeURIComponent(chunkStr);
 
-		               //do something
+		               //do something when data's completely loaded
 		               completeCallback(data, console.log);
 
 		               //clear affiliate vars for next use
@@ -40,10 +40,22 @@ var sdk = (function () {
 		            }
 		        }
 		    };
-		    //iframe = document.createElement('iframe');
+
+			//initialize by creating the iframe comm channel and requesting crumb
+			iframe = document.createElement('iframe');
+			iframe.src = 'iframe.html';//todo: make dynamic
+			iframe.style.display = 'none';
+			document.body.appendChild(iframe);
+			this.request();
+			
 		return {
+			
+			//the general purpose util
 			'request' : function (params, fn) {
+				
+				//todo: allow global def of service url
 				var src = 'service';
+				
 				if (params) {
 					//todo: format params
 				}
@@ -52,19 +64,8 @@ var sdk = (function () {
 					completeCallback = fn;
 				}
 			},
-			'query' : function (yql) {
-				
-			},
-			'iframeCallback' : iframeCallback,
-			'init' : function () {
-				iframe = document.createElement('iframe');
-				iframe.src = 'iframe.html';//todo: make dynamic
-				iframe.style.display = 'none';
-				document.body.appendChild(iframe);
-				this.request();
-			}
+			
+			//iframe callback needs to be exposed so iframe can access it
+			'iframeCallback' : iframeCallback
 		};
 	}());
-	
-//todo: set hash in here
-sdk.init();
