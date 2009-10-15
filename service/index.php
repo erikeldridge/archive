@@ -35,10 +35,13 @@ switch($input['method']){
         ));
         break;
         
-    case 'friends':
-        //call api for friend data
+    case 'foo':
+        
         break;
     default:
+    
+        //on initial call, provide crumb only
+        $data = json_encode(array('crumb'=>'cvbfghtyu'));
         break;
 }
 $data = urlencode($data);
