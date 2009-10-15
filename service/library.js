@@ -42,22 +42,35 @@ var sdk = (function () {
 		            }
 		        }
 		    },
-			request = function (params, fn) {
+			request = function (paramsObj, fn) {
 				
 				//todo: allow global def of service url
-				var src = 'service';
+				var src = 'service/';
 				
-				if (params) {
-					//todo: format params
+				if (paramsObj) {
+					src += '?';
+					
+					//append params to req url
+					//todo: either use foreach or add hasOwnObject check js-good-stuff-style
+					for (var key in paramsObj) {
+						src += key + '=' + paramsObj[key] + '&';
+					}
+					
+					//trim trailing &
+					src = src.substr(0, src.length - 1);
 				}
+				
+				//make req
 				iframe.src = src;
+				
+				//if callback fn defined, use it
 				if (fn) {
 					completeCallback = fn;
 				}
 			};
 
 			//init
-			//fetch dev key
+			//fetch dev key case-hardened-js-style
 			var scriptNodes = document.getElementsByTagName('script');
 			for(var i = 0; i < scriptNodes.length; i++){
 				
