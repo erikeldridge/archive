@@ -1,3 +1,4 @@
+//todo: look into using a standard js lib implementation of iframe comm util
 var sdk = (function () {
 	
 		var totalQtyChunks = null,
@@ -5,7 +6,10 @@ var sdk = (function () {
 			chunkStr = null,
 			iframe = null,
 			hash = null,
-			completeCallback = console.log,
+			completeCallback = function (data) {
+				//This is a stub fn.  
+				//The user should define a callback as a param to request()
+			},
 		
 			//todo: make iframe callback name dynamic
 		    iframeCallback = function (chunk) {
@@ -31,14 +35,14 @@ var sdk = (function () {
 		            //if qtyChunksCollected === totalQtyChunks, we're done
 		            if (qtyChunksCollected === totalQtyChunks) {
 
-		                //decode and cache data
-		               var data = decodeURIComponent(chunkStr);
+						//decode and cache data
+						var data = decodeURIComponent(chunkStr);
 
-		               //do something when data's completely loaded
-		               completeCallback(data);
+						//do something w/ data
+						completeCallback(data);
 
-		               //clear affiliate vars for next use
-		               totalQtyChunks = qtyChunksCollected = chunkStr = null;
+						//clear affiliate vars for next use
+						totalQtyChunks = qtyChunksCollected = chunkStr = null;
 		            }
 		        }
 		    },
