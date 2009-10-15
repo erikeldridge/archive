@@ -1,6 +1,10 @@
 var sdk = (function () {
 	
-		var totalQtyChunks = qtyChunksCollected = chunkStr = iframe = null,
+		var totalQtyChunks = null,
+			qtyChunksCollected = null,
+			chunkStr = null,
+			iframe = null,
+			hash = null,
 			completeCallback = console.log,
 		
 			//todo: make iframe callback name dynamic
@@ -52,11 +56,26 @@ var sdk = (function () {
 				}
 			};
 
-			//initialize by creating the iframe comm channel and requesting crumb
+			//init
+			//fetch dev key
+			var scriptNodes = document.getElementsByTagName('script');
+			for(var i = 0; i < scriptNodes.length; i++){
+				
+				//todo: make script src editable
+				if(-1 !== scriptNodes[i].src.indexOf('service/library.js')){
+					
+					//todo: verify we're trimming all whitespace
+					hash = scriptNodes[i].innerHTML.replace('\n', '');
+				}
+			}
+			
+			//create iframe com channel
 			iframe = document.createElement('iframe');
 			iframe.src = 'iframe.html';//todo: make dynamic
 			iframe.style.display = 'none';
 			document.body.appendChild(iframe);
+			
+			//fetch only crumb in 1st request
 			request(null, function(data){
 				//todo: cache crumb internally
 				console.log(data);
