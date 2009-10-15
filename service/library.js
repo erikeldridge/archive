@@ -6,6 +6,7 @@ var sdk = (function () {
 			chunkStr = null,
 			iframe = null,
 			hash = null,
+			crumb = null,			
 			completeCallback = function (data) {
 				//This is a stub fn.  
 				//The user should define a callback as a param to request()
@@ -49,19 +50,20 @@ var sdk = (function () {
 			request = function (paramsObj, fn) {
 				
 				//todo: allow global def of service url
-				var src = 'service/';
+				//every request requires hash so server can lookup acct
+				var src = 'service/?hash=' + hash;
+				
+				if (crumb) {
+					src += '&crumb=' + crumb;
+				}
 				
 				if (paramsObj) {
-					src += '?';
 					
 					//append params to req url
 					//todo: either use foreach or add hasOwnObject check js-good-stuff-style
 					for (var key in paramsObj) {
-						src += key + '=' + paramsObj[key] + '&';
+						src += '&' + key + '=' + paramsObj[key];
 					}
-					
-					//trim trailing &
-					src = src.substr(0, src.length - 1);
 				}
 				
 				//make req
@@ -101,6 +103,9 @@ var sdk = (function () {
 			request({'hash':hash}, function(data){
 				//todo: cache crumb internally
 				console.log(data);
+				
+				//static crumb for testing
+				crumb = '4dc49e30be212209c559e0a990d8f3f8';
 			});
 			
 		return {

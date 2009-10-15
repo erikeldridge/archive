@@ -27,7 +27,7 @@ if(isset($input['serviceId'])){
     switch($input['serviceId']){
 
         //some service requiring authentication, eg yql's social.profile table
-        case 'private':
+        case 'privateco':
             //hash => services => {serviceId1 => {name, url, auth type, key (opt), secret (opt)}, serviceId2 => ...}
 
             //fetch credentials from store
