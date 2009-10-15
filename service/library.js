@@ -37,19 +37,8 @@ var sdk = (function () {
 		               totalQtyChunks = qtyChunksCollected = chunkStr = null;
 		            }
 		        }
-		    };
-
-			//initialize by creating the iframe comm channel and requesting crumb
-			iframe = document.createElement('iframe');
-			iframe.src = 'iframe.html';//todo: make dynamic
-			iframe.style.display = 'none';
-			document.body.appendChild(iframe);
-			this.request();
-			
-		return {
-			
-			//the general purpose util
-			'request' : function (params, fn) {
+		    },
+			request = function (params, fn) {
 				
 				//todo: allow global def of service url
 				var src = 'service';
@@ -61,7 +50,22 @@ var sdk = (function () {
 				if (fn) {
 					completeCallback = fn;
 				}
-			},
+			};
+
+			//initialize by creating the iframe comm channel and requesting crumb
+			iframe = document.createElement('iframe');
+			iframe.src = 'iframe.html';//todo: make dynamic
+			iframe.style.display = 'none';
+			document.body.appendChild(iframe);
+			request(null, function(data){
+				//todo: cache crumb internally
+				console.log(data);
+			});
+			
+		return {
+			
+			//the main, general purpose util
+			'request' : request,
 			
 			//iframe callback needs to be exposed so iframe can access it
 			'iframeCallback' : iframeCallback
