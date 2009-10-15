@@ -86,6 +86,11 @@ var sdk = (function () {
 				}
 			}
 			
+			//validate existence of hash
+			if (!hash) {
+				throw('hash required in sdk lib script include block');
+			}
+			
 			//create iframe com channel
 			iframe = document.createElement('iframe');
 			iframe.src = 'iframe.html';//todo: make dynamic
@@ -93,7 +98,7 @@ var sdk = (function () {
 			document.body.appendChild(iframe);
 			
 			//fetch only crumb in 1st request
-			request(null, function(data){
+			request({'hash':hash}, function(data){
 				//todo: cache crumb internally
 				console.log(data);
 			});

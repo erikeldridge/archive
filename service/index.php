@@ -7,8 +7,9 @@ $filters = array(
 $input = filter_var_array($_GET, $filters);
 
 //if no hash, return error
+//todo: format all output in a way that's readable by the client, ie $data = json_encode(array('key'=>'val'));
 if(!isset($input['hash'])){
-    //die('hash required');
+    die('hash is always required');
 }
 
 //todo: validate crumb
@@ -40,10 +41,12 @@ switch($input['method']){
     case 'foo':
         
         break;
+        
     default:
     
         //on initial call, provide crumb only
-        $data = json_encode(array('crumb'=>'cvbfghtyu'));
+        $crumb = md5($input['hash'].time());
+        $data = json_encode(array('crumb'=>$crumb));
         break;
 }
 $data = urlencode($data);
