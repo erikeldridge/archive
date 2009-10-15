@@ -11,7 +11,9 @@ if(!isset($input['hash'])){
     //die('hash required');
 }
 
-//if crumb, return data
+//todo: validate crumb
+//todo: validate crumb only in 1st request
+
 switch($input['method']){
     case 'profile':
     
