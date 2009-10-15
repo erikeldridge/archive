@@ -2,22 +2,16 @@
 //safely fetch input
 $filters = array(
     'method' => FILTER_SANITIZE_STRING,
-    'hash' => FILTER_SANITIZE_STRING
+    'hash' => FILTER_SANITIZE_STRING,
+    'time' => FILTER_SANITIZE_STRING,
+    'crumb' => FILTER_SANITIZE_STRING
 );
 $input = filter_var_array($_GET, $filters);
 
-//if no hash, return error
-//todo: format all output in a way that's readable by the client, ie $data = json_encode(array('key'=>'val'));
-if(!isset($input['hash'])){
-    die('hash is always required');
-}
-
-//todo: validate crumb
-//todo: validate crumb only in 1st request
-
 switch($input['method']){
     case 'profile':
-    
+        //todo: validate crumb
+        
         //fetch credentials from store
         $credentials = include('credentials.php');
         
@@ -43,6 +37,12 @@ switch($input['method']){
         break;
         
     default:
+        
+        //require hash on initial req
+        if(!isset($input['hash'])){
+            $data = json_encode(array('error'=>"hash req'd for init request"));
+            break;
+        }
     
         //on initial call, provide crumb only
         $crumb = md5($input['hash'].time());
