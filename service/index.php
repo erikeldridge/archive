@@ -1,34 +1,30 @@
 <?php
 //safely fetch input
 $filters = array(
-    'serviceId' => FILTER_SANITIZE_STRING,
+    'service' => FILTER_SANITIZE_STRING,
     'hash' => FILTER_SANITIZE_STRING,
-    'crumb' => FILTER_SANITIZE_STRING
+    'crumb' => FILTER_SANITIZE_STRING,
+    'id' => FILTER_SANITIZE_STRING
 );
 $input = filter_var_array($_GET, $filters);
 
-//perform negative validation
+//validate input
 //hash is always required
 if(!isset($input['hash'])){
-    $data = json_encode(array('error'=>"hash req'd for all requests"));
+    $data = array('error'=>"hash req'd for all requests");
+}elseif(!isset($input['id'])){
+    $data = array('error'=>"req index req'd for all requests");    
 }
-
-//if service
-if(isset($input['serviceId'])){
-
-    if(!isset($input['crumb'])){
-        $data = json_encode(array('error'=>"crumb req'd for all service requests"));
-    }else{
-        //validate crumb using hash and crumb store
-        //if invalid crumb -> error
-    }
-    
+// elseif(!isset($input['crumb'])){
+//     $crumb = md5($input['hash'].time());
+//     $data = array('crumb'=>$crumb);
+// }
+elseif(isset($input['service'])){
     //service endpoints
-    switch($input['serviceId']){
-
+    switch($input['service']){
         //some service requiring authentication, eg yql's social.profile table
         case 'privateco':
-            //hash => services => {serviceId1 => {name, url, auth type, key (opt), secret (opt)}, serviceId2 => ...}
+            //hash => services => {service1 => {name, url, auth type, key (opt), secret (opt)}, service2 => ...}
 
             //fetch credentials from store
             $store = include('store.php');
@@ -36,46 +32,41 @@ if(isset($input['serviceId'])){
             //validate hash
             if(!isset($store[$input['hash']])){
                //die('invalid hash');
-            }elseif(!isset($store[$input['serviceId']])){
+            }elseif(!isset($store[$input['service']])){
 
             }
 
             list($key, $secret) = $store[$input['hash']];
 
             //call api using key/secret for profile data
-            $data = json_encode(array(
-                'name' => 'foo bar',
-                'address' => '123 first st.',
-                'city' => 'burlingame',
-                'state' => 'ca',
-                'country' => 'usa'
-            ));
+            $data = array(
+                'id'=>$input['id']
+                // 'name' => 'foo bar',
+                //                 'address' => '123 first st.',
+                //                 'city' => 'burlingame',
+                //                 'state' => 'ca',
+                //                 'country' => 'usa'
+            );
             break;
-
         case 'public':
-
             break;
-
         default:
             //error: invalid service id
             break;
     }
-    
-//init
 }else{
-    $crumb = md5($input['hash'].time());
-    $data = json_encode(array('crumb'=>$crumb));
+    $data = array('error'=>$_GET['id']);
 }
 
 //format data for output
-$data = urlencode($data);
+$data = urlencode(json_encode($data));
 $chunks = str_split($data, 10);
 
 //output markup
 ?>
 
-<iframe src="../iframe.html?totalQtyChunks=<?= count($chunks) ?>"></iframe>
+<iframe src="../iframe.html?id=<?= $input['id'] ?>&total=<?= count($chunks) ?>"></iframe>
 
 <? foreach($chunks as $chunk): ?>
-    <iframe src="../iframe.html?<?= $chunk ?>"></iframe>
+    <iframe src="../iframe.html?id=<?= $input['id'] ?>&chunk=<?= $chunk ?>"></iframe>
 <? endforeach ?>

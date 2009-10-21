@@ -2,11 +2,17 @@
 <head>
 </head>
 <body>
-    <script src="service/library.js">
-        asd456
-    </script>
+    <script src="http://yui.yahooapis.com/3.0.0/build/yui/yui-min.js"></script>
+    <script src="service/library.js">asd456</script>
     <script>
-        sdk.request({'serviceId':'privateco'}, function (data) {
+        sdk.makeRequest({'serviceId':'privateco'}, function (data) {
+            console.log(data);
+        });
+        sdk.makeRequest({'serviceId':'privateco'}, function (data) {
+            console.log(data);
+        });
+        console.log(sdk.requests);
+        sdk.makeRequest({'serviceId':'privateco'}, function (data) {
             console.log(data);
         });
     </script>
