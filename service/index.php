@@ -1,9 +1,17 @@
 <?php
+require 'request.php';
+
 //safely fetch input
 $filters = array(
+    //auth identifier
     'service' => FILTER_SANITIZE_STRING,
+    //request params
+    'method' => FILTER_SANITIZE_STRING,
+    'url' => FILTER_SANITIZE_STRING,
+    'params' => FILTER_SANITIZE_STRING,
+    //acct identifier
     'hash' => FILTER_SANITIZE_STRING,
-    'crumb' => FILTER_SANITIZE_STRING,
+    //internal params
     'id' => FILTER_SANITIZE_STRING
 );
 $input = filter_var_array($_GET, $filters);
@@ -24,29 +32,25 @@ elseif(isset($input['service'])){
     switch($input['service']){
         //some service requiring authentication, eg yql's social.profile table
         case 'privateco':
-            //hash => services => {service1 => {name, url, auth type, key (opt), secret (opt)}, service2 => ...}
-
+            $data = array('success'=>print_r($input, true));
+            // die();
             //fetch credentials from store
             $store = include('store.php');
-
-            //validate hash
+            $user = $store[$input['hash']];
             if(!isset($store[$input['hash']])){
-               //die('invalid hash');
-            }elseif(!isset($store[$input['service']])){
-
+               $data = array('error'=>'there is no record in the store for hash '.$input['hash']);
+               break;
             }
-
-            list($key, $secret) = $store[$input['hash']];
-
-            //call api using key/secret for profile data
-            $data = array(
-                'id'=>$input['id']
-                // 'name' => 'foo bar',
-                //                 'address' => '123 first st.',
-                //                 'city' => 'burlingame',
-                //                 'state' => 'ca',
-                //                 'country' => 'usa'
-            );
+            if(!$user[$input['service']]){
+                $data = array('error'=>'there is no record in the store for service '.$input['service']);
+                break;
+            }
+            list($key, $secret, $token) = $user[$input['service']];
+            //prep oauth
+            $url = urldecode($input['url']);
+            $params = urldecode($input['params']);
+            $response = request($input['method'], $url, $params);
+            $data = array('success'=>$response);
             break;
         case 'public':
             break;
