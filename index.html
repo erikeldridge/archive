@@ -2,17 +2,24 @@
 <head>
 </head>
 <body>
-    <script src="http://yui.yahooapis.com/3.0.0/build/yui/yui-min.js"></script>
+    <!-- <script src="http://yui.yahooapis.com/3.0.0/build/yui/yui-min.js"></script> -->
     <script src="service/library.js">asd456</script>
     <script>
-        sdk.makeRequest({'serviceId':'privateco'}, function (data) {
+        sdk.makeRequest(
+            {
+                'service':'privateco', 
+                'method':'post', 
+                'url':encodeURIComponent('http://localhost/~eldridge/foxbat/external.php'), 
+                'params':encodeURIComponent('foo=bar&boo=baz')
+            }, 
+            function (data) {
+                console.log(data);
+            }
+        );
+        sdk.makeRequest({'service':'privateco'}, function (data) {
             console.log(data);
         });
-        sdk.makeRequest({'serviceId':'privateco'}, function (data) {
-            console.log(data);
-        });
-        console.log(sdk.requests);
-        sdk.makeRequest({'serviceId':'privateco'}, function (data) {
+        sdk.makeRequest({'service':'privateco'}, function (data) {
             console.log(data);
         });
     </script>
