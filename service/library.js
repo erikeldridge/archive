@@ -4,7 +4,7 @@ var sdk = function () {
 		request = function (params, userCallback) {
 			var iframe = document.createElement('iframe'),
 				id = null,
-				url = 'service/index.php?id=',
+				url = 'service/?id=',
 				total = null,
 				chunks = '',
 				collected,
@@ -19,7 +19,7 @@ var sdk = function () {
 				            chunks += val;
 				            collected++;
 
-				            //if collected == total (coercion intended), we're done
+				            //if collected equals total (coercion intended), we're done
 				            if (collected == total) {
 
 								//decode and cache data
@@ -33,7 +33,6 @@ var sdk = function () {
 								total = null;
 								collected = null;
 								chunks = null;
-								
 								document.body.removeChild(iframe);
 				            }
 							break;
