@@ -52,7 +52,7 @@ var sdk = function () {
 			
 			//init iframe channel
 			iframe.style.display = 'none';
-			iframe.src = 'http://localhost/~eldridge/foxbatexample/client/iframe.html';
+			iframe.src = 'iframe.html';
 			iframe.id = id;
 			document.body.appendChild(iframe);
 			
@@ -60,7 +60,7 @@ var sdk = function () {
 			if (!hash) {
 				var scriptNodes = document.getElementsByTagName('script');
 				for (var i = 0; i < scriptNodes.length; i++) {
-					if (-1 !== scriptNodes[i].src.indexOf('server/library.js')) {
+					if (-1 !== scriptNodes[i].src.indexOf('library.js')) {
 						hash = scriptNodes[i].innerHTML;
 					}
 				}

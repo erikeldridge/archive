@@ -1,12 +1,15 @@
 <html>
     <head></head>
+    <a href="" id="openid">click</a>
     <body>
         <script src="http://yui.yahooapis.com/3.0.0/build/yui/yui-min.js"></script>
-        <script src="http://localhost/~eldridge/foxbatexample/server/library.js">asd456</script>
+        <script src="library.js">asd456</script>
         <script>
         YUI().use('json-parse', function (Y) {
             function callback (data) {
-                console.log(Y.JSON.parse(data).url);
+                var url = Y.JSON.parse(data).url,
+                    a = document.getElementById('openid');
+                a.href = url;
             }
             sdk.makeRequest(
                 { 
