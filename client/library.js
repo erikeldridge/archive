@@ -4,42 +4,26 @@ var sdk = function () {
 		request = function (params, userCallback) {
 			var iframe = document.createElement('iframe'),
 				id = null,
-				url = 'http://localhost/~eldridge/foxbatexample/server/?id=',
-				total = null,
-				chunks = '',
-				collected,
-				iframeCallback = function (key, val) {
-					switch (key) {
-						case 'total':
-							total = val;
-							collected = 0;
-				            chunks = '';
-							break;
-						case 'chunk':
-				            chunks += val;
-				            collected++;
+				url = 'http://test.erikeldridge.com/foxbatexample',
+				chunks = [],
+				collected = 0,
+				iframeCallback = function (obj) {
+					var index = obj['index'];
+					chunks[index] = obj['chunk'];
+					collected++;
+					
+					//if collected equals total (coercion intended), we're done
+					if (collected == obj['total']) {
 
-				            //if collected equals total (coercion intended), we're done
-				            if (collected == total) {
+						//do something w/ data
+						userCallback(chunks.join(''));
 
-								//decode and cache data
-								var data = decodeURIComponent(chunks);
-								
-								//do something w/ data
-								userCallback(data);
-							
-								//clean up
-								requests[id] = null;
-								total = null;
-								collected = null;
-								chunks = null;
-								document.body.removeChild(iframe);
-				            }
-							break;
-						default:
-						
-							//invalid key
-							break;
+						//clean up
+						requests[id] = null;
+						total = null;
+						collected = null;
+						chunks = null;
+						document.body.removeChild(iframe);
 					}
 				};
 				
@@ -70,7 +54,7 @@ var sdk = function () {
 			}
 			
 			//build out request params
-			url += id + '&hash=' + hash;
+			url += '/server/?id=' + id + '&hash=' + hash;
 			for (var key in params) {
 				url += '&'+key+'='+params[key];
 			}

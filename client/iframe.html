@@ -8,11 +8,11 @@ for (var i = 0; i < pairs.length; i++) {
 	pair = pairs[i].split('=');
 	params[pair[0]] = pair[1];
 }
-//pass values to calling file
-if (params['total']) {
-    window.parent.parent.sdk.requests[params['id']].iframeCallback('total', params['total']);
-} else {
-    window.parent.parent.sdk.requests[params['id']].iframeCallback('chunk', params['chunk']);
-}
 
+//pass values back
+window.parent.parent.sdk.requests[params['id']].iframeCallback({
+    'total' : params['total'],
+    'index' : params['index'],
+    'chunk' : params['chunk']
+});
 </script>

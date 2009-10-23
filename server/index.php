@@ -38,9 +38,9 @@ switch($input['action']){
         $data = array('success'=>$response);
         break;
     case 'fetchHybridAuthUrl':
-    
+        session_start();
         //settings
-        $openidIncludePath = './php-openid-2.1.3/';
+        $openidIncludePath = '../../openid/openid+oauth/';
         
         //fetch key
         $store = include('store.php');
@@ -80,7 +80,7 @@ switch($input['action']){
         $openidLoginRedirectUrl = $openidAuthRequest->redirectURL(
             $service['openidRealmUri'],
             $service['openidReturnToUri']
-        );
+        );var_dump($service);
 
         //add hybrid auth fields
         $additionalFields = array(
@@ -91,23 +91,22 @@ switch($input['action']){
         $openidLoginRedirectUrl .= '&'.http_build_query($additionalFields);
         //END: generate openid+oauth redirect url
         
-        $data = array('status'=>'success','url'=>$openidLoginRedirectUrl);
+        $data = array('url'=>$openidLoginRedirectUrl);
         break;
+        
     default:
         //error: invalid service id
         break;
 }
 
 //format data for output
-$data = urlencode(json_encode($data));
-$size = 10;
-$chunks = str_split($data, $size);
-
+$json = urlencode(json_encode($data));
+$size = 100;
+$chunks = str_split($json, $size);
+$total = count($chunks);
 //output markup
 ?>
 
-<iframe src="http://localhost/~eldridge/foxbat/client/iframe.html?id=<?= $input['id'] ?>&total=<?= count($chunks) ?>"></iframe>
-
-<? foreach($chunks as $chunk): ?>
-    <iframe src="http://localhost/~eldridge/foxbat/client/iframe.html?id=<?= $input['id'] ?>&chunk=<?= $chunk ?>"></iframe>
+<? foreach($chunks as $index => $chunk): ?>
+    <iframe src="http://test.erikeldridge.com/foxbatexample/client/iframe.html?id=<?= $input['id'] ?>&index=<?= $index ?>&total=<?= $total ?>&chunk=<?= $chunk ?>"></iframe>
 <? endforeach ?>
