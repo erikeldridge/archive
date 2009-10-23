@@ -1,10 +1,9 @@
 var sdk = function () {
-	var hash,
-		requests = {},
+	var requests = {},
 		request = function (params, userCallback) {
 			var iframe = document.createElement('iframe'),
 				id = null,
-				url = 'service/?id=',
+				url = 'http://example.com/foxbat/service/?id=',
 				total = null,
 				chunks = '',
 				collected,
@@ -52,31 +51,17 @@ var sdk = function () {
 			
 			//init iframe channel
 			iframe.style.display = 'none';
-			iframe.src = 'iframe.html';
+			iframe.src = 'http://example.com/foxbat/client/iframe.html';
 			iframe.id = id;
 			document.body.appendChild(iframe);
 			
-			//get hash from ui
-			if (!hash) {
-				var scriptNodes = document.getElementsByTagName('script');
-				for (var i = 0; i < scriptNodes.length; i++) {
-					if (-1 !== scriptNodes[i].src.indexOf('service/library.js')) {
-						hash = scriptNodes[i].innerHTML;
-					}
-				}
-				if (!hash) {
-					throw('library js, request() fn, hash must be defined');
-				}
-			}
-			
 			//build out request params
-			url += '&hash='+hash+'&id='+id;
+			url += id;
 			for (var key in params) {
 				url += '&'+key+'='+params[key];
 			}
 			iframe.src = url;
-			//console.log(iframe);
-			//expose methods
+			
 			return {
 				'id' : id,
 				'iframeCallback' : iframeCallback
@@ -86,7 +71,7 @@ var sdk = function () {
 	return {
 		'makeRequest' : function (params, userCallback) {
 			var req = request(params, userCallback);
-			requests[req.id] = req;//console.log(requests);
+			requests[req.id] = req;
 		},
 		'requests' : requests
 	};
