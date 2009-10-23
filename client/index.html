@@ -1,0 +1,20 @@
+<html>
+    <head></head>
+    <body>
+        <script src="http://yui.yahooapis.com/3.0.0/build/yui/yui-min.js"></script>
+        <script src="http://localhost/~eldridge/foxbatexample/server/library.js">asd456</script>
+        <script>
+        YUI().use('json-parse', function (Y) {
+            function callback (data) {
+                console.log(Y.JSON.parse(data).url);
+            }
+            sdk.makeRequest(
+                { 
+                    'action':'fetchHybridAuthUrl'
+                }, 
+                callback
+            );
+        });
+        </script>
+    </body>
+</html>
