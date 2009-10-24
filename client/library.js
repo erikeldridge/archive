@@ -3,43 +3,28 @@ var sdk = function () {
 		request = function (params, userCallback) {
 			var iframe = document.createElement('iframe'),
 				id = null,
-				url = 'http://example.com/foxbat/server/?id=',
-				total = null,
-				chunks = '',
-				collected,
-				iframeCallback = function (key, val) {
-					switch (key) {
-						case 'total':
-							total = val;
-							collected = 0;
-				            chunks = '';
-							break;
-						case 'chunk':
-				            chunks += val;
-				            collected++;
+				url = 'http://localhost/~eldridge/foxbat/server/?id=',
+				chunks = [],
+				collected = 0,
+				iframeCallback = function (value) {
+					var index = value['index'];
+					chunks[index] = value['chunk'];
+					collected++;
+		            //if collected equals total (coercion intended), we're done
+		            if (collected == value['total']) {
 
-				            //if collected equals total (coercion intended), we're done
-				            if (collected == total) {
-
-								//decode and cache data
-								var data = decodeURIComponent(chunks);
-								
-								//do something w/ data
-								userCallback(data);
-							
-								//clean up
-								requests[id] = null;
-								total = null;
-								collected = null;
-								chunks = null;
-								document.body.removeChild(iframe);
-				            }
-							break;
-						default:
+						//decode and cache data
+						var data = decodeURIComponent(chunks);
 						
-							//invalid key
-							break;
-					}
+						//do something w/ data
+						userCallback(data);
+					
+						//clean up
+						requests[id] = null;
+						collected = 0;
+						chunks = [];
+						document.body.removeChild(iframe);
+		            }
 				};
 				
 			//generate a unique identifier for each request

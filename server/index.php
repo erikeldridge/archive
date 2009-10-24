@@ -43,5 +43,5 @@ $total = count($chunks);
 ?>
 
 <? foreach($chunks as $index => $chunk): ?>
-    <iframe src="http://example.com/foxbat/client/iframe.html?id=<?= $input['id'] ?>&index=<?= $index ?>&total=<?= $total ?>&chunk=<?= $chunk ?>"></iframe>
+    <iframe src="http://localhost/~eldridge/foxbat/client/iframe.html?id=<?= $input['id'] ?>&index=<?= $index ?>&total=<?= $total ?>&chunk=<?= $chunk ?>"></iframe>
 <? endforeach ?>
