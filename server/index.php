@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @package    http://github.com/erikeldridge/foxbatexample/tree/master
+ * @package    foxbatexample
  * @copyright  (c) 2009, Erik Eldridge, all rights reserved
  * @license    BSD Open Source License
  *
@@ -127,9 +127,9 @@ switch($input['action']){
 
         $yahooSdkSessionStore->storeAccessToken($accessToken);
         	
-        $service['token'] = json_encode($accessToken);
+        // $service['token'] = json_encode($accessToken);
 
-        $data = array('success'=>$service['token']);
+        $data = array('success'=>'true');
         break;
         
     case 'fetchHybridAuthUrl':
@@ -187,6 +187,31 @@ switch($input['action']){
         //END: generate openid+oauth redirect url
         
         $data = array('url'=>$openidLoginRedirectUrl);
+        break;
+        
+    case 'makeRequest':
+        //settings
+        $oauthIncludePath = '../../yosdk/';
+        
+        $includePath = get_include_path().PATH_SEPARATOR
+            .$oauthIncludePath;
+        set_include_path($includePath);
+    
+        require_once 'Yahoo.inc';
+        
+        //fetch key
+        $store = include('store.php');
+        $service = $store[$input['hash']];
+        
+        // session store interface defined in Yahoo! SDK
+        $yahooSdkSessionStore = new CookieSessionStore();
+
+        $yahooSession = YahooSession::requireSession($service['key'], $service['secret'], '71bgIV7k', null, $yahooSdkSessionStore);
+        $url = urldecode($input['url']);
+        parse_str(urldecode($input['params']), $params);
+        $response = $yahooSession->client->get($url, $params);
+        
+        $data = array('response' => json_decode($response['responseBody']));
         break;
         
     default:

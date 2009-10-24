@@ -1,6 +1,6 @@
 <!--
 /**
- * @package    http://github.com/erikeldridge/foxbatexample/tree/master
+ * @package    foxbatexample
  * @copyright  (c) 2009, Erik Eldridge, all rights reserved
  * @license    BSD Open Source License
  *
@@ -25,7 +25,7 @@
 -->
 <html>
     <head></head>
-    <a href="#" id="openid">click</a>
+    <a href="#" id="openid"><img src="http://l.yimg.com/a/i/reg/openid/buttons/2_new.png" style="border:none"/></a>
     <body>
         <script src="http://yui.yahooapis.com/3.0.0/build/yui/yui-min.js"></script>
         <script src="library.js">asd456</script>
@@ -37,11 +37,11 @@
         var pairs = queryString.split('&'),
         	params = {};
         for (var i = 0; i < pairs.length; i++) {
-        	pair = pairs[i].split('=');
+        	var pair = pairs[i].split('=');
         	params[pair[0]] = pair[1];
         }
         
-        YUI().use('json-parse', function (Y) {
+        YUI().use('json-parse', 'node', function (Y) {
             if (params['openid.oauth.request_token']) {
                 sdk.makeRequest(
                     { 
@@ -49,7 +49,23 @@
                         'token' : params['openid.oauth.request_token']
                     }, 
                     function (data) {
-                        Y.log(data);
+                        sdk.makeRequest(
+                            { 
+                                'action':'makeRequest',
+                                'method' : 'get',
+                                'url' : encodeURIComponent('http://query.yahooapis.com/v1/yql'),
+                                'params' : encodeURIComponent('q=select * from social.profile where guid = me&format=json')
+                            }, 
+                            function (data) {
+                                var json = decodeURIComponent(data),
+                                    response = Y.JSON.parse(json),
+                                    givenName = response.response.query.results.profile.givenName,
+                                    imageUrl = response.response.query.results.profile.image.imageUrl;   
+                                Y.get('#openid').setStyle('display', 'none');
+                                Y.get('body').append('<img src="'+imageUrl+'"/><p>' + givenName + '</p>');
+                                
+                            }
+                        );
                     }
                 );
             } else {
