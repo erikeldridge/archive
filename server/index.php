@@ -2,7 +2,7 @@
 
 /**
  * @package    foxbatexample
- * @copyright  (c) 2009, Erik Eldridge
+ * @copyright  (c) 2009, Erik Eldridge, all rights reserved
  * @license    BSD Open Source License
  *
  *   Permission is hereby granted, free of charge, to any person obtaining a copy
