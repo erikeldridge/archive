@@ -10,19 +10,18 @@ var sdk = function () {
 					var index = value['index'];
 					chunks[index] = value['chunk'];
 					collected++;
+					
 		            //if collected equals total (coercion intended), we're done
 		            if (collected == value['total']) {
 
 						//decode and cache data
-						var data = decodeURIComponent(chunks);
+						var data = decodeURIComponent(chunks.join(''));
 						
 						//do something w/ data
 						userCallback(data);
 					
 						//clean up
 						requests[id] = null;
-						// collected = 0;
-						// 						chunks = [];
 						document.body.removeChild(iframe);
 		            }
 				};
