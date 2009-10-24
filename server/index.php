@@ -28,7 +28,7 @@ if('get' == $input['method']){
     curl_close($ch);
     
     //format response for json encode
-    $data = array('response'=>$response);   
+    $data = array('response'=>$response);
 }
 
 //format data for output

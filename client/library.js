@@ -21,8 +21,8 @@ var sdk = function () {
 					
 						//clean up
 						requests[id] = null;
-						collected = 0;
-						chunks = [];
+						// collected = 0;
+						// 						chunks = [];
 						document.body.removeChild(iframe);
 		            }
 				};
