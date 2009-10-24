@@ -48,7 +48,7 @@ try {
 //handle request
 switch($_SERVER['REQUEST_METHOD']){
     case 'GET':
-        $sql = "SELECT value FROM `table1` WHERE `key` = :key";
+        $sql = "SELECT value FROM `tablename` WHERE `key` = :key";
         $prepared = $pdo->prepare($sql);
         $prepared->execute(array(':key' => $input['key']));
         $result = $prepared->fetch();
@@ -58,11 +58,11 @@ switch($_SERVER['REQUEST_METHOD']){
         }
         break;
     case 'POST':
-        $sql = "UPDATE `table1` SET `value` = :value WHERE `key` = :key";
+        $sql = "UPDATE `tablename` SET `value` = :value WHERE `key` = :key";
         $prepared = $pdo->prepare($sql);
         $prepared->execute(array(':key' => $input['key'], ':value' => $input['value']));
         if(0 == $prepared->rowCount()){
-            $sql = 'INSERT INTO `table1` (`primary`, `key`, `value`, `created`, `updated`) VALUES (NULL, :key, :value, NOW(), NOW())';
+            $sql = 'INSERT INTO `tablename` (`primary`, `key`, `value`, `created`, `updated`) VALUES (NULL, :key, :value, NOW(), NOW())';
             $prepared = $pdo->prepare($sql);
             $prepared->execute(array(':key' => $input['key'], ':value' => $input['value']));
         }
