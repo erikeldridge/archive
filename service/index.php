@@ -35,14 +35,13 @@ if('get' == $input['method']){
 $data = urlencode(json_encode($data));
 
 //split output into chunks of arbitrary size (pending length avail. for GET params)
-$size = 10;
+$size = 100;
 $chunks = str_split($data, $size);
+$total = count($chunks);
 
 //output markup
 ?>
 
-<iframe src="http://example.com/foxbat/client/iframe.html?id=<?= $input['id'] ?>&total=<?= count($chunks) ?>"></iframe>
-
-<? foreach($chunks as $chunk): ?>
-    <iframe src="http://example.com/foxbat/client/iframe.html?id=<?= $input['id'] ?>&chunk=<?= $chunk ?>"></iframe>
+<? foreach($chunks as $index => $chunk): ?>
+    <iframe src="http://example.com/foxbat/client/iframe.html?id=<?= $input['id'] ?>&index=<?= $index ?>&total=<?= $total ?>&chunk=<?= $chunk ?>"></iframe>
 <? endforeach ?>
