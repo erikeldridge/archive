@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @package    foxbatexample
+ * @package    http://github.com/erikeldridge/foxbatexample/tree/master
  * @copyright  (c) 2009, Erik Eldridge, all rights reserved
  * @license    BSD Open Source License
  *
