@@ -3,7 +3,7 @@ var sdk = function () {
 		request = function (params, userCallback) {
 			var iframe = document.createElement('iframe'),
 				id = null,
-				url = 'http://example.com/foxbat/service/?id=',
+				url = 'http://example.com/foxbat/server/?id=',
 				total = null,
 				chunks = '',
 				collected,
@@ -51,7 +51,7 @@ var sdk = function () {
 			
 			//init iframe channel
 			iframe.style.display = 'none';
-			iframe.src = 'http://example.com/foxbat/client/iframe.html';
+			iframe.src = 'iframe.html';
 			iframe.id = id;
 			document.body.appendChild(iframe);
 			
