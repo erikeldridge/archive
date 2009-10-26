@@ -1,7 +1,8 @@
 <?php
 
-//uid1=>secret1, uid2=>secret2, etc
-$secrets = array(''=>'');
+//netdb access params
+$netdbUid = '';
+$netdbSecret = '';
 
 //db access params
 $name = '';
