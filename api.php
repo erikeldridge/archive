@@ -1,8 +1,8 @@
 <?php
-error_reporting(0);
+error_reporting(E_ALL);
 
 /*
- CREATE TABLE `netdb`.`tablename` (
+ CREATE TABLE `netdb`.`table1` (
 `primary` INT( 20 ) NOT NULL AUTO_INCREMENT PRIMARY KEY ,
 `key` VARCHAR( 20 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
 `value` MEDIUMTEXT( 1000 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
@@ -24,10 +24,10 @@ $filters = array(
 $input = filter_var_array($_REQUEST, $filters);
 
 //gate
-if(!array_key_exists($input['uid'], $secrets)){
+if($input['uid'] != $netdbUid){
     echo json_encode(array('status' => 'error', 'details' => 'invalid user id: '.$input['uid']));
     exit();
-}elseif(md5($input['uid'].$secrets[$input['uid']]) != $input['hash']){
+}elseif(md5($input['uid'].$netdbSecret) != $input['hash']){
     echo json_encode(array('status' => 'error', 'details' => 'invalid hash: '.$input['hash']));
     exit();
 }elseif(empty($input['key'])){
@@ -46,30 +46,34 @@ try {
 }
 
 //handle request
+function get($pdo, $key){
+    $sql = "SELECT value FROM `table1` WHERE `key` = :key";
+    $prepared = $pdo->prepare($sql);
+    $prepared->execute(array(':key' => $key));
+    $result = $prepared->fetch();
+    $response = array('status'=>'success');
+    if($result){
+        $response['value'] = $result['value'];
+    }
+    return $response;
+}
 switch($_SERVER['REQUEST_METHOD']){
     case 'GET':
-        $sql = "SELECT value FROM `tablename` WHERE `key` = :key";
-        $prepared = $pdo->prepare($sql);
-        $prepared->execute(array(':key' => $input['key']));
-        $result = $prepared->fetch();
-        $response = array('status'=>'success');
-        if($result){
-            $response['value'] = $result['value'];
-        }
+        $response = get($pdo, $input['key']);
         break;
     case 'POST':
-        $sql = "UPDATE `tablename` SET `value` = :value WHERE `key` = :key";
+        $sql = "UPDATE `table1` SET `value` = :value WHERE `key` = :key";
         $prepared = $pdo->prepare($sql);
         $prepared->execute(array(':key' => $input['key'], ':value' => $input['value']));
         if(0 == $prepared->rowCount()){
-            $sql = 'INSERT INTO `tablename` (`primary`, `key`, `value`, `created`, `updated`) VALUES (NULL, :key, :value, NOW(), NOW())';
+            $sql = 'INSERT INTO `table1` (`primary`, `key`, `value`, `created`, `updated`) VALUES (NULL, :key, :value, NOW(), NOW())';
             $prepared = $pdo->prepare($sql);
             $prepared->execute(array(':key' => $input['key'], ':value' => $input['value']));
         }
-        $response = array('status'=>'success');
+        $response = get($pdo, $input['key']);
         break;
     default:
-        $response = json_encode(array('status' => 'error', 'details' => 'invalid request method: '.$_SERVER['REQUEST_METHOD']));
+        $response = array('status' => 'error', 'details' => 'invalid request method: '.$_SERVER['REQUEST_METHOD']);
         break;
 }
 
