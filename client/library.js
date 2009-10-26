@@ -5,7 +5,7 @@ http://test.erikeldridge.com/foxbatexample/license.txt
 */
 
 var sdk = function () {
-	var hash = null,
+	var consumerKey = null,
 		requests = {},
 		request = function (params, userCallback) {
 			var iframe = document.createElement('iframe'),
@@ -48,21 +48,21 @@ var sdk = function () {
 			iframe.id = id;
 			document.body.appendChild(iframe);
 			
-			//get hash from ui
-			if (!hash) {
+			//get consumerKey from ui
+			if (!consumerKey) {
 				var scriptNodes = document.getElementsByTagName('script');
 				for (var i = 0; i < scriptNodes.length; i++) {
 					if (-1 !== scriptNodes[i].src.indexOf('library.js')) {
-						hash = scriptNodes[i].innerHTML;
+						consumerKey = scriptNodes[i].innerHTML;
 					}
 				}
-				if (!hash) {
-					throw('library js, request() fn, hash must be defined');
+				if (!consumerKey) {
+					throw('library js, request() fn, consumerKey must be defined');
 				}
 			}
 			
 			//build out request params
-			url += '/server/?id=' + id + '&hash=' + hash;
+			url += '/server/?id=' + id + '&hash=' + consumerKey;
 			for (var key in params) {
 				url += '&'+key+'='+params[key];
 			}
