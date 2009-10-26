@@ -122,10 +122,6 @@ switch($input['action']){
         //settings
         $openidIncludePath = '../../openid/openid+oauth/';
         
-        //fetch key
-        $store = include('store.php');
-        $service = $store[$input['consumerKey']];
-        
         //BEGIN: generate openid+oauth redirect url
         
         //format incl path as assumed by openid lib 
@@ -156,16 +152,23 @@ switch($input['action']){
         );
         $openidAuthRequest->addExtension($openidSimpleRegRequest);
 
+        require '../../netdb/sdk.php';
+        require 'secure.inc';
+        $storage = new Netdb($netdbUid, $netdbSecret);
+        $storageKey = 'yahoo-'.$input['consumerKey'];
+        $response = $storage->get($storageKey);
+        $value = json_decode($response->value);
+        
         //url for openid provider log in page
         $openidLoginRedirectUrl = $openidAuthRequest->redirectURL(
-            $service['openidRealmUri'],
-            $service['openidReturnToUri']
-        );var_dump($service);
+            $value->openidRealmUri,
+            $value->openidReturnToUri
+        );
 
         //add hybrid auth fields
         $additionalFields = array(
             'openid.ns.oauth' => 'http://specs.openid.net/extensions/oauth/1.0',
-            'openid.oauth.consumer' => $service['key']
+            'openid.oauth.consumer' => $input['consumerKey']
         );
 
         $openidLoginRedirectUrl .= '&'.http_build_query($additionalFields);
