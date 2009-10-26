@@ -19,7 +19,7 @@ if(isset($input['submit'])){
     require '../../netdb/sdk.php';
     require 'secure.inc';
     $storage = new Netdb($netdbUid, $netdbSecret);
-    $storageKey = $input['providerName'].$input['consumerKey'];
+    $storageKey = $input['providerName'].'-'.$input['consumerKey'];
     $storageValue = json_encode($obj);
     
     //store obj
@@ -27,20 +27,18 @@ if(isset($input['submit'])){
     
     //confirm success
     if('success' == $response->status){
-        $displaySuccess = true;
-    }else{
-        $displaySuccess = false;   
+        $value = json_decode($response->value);
     }
 }
 ?>
 
-<? if($displaySuccess): ?>
+<? if($value->providerName): ?>
 <b>Success!</b><br/>
 Here's what was saved:
 <ul>
-    <li><?= $input['providerName'] ?></li>
-    <li><?= $input['consumerKey'] ?></li>
-    <li><?= $input['consumerSecret'] ?></li>
+    <li><?= $value->providerName ?></li>
+    <li><?= $value->consumerKey ?></li>
+    <li><?= $value->consumerSecret ?></li>
 </ul>
 Re-submit form to update/correct information
 <p/>
