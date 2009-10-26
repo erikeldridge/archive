@@ -18,7 +18,7 @@ $filters = array(
     'action' => FILTER_SANITIZE_STRING,
     
     //exchange req token
-    'token' => FILTER_SANITIZE_STRING,
+    'requestToken' => FILTER_SANITIZE_STRING,
     
     //request params
     'method' => FILTER_SANITIZE_STRING,
@@ -51,18 +51,21 @@ switch($input['action']){
         require_once '../../netdb/sdk.php';
         
         //fetch key
-        $store = include('store.php');
-        $service = $store[$input['consumerKey']];
+        require 'secure.inc';
+        $storage = new Netdb($netdbUid, $netdbSecret);
+        $storageKey = 'yahoo-'.$input['consumerKey'];
+        $response = $storage->get($storageKey);
+        $value = json_decode($response->value);
         
         // session store interface defined in Yahoo! SDK
-        $yahooSdkSessionStore = new CustomSessionStore('1', '123qweasdzxc', $input['consumerKey']);
+        $yahooSdkSessionStore = new CustomSessionStore($storage, $storageKey);
 
         //use oauth consumer to sign request for access token
-        $consumer = new OAuthConsumer($service['key'], $service['secret']);
+        $consumer = new OAuthConsumer($value->consumerKey, $value->consumerSecret);
 
         //format request token as expected by oauth lib
         $requestToken = new stdclass();
-        $requestToken->key = $input['token'];
+        $requestToken->key = $input['requestToken'];
 
         //ref: http://step2.googlecode.com/svn/spec/openid_oauth_extension/latest/openid_oauth_extension.html#AuthTokenReq
         $requestToken->secret = '';
@@ -89,7 +92,7 @@ switch($input['action']){
         $accessToken->guid = $params["xoauth_yahoo_guid"];
 
         //note: consumer is the app key
-        $accessToken->consumer = $service['key'];
+        $accessToken->consumer = $value->consumerKey;
 
         $accessToken->sessionHandle = $params["oauth_session_handle"];
 
@@ -111,10 +114,8 @@ switch($input['action']){
         }
 
         $yahooSdkSessionStore->storeAccessToken($accessToken);
-        	
-        // $service['token'] = json_encode($accessToken);
 
-        $data = array('success'=>'true');
+        $data = array('success'=>'true', 'debug' => $accessToken);
         break;
         
     case 'fetchHybridAuthUrl':
@@ -162,7 +163,7 @@ switch($input['action']){
         //url for openid provider log in page
         $openidLoginRedirectUrl = $openidAuthRequest->redirectURL(
             $value->openidRealmUri,
-            $value->openidReturnToUri
+            $value->openidRealmUri.$value->openidReturnToUri
         );
 
         //add hybrid auth fields
@@ -192,13 +193,16 @@ switch($input['action']){
         require_once '../../netdb/sdk.php';
         
         //fetch key
-        $store = include('store.php');
-        $service = $store[$input['consumerKey']];
+        require 'secure.inc';
+        $storage = new Netdb($netdbUid, $netdbSecret);
+        $storageKey = 'yahoo-'.$input['consumerKey'];
+        $response = $storage->get($storageKey);
+        $value = json_decode($response->value);
         
         // session store interface defined in Yahoo! SDK
-        $yahooSdkSessionStore = new CustomSessionStore('1', '123qweasdzxc', $input['consumerKey']);
+        $yahooSdkSessionStore = new CustomSessionStore($storage, $storageKey);
 
-        $yahooSession = YahooSession::requireSession($service['key'], $service['secret'], '71bgIV7k', null, $yahooSdkSessionStore);
+        $yahooSession = YahooSession::requireSession($value->consumerKey, $value->consumerSecret, '71bgIV7k', null, $yahooSdkSessionStore);
         $url = urldecode($input['url']);
         parse_str(urldecode($input['params']), $params);
         $response = $yahooSession->client->get($url, $params);
