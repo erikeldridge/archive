@@ -99,6 +99,8 @@ switch($_SERVER['REQUEST_METHOD']){
         //If there isn't a record.
         if (0 == $result[0]) {
             $sql = sprintf(
+                
+                //we use INSERT and not REPLACE because we don't use key as the primary key
                 "INSERT INTO 
                 `table1` (`primary`, `key`, `value`, `created`, `updated`) 
                 VALUES (NULL, '%s', '%s', NOW(), NOW());", 
@@ -114,7 +116,7 @@ switch($_SERVER['REQUEST_METHOD']){
                 $input['value'], $input['key']
             );
         }
-        
+
         //Either way, return the record.
         $sql .= sprintf(
             "SELECT `value` FROM `table1` WHERE `key` = '%s';", 
