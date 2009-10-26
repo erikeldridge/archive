@@ -62,7 +62,7 @@ var sdk = function () {
 			}
 			
 			//build out request params
-			url += '/server/?id=' + id + '&hash=' + consumerKey;
+			url += '/server/?id=' + id + '&consumerKey=' + consumerKey;
 			for (var key in params) {
 				url += '&'+key+'='+params[key];
 			}
