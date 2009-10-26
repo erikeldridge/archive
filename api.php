@@ -4,17 +4,17 @@ error_reporting(E_ALL);
 /*
  CREATE TABLE `netdb`.`table1` (
 `primary` INT( 20 ) NOT NULL AUTO_INCREMENT PRIMARY KEY ,
-`key` VARCHAR( 20 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
+`key` VARCHAR( 100 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
 `value` MEDIUMTEXT( 1000 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
 `created` DATETIME NOT NULL ,
 `updated` TIMESTAMP( 20 ) ON UPDATE CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE = MYISAM CHARACTER SET utf8 COLLATE utf8_unicode_ci
 */
 
-//secure
+//import private vars
 require 'secure.inc';
 
-//input
+//filter input
 $filters = array(
     'uid' => FILTER_SANITIZE_STRING,
     'hash' => FILTER_SANITIZE_STRING,
@@ -23,7 +23,7 @@ $filters = array(
 );
 $input = filter_var_array($_REQUEST, $filters);
 
-//gate
+//validate input
 if($input['uid'] != $netdbUid){
     echo json_encode(array('status' => 'error', 'details' => 'invalid user id: '.$input['uid']));
     exit();
@@ -33,49 +33,105 @@ if($input['uid'] != $netdbUid){
 }elseif(empty($input['key'])){
     echo json_encode(array('status' => 'error', 'details' => 'key cannot be blank'.$input['key']));
     exit();
-}
-
-//init db
-$dsn = "mysql:dbname=$name;host=$host";
-
-try {
-    $pdo = new PDO($dsn, $user, $pass);
-} catch (PDOException $e) {
-    echo json_encode(array('status' => 'error', 'details' => 'db connection failed: '.$e->getMessage()));
+}elseif(strlen($input['key']) > 150){
+    echo json_encode(array('status' => 'error', 'details' => 'key must be <= 150 char, not '.strlen($input['key'])));
     exit();
 }
 
-//handle request
-function get($pdo, $key){
-    $sql = "SELECT value FROM `table1` WHERE `key` = :key";
-    $prepared = $pdo->prepare($sql);
-    $prepared->execute(array(':key' => $key));
-    $result = $prepared->fetch();
-    $response = array('status'=>'success');
-    if($result){
-        $response['value'] = $result['value'];
-    }
-    return $response;
+//init db
+$mysqli = new mysqli($host, $user, $pass, $name);
+
+if ($mysqli->connect_error) {
+    $details = sprintf('db connection failed (%s): %s', $mysqli->connect_errno, $mysqli->connect_error);
+    echo json_encode(array('status' => 'error', 'details' => $details));
+    exit();
 }
+
+//define fn to manage myqli multi_query
+function runMultiQuery($mysqli, $sql){
+    $results = array();
+    if ($mysqli->multi_query($sql)) {
+        do {
+            $rows = array();
+            if ($result = $mysqli->store_result()) {
+                while ($row = $result->fetch_assoc()) {
+                    $rows[] = $row;
+                }
+                $result->free();
+            }
+            $results[] = $rows;
+        } while ($mysqli->next_result());
+    } else {
+       //error?
+    }
+    return $results;
+}
+
+//handle requests
 switch($_SERVER['REQUEST_METHOD']){
     case 'GET':
-        $response = get($pdo, $input['key']);
+        $sql = sprintf(
+            "SELECT `value` FROM `table1` WHERE `key` = '%s';", 
+            $input['key']
+        );
+        
+        //use multi query for consistency
+        $result = runMultiQuery($mysqli, $sql);
+        $response = array(
+            'status' => 'success',
+            
+            //1st query (even single queries are nested), 1st result row, 'value field'.
+            //Cleanup filtered, json-ed, escaped data before returning it.
+            'value' => html_entity_decode(stripslashes($result[0][0]['value']))
+        );
         break;
     case 'POST':
-        $sql = "UPDATE `table1` SET `value` = :value WHERE `key` = :key";
-        $prepared = $pdo->prepare($sql);
-        $prepared->execute(array(':key' => $input['key'], ':value' => $input['value']));
-        if(0 == $prepared->rowCount()){
-            $sql = 'INSERT INTO `table1` (`primary`, `key`, `value`, `created`, `updated`) VALUES (NULL, :key, :value, NOW(), NOW())';
-            $prepared = $pdo->prepare($sql);
-            $prepared->execute(array(':key' => $input['key'], ':value' => $input['value']));
+    
+        //See if there's a record for this key.
+        $sql = sprintf(
+            "SELECT COUNT(*) FROM `table1` 
+            WHERE `key` = '%s';", 
+            $input['key']
+        );
+        $result = $mysqli->query($sql)->fetch_row();
+        $input['value'] = $mysqli->escape_string($input['value']);
+        
+        //If there isn't a record.
+        if (0 == $result[0]) {
+            $sql = sprintf(
+                "INSERT INTO 
+                `table1` (`primary`, `key`, `value`, `created`, `updated`) 
+                VALUES (NULL, '%s', '%s', NOW(), NOW());", 
+                $input['key'], $input['value']
+            );
+            
+        //If there is a record.
+        }else{
+            $sql = sprintf(
+                "UPDATE `table1`
+                SET `value` = '%s'
+                WHERE `key` = '%s';",
+                $input['value'], $input['key']
+            );
         }
-        $response = get($pdo, $input['key']);
+        
+        //Either way, return the record.
+        $sql .= sprintf(
+            "SELECT `value` FROM `table1` WHERE `key` = '%s';", 
+            $input['key']
+        );
+        $result = runMultiQuery($mysqli, $sql);
+        $response = array(
+            'status' => 'success',
+            'value' => html_entity_decode(stripslashes($result[1][0]['value']))
+        );
         break;
     default:
         $response = array('status' => 'error', 'details' => 'invalid request method: '.$_SERVER['REQUEST_METHOD']);
         break;
 }
+
+$mysqli->close();
 
 echo json_encode($response);
 ?>
