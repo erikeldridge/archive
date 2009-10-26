@@ -3,7 +3,7 @@
 /*
 Copyright (c) 2009, Erik Eldridge. All rights reserved.
 Code licensed under the BSD License:
-http://test.erikeldridge.com/foxbatexample/license.txt
+http://github.com/erikeldridge/foxbatexample/blob/master/license.txt
 */
  
 session_start();
@@ -114,8 +114,15 @@ switch($input['action']){
         }
 
         $yahooSdkSessionStore->storeAccessToken($accessToken);
-
-        $data = array('success'=>'true', 'debug' => $accessToken);
+        
+        //store req token as sesson id
+        $response = $storage->set('sessionId-uid', $input['requestToken']);
+        
+        if('success' != $response->status){
+            //error
+        }
+        
+        $data = array('success'=>'true');
         break;
         
     case 'fetchHybridAuthUrl':
@@ -180,6 +187,30 @@ switch($input['action']){
         
     case 'makeRequest':
     
+        require_once '../../netdb/sdk.php';
+    
+        //fetch key
+        require 'secure.inc';
+        $storage = new Netdb($netdbUid, $netdbSecret);
+        $storageKey = 'yahoo-'.$input['consumerKey'];
+        $response = $storage->get($storageKey);
+        $value = json_decode($response->value);
+    
+        //BEGIN: validate request using session id
+        
+        //fetch session id for claimed user
+        $response = $storage->get('sessionId-uid');
+            
+        //compare it to passed sesion id
+        $passedSessionId = $input['requestToken'];
+        $storedSessionId = json_decode($response->value);
+        if($passedSessionId != $storedSessionId){
+            $data = array('status' => 'error', 'details' => 'invalid session id: '.json_decode($response->value));
+            break;
+        }
+        
+        //END: validate request using session id
+        
         //settings
         $oauthIncludePath = '../../yosdk/';
         
@@ -190,14 +221,6 @@ switch($input['action']){
         require_once 'Yahoo.inc';
         require_once 'YahooSessionStore.inc';
         require_once 'CustomSessionStore.php';
-        require_once '../../netdb/sdk.php';
-        
-        //fetch key
-        require 'secure.inc';
-        $storage = new Netdb($netdbUid, $netdbSecret);
-        $storageKey = 'yahoo-'.$input['consumerKey'];
-        $response = $storage->get($storageKey);
-        $value = json_decode($response->value);
         
         // session store interface defined in Yahoo! SDK
         $yahooSdkSessionStore = new CustomSessionStore($storage, $storageKey);
@@ -207,7 +230,7 @@ switch($input['action']){
         parse_str(urldecode($input['params']), $params);
         $response = $yahooSession->client->get($url, $params);
         
-        $data = array('response' => json_decode($response['responseBody']));
+        $data = array('response' => json_decode($response['responseBody']), 'debug' => $validId);
         break;
         
     default:
