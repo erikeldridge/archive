@@ -1,28 +1,10 @@
 <?php
 
-/**
- * @package http://github.com/erikeldridge/foxbatexample/tree/master    
- * @copyright (c) 2009, Erik Eldridge, all rights reserved
- * @license BSD Open Source License
- *
- *   Permission is hereby granted, free of charge, to any person obtaining a copy
- *   of this software and associated documentation files (the "Software"), to deal
- *   in the Software without restriction, including without limitation the rights
- *   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- *   copies of the Software, and to permit persons to whom the Software is
- *   furnished to do so, subject to the following conditions:
- *
- *   The above copyright notice and this permission notice shall be included in
- *   all copies or substantial portions of the Software.
- *
- *   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- *   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- *   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- *   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- *   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- *   THE SOFTWARE.
- **/
+/*
+Copyright (c) 2009, Erik Eldridge. All rights reserved.
+Code licensed under the BSD License:
+http://test.erikeldridge.com/foxbatexample/license.txt
+*/
  
 session_start();
 
@@ -30,7 +12,7 @@ $filters = array(
     
     //internal params
     'id' => FILTER_SANITIZE_STRING,
-    'hash' => FILTER_SANITIZE_STRING,
+    'consumerKey' => FILTER_SANITIZE_STRING,
     
     //fetch hybrid auth
     'action' => FILTER_SANITIZE_STRING,
@@ -64,13 +46,16 @@ switch($input['action']){
         set_include_path($includePath);
     
         require_once 'Yahoo.inc';
-    
+        require_once 'YahooSessionStore.inc';
+        require_once 'CustomSessionStore.php';
+        require_once '../../netdb/sdk.php';
+        
         //fetch key
         $store = include('store.php');
-        $service = $store[$input['hash']];
+        $service = $store[$input['consumerKey']];
         
         // session store interface defined in Yahoo! SDK
-        $yahooSdkSessionStore = new CookieSessionStore();
+        $yahooSdkSessionStore = new CustomSessionStore('1', '123qweasdzxc', $input['consumerKey']);
 
         //use oauth consumer to sign request for access token
         $consumer = new OAuthConsumer($service['key'], $service['secret']);
@@ -139,7 +124,7 @@ switch($input['action']){
         
         //fetch key
         $store = include('store.php');
-        $service = $store[$input['hash']];
+        $service = $store[$input['consumerKey']];
         
         //BEGIN: generate openid+oauth redirect url
         
@@ -190,6 +175,7 @@ switch($input['action']){
         break;
         
     case 'makeRequest':
+    
         //settings
         $oauthIncludePath = '../../yosdk/';
         
@@ -198,13 +184,16 @@ switch($input['action']){
         set_include_path($includePath);
     
         require_once 'Yahoo.inc';
+        require_once 'YahooSessionStore.inc';
+        require_once 'CustomSessionStore.php';
+        require_once '../../netdb/sdk.php';
         
         //fetch key
         $store = include('store.php');
-        $service = $store[$input['hash']];
+        $service = $store[$input['consumerKey']];
         
         // session store interface defined in Yahoo! SDK
-        $yahooSdkSessionStore = new CookieSessionStore();
+        $yahooSdkSessionStore = new CustomSessionStore('1', '123qweasdzxc', $input['consumerKey']);
 
         $yahooSession = YahooSession::requireSession($service['key'], $service['secret'], '71bgIV7k', null, $yahooSdkSessionStore);
         $url = urldecode($input['url']);
