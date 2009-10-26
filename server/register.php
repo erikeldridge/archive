@@ -1,4 +1,11 @@
 <?php
+
+/*
+Copyright (c) 2009, Erik Eldridge. All rights reserved.
+Code licensed under the BSD License:
+http://test.erikeldridge.com/foxbatexample/license.txt
+*/
+
 $filters = array(
     'submit' => FILTER_SANITIZE_STRING,
     'consumerKey' => FILTER_SANITIZE_STRING,
