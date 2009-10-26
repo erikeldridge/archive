@@ -4,7 +4,7 @@ require 'secure.inc';
 $netdb = new Netdb($netdbUid, $netdbSecret);
 
 $key = 'asd123';
-$value = 'value=thisthat';
+$value = 'thisthat';
 $response = $netdb->set($key, $value);
 assert('success' == $response->status);
 assert('thisthat' == $response->value);
