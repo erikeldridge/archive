@@ -1,4 +1,11 @@
 <?php
+
+/*
+Copyright (c) 2009, Erik Eldridge. All rights reserved.
+Code licensed under the BSD License:
+http://github.com/erikeldridge/authproxy/blob/master/license.txt
+*/
+
 require 'keydb.php';
 //post {domain}/authproxy/api.php?action=insert&hash={hash}&userId={userId}&type={type}
 //   --> insert 
@@ -47,7 +54,7 @@ if (!isset($input['userId'])) {
     if('success' == $response->status){
 
         if (isset($response->value)) {
-            $response = array('value' => $response->value);
+            $response = array('value' => json_decode($response->value));
         }
         
         $response['status'] = 'success';
@@ -83,7 +90,7 @@ if (!isset($input['userId'])) {
         
             //confirm success
             if('success' == $response->status){
-                $response = array('status' => 'success', 'recordId' => $recordId, 'debug' => $response);
+                $response = array('status' => 'success', 'recordId' => $recordId, 'debug' => print_r($input, true));
             } else {
                 $response = array('status' => 'error', 'debug' => $response);                
             }

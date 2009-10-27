@@ -3,55 +3,61 @@
 /*
 Copyright (c) 2009, Erik Eldridge. All rights reserved.
 Code licensed under the BSD License:
-http://test.erikeldridge.com/foxbatexample/license.txt
+http://github.com/erikeldridge/authproxy/blob/master/license.txt
 */
 
 $filters = array(
     'submit' => FILTER_SANITIZE_STRING,
+    'localKey' => FILTER_SANITIZE_STRING,
     'consumerKey' => FILTER_SANITIZE_STRING,
     'consumerSecret' => FILTER_SANITIZE_STRING,
     'providerName' => FILTER_SANITIZE_STRING,
-    'openidRealmUri' => FILTER_SANITIZE_STRING,
-    'openidReturnToUri' => FILTER_SANITIZE_STRING,
+    'callbackUrl' => FILTER_SANITIZE_STRING,
 );
 $input = filter_var_array($_GET, $filters);
 
 if(isset($input['submit'])){
     
-    //format for storage
-    $obj = new stdclass();
-    $obj->providerName = $input['providerName'];
-    $obj->consumerKey = $input['consumerKey'];
-    $obj->consumerSecret = $input['consumerSecret'];
-    $obj->openidRealmUri = $input['openidRealmUri'];
-    $obj->openidReturnToUri = $input['openidReturnToUri'];
+    require 'keydb.php';
     
-    //init storage
-    require '../../netdb/sdk.php';
-    require 'secure.inc';
-    $storage = new Netdb($netdbUid, $netdbSecret);
-    $storageKey = $input['providerName'].'-'.$input['consumerKey'];
-    $storageValue = json_encode($obj);
+    //http://github.com/shuber/curl
+    require '../curl/curl.php';
+    $curl = new Curl;
     
-    //store obj
-    $response = $storage->set($storageKey, $storageValue);
+    $url = sprintf('%s/authproxy/api.php', 'http://localhost/~eldridge');
+    $params = array(
+        'action' => 'insert',
+        'hash' => sha1(KeyDB::$credentials[$input['localKey']].$input['localKey']),
+        'userId' => $input['localKey'],
+        'type' => 'oauth',
+        'providerName' => $input['providerName'],
+        'consumerKey' => $input['consumerKey'],
+        'consumerSecret' => $input['consumerSecret'],
+        'callbackUrl' => $input['callbackUrl']
+    );
+    $response = json_decode($curl->post($url, $params)->body);
     
     //confirm success
     if('success' == $response->status){
-        $value = json_decode($response->value);
+        $params = array(
+            'hash' => sha1(KeyDB::$credentials[$input['localKey']].$input['localKey']),
+            'userId' => $input['localKey'],
+            'type' => 'oauth',
+            'recordId' => $response->recordId
+        );
+        $response = json_decode($curl->get($url, $params)->body);
     }
 }
 ?>
 
-<? if($value->providerName): ?>
+<? if($response->value->providerName): ?>
 <b>Success!</b><br/>
 Here's what was saved:
 <ul>
-    <li><?= $value->providerName ?></li>
-    <li><?= $value->consumerKey ?></li>
-    <li><?= $value->consumerSecret ?></li>
-    <li><?= $value->openidRealmUri ?></li>
-    <li><?= $value->openidReturnToUri ?></li>
+    <li><?= $response->value->providerName ?></li>
+    <li><?= $response->value->consumerKey ?></li>
+    <li><?= $response->value->consumerSecret ?></li>
+    <li><?= $response->value->callbackUrl ?></li>
 </ul>
 Re-submit form to update/correct information
 <p/>
@@ -59,15 +65,15 @@ Re-submit form to update/correct information
 <b>Register your OAuth key/secret here</b>
 <? endif ?>
 <form>
+    Local key<br/>
+    <input name="localKey"/><br/>
     Provider name, eg yahoo:<br/>
     <input name="providerName"/><br/>
     Consumer key (from provider):<br/>
     <input name="consumerKey"/><br/>
     Consumer secret (from provider):<br/>
     <input name="consumerSecret"/><br/>
-    OpenID realm URI, eg http://test.erikeldidge.com:<br/>
-    <input name="openidRealmUri"/><br/>
-    OpenID return-to path, eg /foxbat/return_to.html:<br/>
-    <input name="openidReturnToUri"/><br/>
+    Callback URL, eg http://example.com<br/>
+    <input name="callbackUrl"/><br/>
     <input type="submit" name="submit" value="Register"/>
 </form>
