@@ -24,10 +24,10 @@ $filters = array(
 $input = filter_var_array($_REQUEST, $filters);
 
 //validate input
-if($input['uid'] != $netdbUid){
+if(in_array($input['uid'], $credentials)){
     echo json_encode(array('status' => 'error', 'details' => 'invalid user id: '.$input['uid']));
     exit();
-}elseif(md5($input['uid'].$netdbSecret) != $input['hash']){
+}elseif(sha1($credentials[$input['uid']].$input['uid']) != $input['hash']){
     echo json_encode(array('status' => 'error', 'details' => 'invalid hash: '.$input['hash']));
     exit();
 }elseif(empty($input['key'])){

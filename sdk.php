@@ -5,7 +5,7 @@ class Netdb {
     function __construct($uid, $secret){
         $this->uid = $uid;
         $this->secret = $secret;
-        $this->hash = md5($uid.$secret);
+        $this->hash = sha1($secret.$uid);
     }
     function get($key){
         $replace = array($this->uid, $this->hash, $key);
@@ -18,7 +18,7 @@ class Netdb {
     }
     function set($key, $value){
         if(!is_string($value)){
-           throw('value must be a string, not: '.print_r($value, true));
+           throw(new Exception('value must be a string, not: '.print_r($value, true)));
         }
         $replace = array($this->uid, $this->hash, $key);
         $url = str_replace($this->search, $replace, $this->url);
