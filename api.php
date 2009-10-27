@@ -77,14 +77,18 @@ switch($_SERVER['REQUEST_METHOD']){
         
         //use multi query for consistency
         $result = runMultiQuery($mysqli, $sql);
-        $response = array(
-            'status' => 'success',
+        
+        $response = array('status' => 'success');
+        
+        if ($result[0]) {
             
             //1st query (even single queries are nested), 1st result row, 'value field'.
             //Cleanup filtered, json-ed, escaped data before returning it.
-            'value' => html_entity_decode(stripslashes($result[0][0]['value']))
-        );
+            $response['value'] = html_entity_decode(stripslashes($result[0][0]['value']));
+        }
+        
         break;
+        
     case 'POST':
     
         //See if there's a record for this key.
