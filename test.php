@@ -1,38 +1,56 @@
 <?php
 require 'keydb.php';
+
+//http://github.com/shuber/curl
 require '../curl/curl.php';
 $curl = new Curl;
 
 //insert oauth record
 $userId = '1';
-$url = sprintf('%s/authproxy/api.php?action=%s&hash=%s&userId=%s&type=%s',
-    'http://localhost/~eldridge',
-    'insert',
-    sha1(KeyDB::$credentials[$userId].$userId),
-    $userId,
-    'oauth'
-);
+$providerName = 'yahoo.com';
+$consumerKey = 'sjdfkjsjdlkfjl';
+$consumerSecret = 'jljsldjfjsldjfljsjdf';
+$callbackUrl = 'http://example.com';
+$url = sprintf('%s/authproxy/api.php', 'http://localhost/~eldridge');
 $params = array(
-    'providerName' => 'yahoo.com',
-    'consumerKey' => 'sjdjfljsldkjfkl',
-    'consumerSecret' => 'skdjflsjdfjlsjdlkjflks',
-    'callbackUrl' => 'http://example.com'
+    'action' => 'insert',
+    'hash' => sha1(KeyDB::$credentials[$userId].$userId),
+    'userId' => $userId,
+    'type' => 'oauth',
+    'providerName' => $providerName,
+    'consumerKey' => $consumerKey,
+    'consumerSecret' => $consumerSecret,
+    'callbackUrl' => $callbackUrl
 );
 $response = json_decode($curl->post($url, $params)->body);
 assert('success' == $response->status);
 assert(isset($response->recordId) && !empty($response->recordId));
 
-//delete record
-$userId = '1';
-$url = sprintf('%s/authproxy/api.php?action=%s&hash=%s&userId=%s&type=%s',
-    'http://localhost/~eldridge',
-    'delete',
-    sha1(KeyDB::$credentials[$userId].$userId),
-    $userId,
-    'oauth'
-);
+//get oauth record
+$recordId = $response->recordId;
+$url = sprintf('%s/authproxy/api.php', 'http://localhost/~eldridge');
 $params = array(
-    'recordId' => $response->recordId
+    'hash' => sha1(KeyDB::$credentials[$userId].$userId),
+    'userId' => $userId,
+    'type' => 'oauth',
+    'recordId' => $recordId
+);
+$response = json_decode($curl->get($url, $params)->body);
+assert('success' == $response->status);
+$value = json_decode($response->value);
+assert($value->providerName == $providerName);
+assert($value->consumerKey == $consumerKey);
+assert($value->consumerSecret == $consumerSecret);
+assert($value->callbackUrl == $callbackUrl);
+
+//delete record
+$url = sprintf('%s/authproxy/api.php', 'http://localhost/~eldridge');
+$params = array(
+    'hash' => sha1(KeyDB::$credentials[$userId].$userId),
+    'userId' => $userId,
+    'action' => 'delete',
+    'type' => 'oauth',
+    'recordId' => $recordId
 );
 $response = json_decode($curl->post($url, $params)->body);
 assert('success' == $response->status);
