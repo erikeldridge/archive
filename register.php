@@ -22,8 +22,8 @@ if(isset($input['submit'])){
     
     //http://github.com/shuber/curl
     require '../curl/curl.php';
-    $curl = new Curl;
     
+    $curl = new Curl;
     $url = sprintf('%s/authproxy/api.php', 'http://localhost/~eldridge');
     $params = array(
         'action' => 'insert',
@@ -36,7 +36,7 @@ if(isset($input['submit'])){
         'callbackUrl' => $input['callbackUrl']
     );
     $response = json_decode($curl->post($url, $params)->body);
-    
+    var_dump($response);
     //confirm success
     if('success' == $response->status){
         $params = array(
@@ -47,6 +47,7 @@ if(isset($input['submit'])){
         );
         $response = json_decode($curl->get($url, $params)->body);
     }
+    
 }
 ?>
 
@@ -66,7 +67,7 @@ Re-submit form to update/correct information
 <? endif ?>
 <form>
     Local key<br/>
-    <input name="localKey"/><br/>
+    <input name="localKey" value="BG5BMUK24OOYGHWKTJBCX2TN5E"/><br/>
     Provider name, eg yahoo:<br/>
     <input name="providerName"/><br/>
     Consumer key (from provider):<br/>
