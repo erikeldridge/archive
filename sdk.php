@@ -1,5 +1,9 @@
 <?php
 
+if (!class_exists('Curl'))) {
+    throw new Exception('Curl class (http://github.com/shuber/curl) required');
+}
+
 class NetDB {
     
     //template api url
