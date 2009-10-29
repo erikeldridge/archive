@@ -1,8 +1,8 @@
 <?php
 
 class NetDB {
-    var $url = "http://test.erikeldridge.com/netdb/{uid}/{hash}/{key}";
-    var $search = array('{uid}', '{hash}', '{key}');
+    private $url = "http://test.erikeldridge.com/netdb/{uid}/{hash}/{key}";
+    private $search = array('{uid}', '{hash}', '{key}');
     private $curl = new Curl;
     function __construct($uid, $secret){
         $this->uid = $uid;
