@@ -1,7 +1,7 @@
 <?php
 require 'sdk.php';
 require 'secure.inc';
-$netdb = new Netdb($netdbUid, $netdbSecret);
+$netdb = new NetDB($netdbUid, $netdbSecret);
 
 $key = 'doesntexist';
 $response = $netdb->get($key);

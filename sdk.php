@@ -1,5 +1,5 @@
 <?php
-class Netdb {
+class NetDB {
     var $url = "http://test.erikeldridge.com/netdb/{uid}/{hash}/{key}";
     var $search = array('{uid}', '{hash}', '{key}');
     function __construct($uid, $secret){
