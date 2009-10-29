@@ -1,6 +1,10 @@
 <?php
 require 'sdk.php';
 require 'secure.inc';
+
+//http://github.com/shuber/curl
+require '../curl/curl.php';
+
 $netdb = new NetDB($netdbUid, $netdbSecret);
 
 $key = 'doesntexist';
