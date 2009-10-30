@@ -1,9 +1,12 @@
 <?php
-require 'sdk.php';
-require 'secure.inc';
 
 //http://github.com/shuber/curl
 require '../curl/curl.php';
+
+require 'store/store.interface.php';
+require 'store/store.class.php';
+require 'sdk.php';
+require 'secure.inc';
 
 $netdb = new NetDB($netdbUid, $netdbSecret);
 
@@ -28,4 +31,6 @@ $value = 'fooboo';
 $response = $netdb->set($key, $value);
 assert('success' == $response->status);
 assert('fooboo' == $response->value);
+
+
 ?>
