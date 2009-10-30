@@ -1,7 +1,7 @@
 <?php
 
-class SqliteStore implements Store {
-    function __construct($filePath) {
+class SQLiteStore implements Store {
+    function __construct($filePath = 'sqlite') {
         $this->db = new SQLiteDatabase($filePath, 0777, $errorMessage);
     }
     function get($key) {

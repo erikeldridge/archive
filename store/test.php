@@ -5,7 +5,7 @@
 require 'store.interface.php';
 require 'store.class.php';
 
-$store = new SqliteStore('sqlite');
+$store = new SQLiteStore();
 
 //set up
 $store->db->query("CREATE TABLE table1 (key varchar(100), value varchar(1000), created timestamp(20), updated timestamp(20))", $error);
