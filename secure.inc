@@ -1,12 +1,11 @@
 <?php
 
 //netdb access params
-$netdbUid = '';
-$netdbSecret = '';
+$credentials = array('1' => 'sdjfkjsldkfj');
 
 //db access params
-$name = '';
-$host = '';
-$user = '';
-$pass = '';
+// $name = '';
+// $host = '';
+// $user = '';
+// $pass = '';
 ?>
