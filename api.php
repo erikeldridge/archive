@@ -5,6 +5,8 @@ error_reporting(E_ALL);
 
 //import private vars
 require 'secure.inc';
+require 'store/store.interface.php';
+require 'store/store.class.php';
 
 //filter input
 $filters = array(
@@ -31,54 +33,28 @@ if(in_array($input['uid'], $credentials)){
 }
 
 //init db
-$mysqli = new mysqli($host, $user, $pass, $name);
-
-if ($mysqli->connect_error) {
-    $details = sprintf('db connection failed (%s): %s', $mysqli->connect_errno, $mysqli->connect_error);
+try {
+    $store = new SQLiteStore();
+} catch(Exception $e) {
+    $details = sprintf('db connection failed (%s): %s', print_r($e, true));
     echo json_encode(array('status' => 'error', 'details' => $details));
     exit();
-}
-
-//define fn to manage myqli multi_query
-function runMultiQuery($mysqli, $sql){
-    $results = array();
-    if ($mysqli->multi_query($sql)) {
-        do {
-            $rows = array();
-            if ($result = $mysqli->store_result()) {
-                while ($row = $result->fetch_assoc()) {
-                    $rows[] = $row;
-                }
-                $result->free();
-            }
-            $results[] = $rows;
-        } while ($mysqli->next_result());
-    } else {
-       //error?
-    }
-    return $results;
 }
 
 //handle requests
 switch($_SERVER['REQUEST_METHOD']){
     case 'GET':
-        $sql = sprintf(
-            "SELECT `value` FROM `table1` WHERE `key` = '%s';", 
-            $input['key']
-        );
-        
-        //use multi query for consistency
-        $result = runMultiQuery($mysqli, $sql);
-        
-        $response = array('status' => 'success');
-        
-        if ($result[0]) {
+        try {
+            $result = $store->get($input['key']);
+            $response = array('status' => 'success');
+            if ($result) {
+                
+                //Cleanup filtered, json-ed, escaped data before returning it.
+                $response['value'] = html_entity_decode(stripslashes($result));
+            }
+        } catch(Exception $e) {
             
-            //1st query (even single queries are nested), 1st result row, 'value field'.
-            //Cleanup filtered, json-ed, escaped data before returning it.
-            $response['value'] = html_entity_decode(stripslashes($result[0][0]['value']));
-        }
-        
+        }        
         break;
         
     case 'POST':
@@ -128,8 +104,6 @@ switch($_SERVER['REQUEST_METHOD']){
         $response = array('status' => 'error', 'details' => 'invalid request method: '.$_SERVER['REQUEST_METHOD']);
         break;
 }
-
-$mysqli->close();
 
 echo json_encode($response);
 ?>
