@@ -3,12 +3,12 @@
 //http://github.com/shuber/curl
 require '../curl/curl.php';
 
-require 'store/store.interface.php';
-require 'store/store.class.php';
+require 'storage/interface.php';
+require 'storage/sqlite.php';
 require 'sdk.php';
 require 'secure.inc';
 
-$netdb = new NetDB($netdbUid, $netdbSecret);
+$netdb = new NetDB('http://localhost/~eldridge', 1, $credentials[1]);
 
 $key = 'doesntexist';
 $response = $netdb->get($key);
@@ -17,20 +17,19 @@ assert(!isset($response->value));
 
 $key = 'asd123';
 $value = 'thisthat';
-$response = $netdb->set($key, $value);
+$response = $netdb->set($key, $value);var_dump($response);
 assert('success' == $response->status);
-assert('thisthat' == $response->value);
 
 $key = 'asd123';
 $response = $netdb->get($key);
 assert('success' == $response->status);
 assert('thisthat' == $response->value);
-
-$key = 'asd123';
-$value = 'fooboo';
-$response = $netdb->set($key, $value);
-assert('success' == $response->status);
-assert('fooboo' == $response->value);
+// 
+// $key = 'asd123';
+// $value = 'fooboo';
+// $response = $netdb->set($key, $value);
+// assert('success' == $response->status);
+// assert('fooboo' == $response->value);
 
 
 ?>
