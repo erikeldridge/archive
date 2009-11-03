@@ -2,8 +2,8 @@
 
 //Note: dir must be writable by web server for sqlite to be able to create a db and table
 
-require 'store.interface.php';
-require 'store.class.php';
+require 'interface.php';
+require 'sqlite.php';
 
 $store = new SQLiteStore();
 
