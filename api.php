@@ -1,13 +1,16 @@
 <?php
 error_reporting(E_ALL);
 
-/* CREATE TABLE `netdb`.`46c785c3c2f6de9199cdfed3225b87b2399d2592` ( `key` VARCHAR( 150 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL PRIMARY KEY, `value` MEDIUMTEXT( 1000 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL , `created` DATETIME NOT NULL , `updated` TIMESTAMP( 20 ) ON UPDATE CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ) ENGINE = MYISAM CHARACTER SET utf8 COLLATE utf8_unicode_ci */
+/* 
+ CREATE TABLE `netdb`.`46c785c3c2f6de9199cdfed3225b87b2399d2592` (
+`key` VARCHAR( 150 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
+`value` VARCHAR( 1000 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
+`created` TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
+) ENGINE = MYISAM CHARACTER SET utf8 COLLATE utf8_unicode_ci
+*/
 
 //import private vars
 require 'secure.inc';
-require 'storage/interface.php';
-// require 'storage/mysqli.php';
-require 'storage/sqlite.php';
 
 //filter input
 $filters = array(
@@ -35,7 +38,11 @@ if(in_array($input['uid'], $credentials)){
 
 //init db
 try {
-    $storage = new SQLiteStore();
+    require 'storage/interface.php';
+    require 'storage/mysqli.php';
+    $storage = new MysqliStore($host, $user, $pass, $name);
+    // require 'storage/sqlite.php';
+    // $storage = new SQLiteStore();
 } catch(Exception $e) {
     $details = sprintf('db connection failed (%s): %s', print_r($e, true));
     echo json_encode(array('status' => 'error', 'details' => $details));
