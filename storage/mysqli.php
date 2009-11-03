@@ -3,28 +3,28 @@ class MysqliStore implements Store {
     function __construct($host, $user, $pass, $name) {
         $this->mysqli = new mysqli($host, $user, $pass, $name);
 
-        if ($mysqli->connect_error) {
+        if ($this->mysqli->connect_error) {
             $details = sprintf(
                 'db connection failed (%s): %s', 
                 $this->mysqli->connect_errno, 
                 $this->mysqli->connect_error
             );
-            throw new Exception(json_encode(array('status' => 'error', 'details' => $details)));
+            throw new Exception($details);
         }
     }
-    function runMultiQuery($mysqli, $sql){
+    function runMultiQuery($sql){
         $results = array();
-        if ($mysqli->multi_query($sql)) {
+        if ($this->mysqli->multi_query($sql)) {
             do {
                 $rows = array();
-                if ($result = $mysqli->store_result()) {
+                if ($result = $this->mysqli->store_result()) {
                     while ($row = $result->fetch_assoc()) {
                         $rows[] = $row;
                     }
                     $result->free();
                 }
                 $results[] = $rows;
-            } while ($mysqli->next_result());
+            } while ($this->mysqli->next_result());
         } else {
            //error?
         }
@@ -32,12 +32,12 @@ class MysqliStore implements Store {
     }
     function get($key) {
         $sql = sprintf(
-            "SELECT `value` FROM `table1` WHERE `key` = '%s';", 
+            "SELECT `value` FROM `46c785c3c2f6de9199cdfed3225b87b2399d2592` WHERE `key` = '%s';", 
             $key
         );
         
         //use multi query for consistency
-        $result = runMultiQuery($mysqli, $sql);
+        $result = $this->runMultiQuery($sql);
         
         $response = array('status' => 'success');
 
@@ -48,45 +48,19 @@ class MysqliStore implements Store {
             $response['value'] = html_entity_decode(stripslashes($result[0][0]['value']));
         }
     }
-    function set($key, $val){}
+    function set($key, $val){
+        $time = time();
+        $sql = sprintf(
+            "REPLACE INTO 
+            `46c785c3c2f6de9199cdfed3225b87b2399d2592` (`key`, `value`, `created`) 
+            VALUES ('%s', '%s', '%s');", 
+            $input['key'], $input['value'], $time
+        );
+
+        $result = $this->runMultiQuery($sql);
+        $response = array(
+            'status' => 'success',
+            'value' => html_entity_decode(stripslashes($result[1][0]['value']))
+        );
+    }
 }
-// See if there's a record for this key.
-// $sql = sprintf(
-//     "SELECT COUNT(*) FROM `table1` 
-//     WHERE `key` = '%s';", 
-//     $input['key']
-// );
-// $result = $mysqli->query($sql)->fetch_row();
-// $input['value'] = $mysqli->escape_string($input['value']);
-// 
-// //If there isn't a record.
-// if (0 == $result[0]) {
-//     $sql = sprintf(
-//         
-//         //we use INSERT and not REPLACE because we don't use key as the primary key
-//         "INSERT INTO 
-//         `table1` (`primary`, `key`, `value`, `created`, `updated`) 
-//         VALUES (NULL, '%s', '%s', NOW(), NOW());", 
-//         $input['key'], $input['value']
-//     );
-//     
-// //If there is a record.
-// }else{
-//     $sql = sprintf(
-//         "UPDATE `table1`
-//         SET `value` = '%s'
-//         WHERE `key` = '%s';",
-//         $input['value'], $input['key']
-//     );
-// }
-// 
-// //Either way, return the record.
-// $sql .= sprintf(
-//     "SELECT `value` FROM `table1` WHERE `key` = '%s';", 
-//     $input['key']
-// );
-// $result = runMultiQuery($mysqli, $sql);
-// $response = array(
-//     'status' => 'success',
-//     'value' => html_entity_decode(stripslashes($result[1][0]['value']))
-// );
