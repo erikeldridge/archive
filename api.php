@@ -5,8 +5,9 @@ error_reporting(E_ALL);
 
 //import private vars
 require 'secure.inc';
-require 'store/store.interface.php';
-require 'store/store.class.php';
+require 'storage/interface.php';
+// require 'storage/mysqli.php';
+require 'storage/sqlite.php';
 
 //filter input
 $filters = array(
@@ -34,7 +35,7 @@ if(in_array($input['uid'], $credentials)){
 
 //init db
 try {
-    $store = new SQLiteStore();
+    $storage = new SQLiteStore();
 } catch(Exception $e) {
     $details = sprintf('db connection failed (%s): %s', print_r($e, true));
     echo json_encode(array('status' => 'error', 'details' => $details));
@@ -45,7 +46,7 @@ try {
 switch($_SERVER['REQUEST_METHOD']){
     case 'GET':
         try {
-            $result = $store->get($input['key']);
+            $result = $storage->get($input['key']);
             $response = array('status' => 'success');
             if ($result) {
                 
@@ -57,48 +58,13 @@ switch($_SERVER['REQUEST_METHOD']){
         }        
         break;
         
-    case 'POST':
-    
-        //See if there's a record for this key.
-        $sql = sprintf(
-            "SELECT COUNT(*) FROM `table1` 
-            WHERE `key` = '%s';", 
-            $input['key']
-        );
-        $result = $mysqli->query($sql)->fetch_row();
-        $input['value'] = $mysqli->escape_string($input['value']);
-        
-        //If there isn't a record.
-        if (0 == $result[0]) {
-            $sql = sprintf(
-                
-                //we use INSERT and not REPLACE because we don't use key as the primary key
-                "INSERT INTO 
-                `table1` (`primary`, `key`, `value`, `created`, `updated`) 
-                VALUES (NULL, '%s', '%s', NOW(), NOW());", 
-                $input['key'], $input['value']
-            );
-            
-        //If there is a record.
-        }else{
-            $sql = sprintf(
-                "UPDATE `table1`
-                SET `value` = '%s'
-                WHERE `key` = '%s';",
-                $input['value'], $input['key']
-            );
+    case 'POST':    
+        try {
+            $storage->set($input['key'], $input['value']);
+            $response = array('status' => 'success');
+        } catch(Exception $e) {
+            $response = array('status' => 'error', 'details' => print_r($e, true));
         }
-
-        //Either way, return the record.
-        $sql .= sprintf(
-            "SELECT `value` FROM `table1` WHERE `key` = '%s';", 
-            $input['key']
-        );
-        $result = runMultiQuery($mysqli, $sql);
-        $response = array(
-            'status' => 'success',
-            'value' => html_entity_decode(stripslashes($result[1][0]['value']))
-        );
         break;
     default:
         $response = array('status' => 'error', 'details' => 'invalid request method: '.$_SERVER['REQUEST_METHOD']);
