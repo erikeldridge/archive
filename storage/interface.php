@@ -2,7 +2,7 @@
 interface Store {
     
     /**
-    * retreives a value from storage
+    * retrieves a value from storage
     * @param $key The index of the record to fetch as a string
     * @return raw contents of 'value' field
     * @throws exception if store error
