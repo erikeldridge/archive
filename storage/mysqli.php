@@ -48,19 +48,18 @@ class MysqliStore implements Store {
             $response['value'] = html_entity_decode(stripslashes($result[0][0]['value']));
         }
     }
-    function set($key, $val){
+    function set($key, $value){
         $time = time();
         $sql = sprintf(
             "REPLACE INTO 
             `46c785c3c2f6de9199cdfed3225b87b2399d2592` (`key`, `value`, `created`) 
             VALUES ('%s', '%s', '%s');", 
-            $input['key'], $input['value'], $time
+            $key, $value, $time
         );
 
         $result = $this->runMultiQuery($sql);
         $response = array(
-            'status' => 'success',
-            'value' => html_entity_decode(stripslashes($result[1][0]['value']))
+            'status' => 'success'
         );
     }
 }
