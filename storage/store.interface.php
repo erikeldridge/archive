@@ -12,7 +12,7 @@ interface Store {
     /**
     * puts a value into storage
     * @param $key The string index of the record to insert
-    * @param $value The string content of the record to insert
+    * @param $value The raw (each storage type may have different reqs for escaping) string content of the record to insert
     * @throws exception if store error
     */
     function set($key, $val);
