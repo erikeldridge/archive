@@ -11,19 +11,19 @@ require 'secure.inc';
 $netdb = new NetDB('http://localhost/~eldridge', 1, $credentials[1]);
 
 $key = 'doesntexist';
-$response = $netdb->get($key);
+$response = $netdb->get($key);var_dump($response);
 assert('success' == $response->status);
 assert(!isset($response->value));
-
-$key = 'asd123';
-$value = 'thisthat';
-$response = $netdb->set($key, $value);var_dump($response);
-assert('success' == $response->status);
-
-$key = 'asd123';
-$response = $netdb->get($key);
-assert('success' == $response->status);
-assert('thisthat' == $response->value);
+// 
+// $key = 'asd123';
+// $value = 'thisthat';
+// $response = $netdb->set($key, $value);
+// assert('success' == $response->status);
+// 
+// $key = 'asd123';
+// $response = $netdb->get($key);
+// assert('success' == $response->status);
+// assert('thisthat' == $response->value);
 // 
 // $key = 'asd123';
 // $value = 'fooboo';
