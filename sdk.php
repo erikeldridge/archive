@@ -5,9 +5,8 @@ if (!class_exists('Curl')) {
 }
 
 class NetDB {    
-    function __construct($uid, $secret){
+    function __construct($uid, $secret, $url){
         $this->curl = new Curl;
-        $url = 'http://example.com';
         $hash = sha1($secret.$uid);  
         $this->url = sprintf('%s/netdb/api/%s/%s', $url, $uid, $hash);
     }
