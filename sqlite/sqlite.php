@@ -23,9 +23,9 @@ class SQLiteStore implements KVStore {
         $time = time();
         $sql = sprintf(
             "REPLACE INTO 
-            table1 (key, value, created) 
+            %s (key, value, created) 
             VALUES ('%s', '%s', '%d');", 
-            $key, $value, $time
+            $this->tableName, $key, $value, $time
         );
         
         //allow exceptions to bubble up
