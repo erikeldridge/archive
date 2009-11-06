@@ -12,17 +12,29 @@ error_reporting(E_ALL);
 //import private vars
 require 'secure.inc';
 
-//filter input
-$filters = array(
-    'uid' => FILTER_SANITIZE_STRING,
-    'hash' => FILTER_SANITIZE_STRING,
-    'key' => FILTER_SANITIZE_STRING,
-    'value' => FILTER_SANITIZE_STRING
+//keys for input
+$keys = array('uid', 'hash', 'key');
+
+//fetch input args from request uri
+$uri = filter_var(
+    $_SERVER['REQUEST_URI'], 
+    FILTER_SANITIZE_STRING
 );
-$input = filter_var_array($_REQUEST, $filters);
+
+//remove leading and trailing slashes so we can explode correctly
+$uri = trim($uri, '/');
+
+//split string into values
+$values = explode('/', $uri);
+
+//we don't want the leading 'netdb' or 'api'
+$values = array_slice($values, 2);
+
+//assemble the input into an assoc arr
+$input = array_combine($keys, $values);
 
 //validate input
-if(in_array($input['uid'], $credentials)){
+if(!array_key_exists($input['uid'], $credentials)){
     echo json_encode(array('status' => 'error', 'details' => 'invalid user id: '.$input['uid']));
     exit();
 }elseif(sha1($credentials[$input['uid']].$input['uid']) != $input['hash']){
@@ -38,45 +50,77 @@ if(in_array($input['uid'], $credentials)){
 
 //init db
 try {
-    require 'storage/interface.php';
-    require 'storage/mysqli.php';
-    $storage = new MysqliStore($host, $user, $pass, $name);
-    // require 'storage/sqlite.php';
-    // $storage = new SQLiteStore();
+    $mysqli = new mysqli($host, $user, $pass, $name);
 } catch(Exception $e) {
     $details = sprintf('db connection failed (%s): %s', print_r($e, true));
     echo json_encode(array('status' => 'error', 'details' => $details));
     exit();
 }
 
+function runMultiQuery($mysqli, $sql){
+    $results = array();
+    if ($mysqli->multi_query($sql)) {
+        do {
+            $rows = array();
+            if ($result = $mysqli->store_result()) {
+                while ($row = $result->fetch_assoc()) {
+                    $rows[] = $row;
+                }
+                $result->free();
+            }
+            $results[] = $rows;
+        } while ($mysqli->next_result());
+    } else {
+       //error?
+    }
+    return $results;
+}
+
 //handle requests
 switch($_SERVER['REQUEST_METHOD']){
     case 'GET':
-        try {
-            $result = $storage->get($input['key']);
-            $response = array('status' => 'success');
-            if ($result) {
-                
-                //Cleanup filtered, json-ed, escaped data before returning it.
-                $response['value'] = html_entity_decode(stripslashes($result));
-            }
-        } catch(Exception $e) {
-            
-        }        
+        $sql = sprintf(
+            "SELECT `value` FROM `%s` WHERE `key` = '%s';",
+            $input['uid'], 
+            $input['key']
+        );
+    
+        //use multi query for consistency
+        $result = runMultiQuery($mysqli, $sql);
+    
+        $response = array('status' => 'success');
+
+        if ($result[0]) {
+        
+            //1st query (even single queries are nested), 1st result row, 'value field'.
+            //Cleanup filtered, json-ed, escaped data before returning it.
+            $response['value'] = html_entity_decode(stripslashes($result[0][0]['value']));
+        }     
         break;
         
     case 'POST':    
-        try {
-            $storage->set($input['key'], $input['value']);
-            $response = array('status' => 'success');
-        } catch(Exception $e) {
-            $response = array('status' => 'error', 'details' => print_r($e, true));
+        if (!isset($_POST['value'])) {
+            //error
         }
+        $input['value'] = filter_var($_POST['value'], FILTER_SANITIZE_STRING);
+        $sql = sprintf(
+            "REPLACE INTO 
+            `%s` (`key`, `value`, `created`) 
+            VALUES ('%s', '%s', '%s');", 
+            $input['uid'], $input['key'], $input['value'], time()
+        );
+        $result = runMultiQuery($mysqli, $sql);
+        $response = array(
+            'status' => 'success'
+        );
         break;
+        
     default:
         $response = array('status' => 'error', 'details' => 'invalid request method: '.$_SERVER['REQUEST_METHOD']);
         break;
 }
+
+$mysqli->close();
 
 echo json_encode($response);
 ?>
