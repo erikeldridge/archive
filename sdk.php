@@ -5,13 +5,14 @@ if (!class_exists('Curl')) {
 }
 
 class NetDB {    
-    function __construct($url, $uid, $secret){
+    function __construct($uid, $secret){
         $this->curl = new Curl;
-        $hash = sha1($secret.$uid);       
-        $this->url = sprintf('%s/netdb/api.php?uid=%s&hash=%s&', $url, $uid, $hash);
+        $url = 'http://example.com';
+        $hash = sha1($secret.$uid);  
+        $this->url = sprintf('%s/netdb/api/%s/%s', $url, $uid, $hash);
     }
     function get($key){
-        $url = $this->url.'key='.$key;        
+        $url = $this->url.'/'.$key;        
         $response = $this->curl->get($url)->body;
         return json_decode($response);
     }
@@ -19,7 +20,7 @@ class NetDB {
         if(!is_string($value)){
            throw(new Exception('value must be a string, not: '.print_r($value, true)));
         }
-        $url = $this->url.'key='.$key; 
+        $url = $this->url.'/'.$key; 
         $params = array('value'=>$value);
         $response = $this->curl->post($url, $params)->body;
         return json_decode($response);
