@@ -6,7 +6,12 @@ Code licensed under the BSD License:
 http://github.com/erikeldridge/authproxy/blob/master/license.txt
 */
 
-require 'keydb.php';
+//private
+$netdbKey = '';
+$netdbSecret = '';
+
+$users = array(''=>'');
+
 //post {domain}/authproxy/api.php?action=insert&hash={hash}&userId={userId}&type={type}
 //   --> insert 
 //   <-- record id
@@ -34,9 +39,9 @@ $input = filter_var_array($_REQUEST, $filters);
 
 if (!isset($input['userId'])) {
     $response = array('status' => 'error', 'details' => 'userId required');
-} elseif (!array_key_exists($input['userId'], KeyDB::$credentials)) {
+} elseif (!array_key_exists($input['userId'], $users)) {
     $response = array('status' => 'error', 'details' => 'invalid userId: '.$input['userId']);
-} elseif(sha1(KeyDB::$credentials[$input['userId']].$input['userId']) != $input['hash']) {
+} elseif(sha1($users[$input['userId']].$input['userId']) != $input['hash']) {
     $response = array('status' => 'error', 'details' => 'invalid hash: '.$input['hash']);
 } elseif('oauth' != $input['type']) {
     $response = array('status' => 'error', 'details' => 'invalid type: '.$input['type']);
@@ -45,22 +50,22 @@ if (!isset($input['userId'])) {
 } elseif ('GET' == $_SERVER['REQUEST_METHOD']) {
 
     //init storage
+    require '../curl/curl.php';
     require '../netdb/sdk.php';
-    $storage = new Netdb(KeyDB::$netdb_key, KeyDB::$netdb_secret);
+    require '../kvstore/interface.php';
+    // require '../kvstore/netbd/netdb.php';
+    // $storage = new NetDBStore(KeyDB::$netdb_key, KeyDB::$netdb_secret);
+    require '../kvstore/sqlite/sqlite.php';
+    $storage = new SQLiteStore($netdbKey);
     
     $storageKey = sprintf('authproxy-services-%s-%s', $input['userId'], $input['recordId']);
-    $response = $storage->get($storageKey);
+    $value = $storage->get($storageKey);
 
     //confirm success
-    if('success' == $response->status){
-
-        //storage returns success if it doesn't fail, but there may not be a record
-        if (isset($response->value)) {
-            $response->value = json_decode($response->value);
-        }
-        
+    if($value){
+        $response = array('status' => 'success', 'value' => json_decode($value));  
     } else {
-        $response = array('status' => 'error', 'debug' => $response);                
+        $response = array('status' => 'error');                
     }
     
 } elseif (!in_array($input['action'], array('select', 'insert', 'update', 'delete'))) {
@@ -68,9 +73,16 @@ if (!isset($input['userId'])) {
 } elseif ('POST' == $_SERVER['REQUEST_METHOD']) {
     
     //init storage
+    require '../curl/curl.php';
     require '../netdb/sdk.php';
-    $storage = new Netdb(KeyDB::$netdb_key, KeyDB::$netdb_secret);
-    
+    require '../kvstore/interface.php';
+    // require '../kvstore/netbd/netdb.php';
+    // $storage = new NetDBStore(KeyDB::$netdb_key, KeyDB::$netdb_secret);
+    require '../kvstore/sqlite/sqlite.php';
+    $storage = new SQLiteStore($netdbKey);
+    // $storage->db->query("DROP TABLE $netdbKey");
+    // $storage->db->query(sprintf("CREATE TABLE %s (key varchar(100) PRIMARY KEY, value varchar(1000), created timestamp(20))", $netdbKey), $error);
+            
     switch ($input['action']) {
             
         case 'insert':
@@ -89,25 +101,25 @@ if (!isset($input['userId'])) {
             $storageKey = sprintf('authproxy-services-%s-%s', $input['userId'], $recordId);
             
             $response = $storage->set($storageKey, $storageValue);
-        
-            //sanity check
-            if('success' != $response->status){
-                $response = array('status' => 'error', 'debug' => print_r($response, true));
-                break;            
-            }
             
             //add record id to credentials array in meta for user
             $storageKey = sprintf('authproxy-users-%s', $input['userId']);
             $response = $storage->get($storageKey);
-            $value = json_decode($response->value);
+    
+            //sanity check
+            if(!$response){
+                $response = array('status' => 'error', 'debug' => 'there is no record for user '.$input['userId']);
+                break;            
+            }
+        
+            $value = json_decode($response);
             $value->recordIds[] = $recordId;
-            $response = $storage->set($storageKey, json_encode($value));
             
-            //confirm success
-            if('success' == $response->status){
-                $response = array('status' => 'success', 'recordId' => $recordId, 'debug' => print_r($response, true));
-            } else {
-                $response = array('status' => 'error', 'debug' => $response);                
+            try {
+                $storage->set($storageKey, json_encode($value));
+                $response = array('status' => 'success', 'recordId' => $recordId, 'debug' => print_r($value, true));
+            } catch (Exception $e) {
+                $response = array('status' => 'error', 'debug' => print_r($e, true));
             }
         
             break;
@@ -142,16 +154,15 @@ if (!isset($input['userId'])) {
             //remove record id from services array in meta for user
             $storageKey = sprintf('authproxy-users-%s', $input['userId']);
             $response = $storage->get($storageKey);
-            $value = json_decode($response->value);
+            $value = json_decode($response);
             $index = array_search($input['recordId'], $value->recordIds);
             unset($value->recordIds[$index]);
-            $response = $storage->set($storageKey, json_encode($value));
             
-            //confirm success
-            if('success' == $response->status){
+            try {
+                $response = $storage->set($storageKey, json_encode($value));
                 $response = array('status' => 'success', 'debug' => print_r($value->recordIds, true));
-            } else {
-                $response = array('status' => 'error', 'debug' => $response);                
+            } catch (Exception $e) {
+                $response = array('status' => 'error', 'debug' => print_r($e, true));
             }
 
             break;
