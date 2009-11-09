@@ -6,7 +6,7 @@ if (!class_exists('NetDB')) {
 
 class NetDBStore implements KVStore {
     function __construct($key, $secret) {
-        $this->netdb = new NetDB($key, $secret);
+        $this->netdb = new NetDB($key, $secret, 'http://test.erikeldridge.com');
     }
     function get($key) {
         $value = $this->netdb->get($key);
