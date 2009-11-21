@@ -2,7 +2,7 @@
 
 ## Preamble
 
-OAuthPanda attempts to make requests to web services secured using [OAuth](http://oauth.net) as painless as possible.  OAuthPanda would like to be simple as a spoon to use, but tough when it comes to protecting the user.
+OAuthPanda attempts to make requests to [OAuth](http://oauth.net)-secured web services as painless as possible.  OAuthPanda would like to be simple as a spoon to use, but tough when it comes to protecting the user.
 
 OAuthPanda uses the standard OAuth library and an http request library to do the heavy lifting.  The panda's magic comes from it's ability to make these two talk to each other and communicate with people as clearly as possible.  Detailed installation and usage instructions are given below.
 
@@ -11,9 +11,9 @@ OAuthPanda uses the standard OAuth library and an http request library to do the
 * PHP 5.2 with [cURL](http://us.php.net/manual/en/ref.curl.php) enabled
 * The [Yahoo! Curl utility class](http://github.com/yahoo/yos-social-php5/blob/master/lib/Yahoo/YahooCurl.class.php)
 * A server that can serve content to an OAuth provider, i.e., that's accessible via a domain you have root access to.  
-** Confused?  Here's some documentation for getting started w/ [Yahoo!](http://developer.yahoo.com/oauth/).
+   * Confused?  Here's some documentation for getting started w/ [Yahoo!](http://developer.yahoo.com/oauth/).
 * OAuth consumer key and secret.  
-** The linked documentation above explains this too
+   * The linked documentation above explains this too
 * The [OAuth PHP library]()
 
 ## Usage
