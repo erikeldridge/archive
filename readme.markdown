@@ -21,18 +21,16 @@ OAuthPanda uses the standard OAuth library and an http request library to do the
 ### Fetching the OAuth request token
 
     <?php
+    require_once 'private.php';
+
     require_once 'OAuth.php';
     require_once 'YahooCurl.class.php';
     require_once 'OAuthPanda.class.php';
-    
-    $key = '{your OAuth consumer key}';
-    $secret = '{your OAuth consumer secret}';
-    $callback_url = '{your OAuth callback url}';
 
-    $panda = new OAuthPanda($key, $secret);
+    $panda = new OAuthPanda(OAUTH_CONSUMER_KEY, OAUTH_CONSUMER_SECRET);
     $response = $panda->set('oauth_param_location', 'url')->GET(
         'https://api.login.yahoo.com/oauth/v2/get_request_token', 
-        array('oauth_callback' => $callback_url)
+        array('oauth_callback' => OAUTH_CALLBACK_URL)
     );
     printf('<br/>===<pre>%s</pre>===<br/>', print_r($response, true));
     ?>
