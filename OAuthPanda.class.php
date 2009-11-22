@@ -28,73 +28,113 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  **/
- 
+
+class OauthPandaResponse {
+    function __construct($args)
+    {
+        if(is_array($args)){
+            foreach($args as $key => $value){
+                $this->$key = $value;
+            }
+        }
+    }
+    function __toString()
+    {
+        return sprintf('<hr/><pre>%s</pre><hr/>', print_r($this, true));
+    }
+}
+
+interface OauthPandaRequest {
+    function request($request_method, $url, Array $headers, $post_params);
+}
+
+class OauthPandaYahooCurlRequest implements OauthPandaRequest {
+    function request($request_method, $url, Array $headers, $post_params)
+    {
+        //signature: fetch($url, Array $params, $headers = array(), $method = self::GET, $post = null, $options = array())
+        $http = YahooCurl::fetch($url, null, $headers, $request_method, $post_params);
+        
+        return new OauthPandaResponse($http);
+    }
+}
+
 class OAuthPanda
 {
-    public function __construct($key, $secret, $callback_url=null)
+    //define bare minimum requirements (key, secret) and defaults
+    public function __construct($key, $secret)
     {
         $this->consumer = new OAuthConsumer(
             $key, 
-            $secret,
-            $callback_url
+            $secret
         );
         
         //defaults
+        $this->request_client = new OauthPandaYahooCurlRequest;
         $this->signature_method = new OAuthSignatureMethod_HMAC_SHA1();
         $this->token = null;
         $this->headers = array();
-        $this->post_params = array();
-        $this->get_params = array();
-        $this->content = null;
+        $this->post_params = '';
         $this->oauth_param_location = 'header';
-        $this->curl_options = array();
     }
     
-    //convenient, chainable setter
-    public function set($name, $value)
+    //convenient, chainable method for custom settings
+    public function set(Array $args)
     {        
-        $this->$name = $value;
+        foreach($args as $key => $value){
+            $this->$key = $value;
+        }
         return $this;
     }
     
     //convenient, method-oriented caller
     public function __call($name, $args)
     {
-        $method = strtoupper($name);
-        return $this->request($method, $args[0], $args[1], $args[2]);
-    }
-    
-    private function request($request_method, $url, $params=array(), $content=null)
-    {
+        //format/validate input
+        $request_method = strtoupper($name);
+        $this->url = $args[0];
+        $extra_params = $args[1];
+        
+        //BEGIN: oauth config
         $request = OAuthRequest::from_consumer_and_token(
             $this->consumer, 
             $this->token, 
             $request_method, 
-            $url,
-            $params);
+            $this->url,
+            $extra_params);
             
         $request->sign_request(
             $this->signature_method, 
             $this->consumer, 
             $this->token
         );
-        
+
         switch($this->oauth_param_location){
             case 'url':
-                $url = $request->to_url();
+                $this->url = $request->to_url();
                 break;
             case 'header':
-                $this->headers[] = $request->to_header();
+                $this->headers[] = $request->to_header();        
                 break;
             case 'post':
                 $this->post_params = $request->to_postdata();
                 break;
             default:
-                throw(new Exception('invalid oauth param location: '.$this->oauth_param_location));
+                $message = "Invalid oauth param location ($this->oauth_param_location).  "
+                    ."Valid options are 'url', 'header' (default), or 'post'.";
+                throw(new Exception($message));
                 break;
         }
         
-        $response = YahooCurl::fetch($url, $this->post_params, $this->headers, $request->get_normalized_http_method(), $this->content, $this->curl_options);
+        $this->request_method = $request->get_normalized_http_method();
+        //END: oauth config
+        
+        //make request
+        $response = $this->request_client->request(
+            $this->request_method, 
+            $this->url, 
+            $this->headers,
+            $this->post_params
+        );
         
         return $response;
     }
