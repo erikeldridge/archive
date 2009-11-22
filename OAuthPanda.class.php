@@ -29,21 +29,6 @@
  *   THE SOFTWARE.
  **/
 
-class OauthPandaResponse {
-    function __construct($args)
-    {
-        if(is_array($args)){
-            foreach($args as $key => $value){
-                $this->$key = $value;
-            }
-        }
-    }
-    function __toString()
-    {
-        return sprintf('<hr/><pre>%s</pre><hr/>', print_r($this, true));
-    }
-}
-
 interface OauthPandaRequest {
     function request($request_method, $url, Array $headers, $post_params);
 }
@@ -54,7 +39,7 @@ class OauthPandaYahooCurlRequest implements OauthPandaRequest {
         //signature: fetch($url, Array $params, $headers = array(), $method = self::GET, $post = null, $options = array())
         $http = YahooCurl::fetch($url, null, $headers, $request_method, $post_params);
         
-        return new OauthPandaResponse($http);
+        return $http;
     }
 }
 
