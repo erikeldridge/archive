@@ -1,6 +1,12 @@
 <?php
-define('OAUTH_CONSUMER_KEY', '');
-define('OAUTH_CONSUMER_SECRET', '');
+// yahoo
+define('YAHOO_OAUTH_CONSUMER_KEY', '');
+define('YAHOO_OAUTH_CONSUMER_SECRET', '');
+
+// twitter 
+define('TWITTER_OAUTH_CONSUMER_KEY', '');
+define('TWITTER_OAUTH_CONSUMER_SECRET', '');
+
 define('OAUTH_CALLBACK_URL', '');
 
 //http://github.com/yahoo/yos-social-php5/blob/master/lib/Yahoo/YahooCurl.class.php
