@@ -46,7 +46,7 @@ class OauthPandaYahooCurlRequest implements OauthPandaRequest {
 class OAuthPanda
 {
     //define bare minimum requirements (key, secret) and defaults
-    public function __construct($key, $secret)
+    public function __construct($key, $secret, Array $custom_settings)
     {
         $this->consumer = new OAuthConsumer(
             $key, 
@@ -60,15 +60,11 @@ class OAuthPanda
         $this->headers = array();
         $this->post_params = '';
         $this->oauth_param_location = 'header';
-    }
-    
-    //convenient, chainable method for custom settings
-    public function set(Array $args)
-    {        
-        foreach($args as $key => $value){
+        
+        //custom
+        foreach($custom_settings as $key => $value){
             $this->$key = $value;
         }
-        return $this;
     }
     
     //convenient, method-oriented caller
