@@ -29,11 +29,56 @@
  *   THE SOFTWARE.
  **/
 
-interface OauthPandaRequest {
+interface OauthClientPanda {
+    public function sign($consumer_key, $consumer_secret, $url, $params=array(), 
+        $request_method='GET', $token=null, $oauth_signature_method='HMAC');
+}
+
+class GoogleCodeOauthClientPanda implements OauthClientPanda {
+    public function sign(
+        $consumer_key, $consumer_secret, $url, $params=array(), 
+        $request_method='GET', $token=null, $oauth_signature_method='HMAC')
+    {
+        $consumer = new OAuthConsumer(
+            $consumer_key, 
+            $consumer_secret
+        );
+        
+        $request = OAuthRequest::from_consumer_and_token(
+            $consumer, 
+            $token, 
+            $request_method, 
+            $url,
+            $params);
+        
+        switch($oauth_signature_method){
+            case 'hmac':
+                $oauth_signature_method = new OAuthSignatureMethod_HMAC_SHA1();
+                break;
+            case 'text':
+                $oauth_signature_method = new OAuthSignatureMethod_PLAINTEXT();
+                break;
+            default:
+                throw(new Exception());
+        }
+        
+        $request->sign_request(
+            $oauth_signature_method,
+            $consumer, 
+            $token
+        );
+        
+        parse_str($request->to_postdata(), $signed_params);
+        
+        return $signed_params;
+    }
+}
+
+interface HttpRequestPanda {
     function request($request_method, $url, Array $headers, $post_params);
 }
 
-class OauthPandaYahooCurlRequest implements OauthPandaRequest {
+class YahooCurlPanda implements HttpRequestPanda {
     function request($request_method, $url, Array $headers, $post_params)
     {
         //signature: fetch($url, Array $params, $headers = array(), $method = self::GET, $post = null, $options = array())
@@ -44,77 +89,74 @@ class OauthPandaYahooCurlRequest implements OauthPandaRequest {
 }
 
 class OAuthPanda
-{
-    //define bare minimum requirements (key, secret) and defaults
-    public function __construct($key, $secret, Array $custom_settings)
-    {
-        $this->consumer = new OAuthConsumer(
-            $key, 
-            $secret
-        );
-        
-        //defaults
-        $this->request_client = new OauthPandaYahooCurlRequest;
-        $this->signature_method = new OAuthSignatureMethod_HMAC_SHA1();
-        $this->token = null;
-        $this->headers = array();
-        $this->post_params = '';
-        $this->oauth_param_location = 'header';
-        
-        //custom
-        foreach($custom_settings as $key => $value){
-            $this->$key = $value;
-        }
-    }
-    
-    //convenient, method-oriented caller
+{  
     public function __call($name, $args)
     {
-        //format/validate input
         $request_method = strtoupper($name);
-        $this->url = $args[0];
-        $extra_params = $args[1];
         
-        //BEGIN: oauth config
-        $request = OAuthRequest::from_consumer_and_token(
-            $this->consumer, 
-            $this->token, 
-            $request_method, 
-            $this->url,
-            $extra_params);
+        $settings = array(
+            //required
+            'consumer_key' => null,
+            'consumer_secret' => null,
+            'url' => null,
             
-        $request->sign_request(
-            $this->signature_method, 
-            $this->consumer, 
-            $this->token
+            //defaults
+            'oauth_client' => new GoogleCodeOauthClientPanda,
+            'request_client' => new YahooCurlPanda,
+            'oauth_signature_method' => 'hmac',
+            'oauth_param_location' => 'header',
+            'token' => null,
+            'headers' => array(),
+            'params' => array()
         );
-
-        switch($this->oauth_param_location){
+        
+        //apply arguments
+        foreach($args[0] as $arg_name => $arg_value){
+            if(FALSE === array_key_exists($arg_name, $settings)){
+                throw(new Exception(''));
+            }
+            $settings[$arg_name] = $arg_value;
+        }
+        
+        //oauth config
+        //$consumer_key, $consumer_secret, $url, $params=array(), $request_method='GET', $token=null, $oauth_signature_method='HMAC'
+        $signed_params = $settings['oauth_client']->sign(
+            $settings['consumer_key'],
+            $settings['consumer_secret'],
+            $settings['url'],
+            $settings['params'],
+            
+            //GET, POST, PUT, DELETE, etc
+            $request_method,
+            
+            $settings['token'],
+            $settings['oauth_signature_method']
+        );
+        
+        switch($settings['oauth_param_location']){
             case 'url':
-                $this->url = $request->to_url();
+                $settings['url'] .= '?'.http_build_query($signed_params);
                 break;
             case 'header':
-                $this->headers[] = $request->to_header();        
+                $settings['headers'][] = $request->to_header();        
                 break;
             case 'post':
-                $this->post_params = $request->to_postdata();
+                $settings['params'] = http_build_query($signed_params);
                 break;
             default:
-                $message = "Invalid oauth param location ($this->oauth_param_location).  "
+                $message = "Invalid oauth param location (".$settings['oauth_param_location'].").  "
                     ."Valid options are 'url', 'header' (default), or 'post'.";
                 throw(new Exception($message));
                 break;
         }
-        
-        $this->request_method = $request->get_normalized_http_method();
         //END: oauth config
         
         //make request
-        $response = $this->request_client->request(
-            $this->request_method, 
-            $this->url, 
-            $this->headers,
-            $this->post_params
+        $response = $settings['request_client']->request(
+            $request_method, 
+            $settings['url'], 
+            $settings['headers'],
+            $settings['params']
         );
         
         return $response;
