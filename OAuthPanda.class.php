@@ -29,135 +29,183 @@
  *   THE SOFTWARE.
  **/
 
-interface OauthClientPanda {
-    public function sign($consumer_key, $consumer_secret, $url, $params=array(), 
-        $request_method='GET', $token=null, $oauth_signature_method='HMAC');
-}
-
-class GoogleCodeOauthClientPanda implements OauthClientPanda {
-    public function sign(
-        $consumer_key, $consumer_secret, $url, $params=array(), 
-        $request_method='GET', $token=null, $oauth_signature_method='HMAC')
-    {
-        $consumer = new OAuthConsumer(
-            $consumer_key, 
-            $consumer_secret
-        );
-        
-        $request = OAuthRequest::from_consumer_and_token(
-            $consumer, 
-            $token, 
-            $request_method, 
-            $url,
-            $params);
-        
-        switch($oauth_signature_method){
-            case 'hmac':
-                $oauth_signature_method = new OAuthSignatureMethod_HMAC_SHA1();
-                break;
-            case 'text':
-                $oauth_signature_method = new OAuthSignatureMethod_PLAINTEXT();
-                break;
-            default:
-                throw(new Exception());
-        }
-        
-        $request->sign_request(
-            $oauth_signature_method,
-            $consumer, 
-            $token
-        );
-        
-        parse_str($request->to_postdata(), $signed_params);
-        
-        return $signed_params;
-    }
-}
-
-interface HttpRequestPanda {
-    function request($request_method, $url, Array $headers, $post_params);
-}
-
-class YahooCurlPanda implements HttpRequestPanda {
-    function request($request_method, $url, Array $headers, $post_params)
-    {
-        //signature: fetch($url, Array $params, $headers = array(), $method = self::GET, $post = null, $options = array())
-        $http = YahooCurl::fetch($url, null, $headers, $request_method, $post_params);
-        
-        return $http;
-    }
-}
-
 class OAuthPanda
 {  
+	static function handleException($settings, $exception) {
+		switch($settings['exception_handling']['value']){
+			case 'log':
+				error_log(print_r($exception, true));
+				break;
+			case 'throw':
+				throw($exception);
+				break;
+			default: //'print'
+				$message = sprintf(
+					'<pre>%s</pre>', 
+					print_r($exception, true)
+				);
+				trigger_error($message, E_USER_ERROR);
+				exit;
+		}
+	}
+	
     public function __call($name, $args)
-    {
+    {        
         $request_method = strtoupper($name);
-        
+        $input = $args[0];
+
         $settings = array(
-            //required
-            'consumer_key' => null,
-            'consumer_secret' => null,
-            'url' => null,
-            
-            //defaults
-            'oauth_client' => new GoogleCodeOauthClientPanda,
-            'request_client' => new YahooCurlPanda,
-            'oauth_signature_method' => 'hmac',
-            'oauth_param_location' => 'header',
-            'token' => null,
-            'headers' => array(),
-            'params' => array()
+            'consumer_key' => array(
+                'required' => true,
+				'validate' => create_function('$value', 
+					'return is_string($value);'
+				),
+            ),
+            'consumer_secret' => array(
+                'required' => true,
+				'validate' => create_function('$value', 
+					'return is_string($value);'
+				),
+            ),
+            'url' => array(
+                'required' => true,
+				'validate' => create_function('$value', 
+					'return is_string($value);'
+				),
+            ),
+            'oauth_client' => array(
+                'required' => true,
+				'validate' => create_function('$value', 
+					'if(!is_object($value)){
+						$message = "oauth_client must be an object, not: ".print_r($value, true);
+						throw(new Exception($message));
+					}'
+				)
+            ),
+            'request_client' => array(
+                'required' => true,
+				'validate' => create_function('$value', 
+					'if(!is_object($value)){
+						$message = "request_client must be an object, not: ".print_r($value, true);
+						throw(new Exception($message));
+					}'
+				)
+	          ),
+            'oauth_signature_method' => array(
+                'required' => false,
+                'value' => 'hmac',
+				'validate' => create_function('$value', 
+					'return is_string($value) && in_array($value, array("hmac", "plain"));'
+				),
+            ),
+            'oauth_param_location' => array(
+                'required' => false,
+                'value' => 'header',
+				'validate' => create_function('$value', 
+					'return is_string($value) && in_array($value, array("header", "post", "url"));'
+				),
+            ),
+            'token' => array(
+                'required' => false,
+                'value' => null,
+				'validate' => create_function('$value',
+					'return is_object($value) || is_null($value);'
+				),
+            ),
+            'headers' => array(
+                'required' => false,
+                'value' => array(),
+				'validate' => create_function('$value', 
+					'return is_array($value);'
+				),
+            ),
+            'params' => array(
+                'required' => false,
+                'value' => array(),
+				'validate' => create_function('$value', 
+					'return is_array($value);'
+				),
+            ),
+	        'exception_handling' => array(
+	            'required' => false,
+	            'value' => 'print',
+				'validate' => create_function('$value', 
+					'return is_string($value) && in_array($value, array("print", "log", "throw"));'
+				),
+	        ),
         );
-        
-        //apply arguments
-        foreach($args[0] as $arg_name => $arg_value){
-            if(FALSE === array_key_exists($arg_name, $settings)){
-                throw(new Exception(''));
-            }
-            $settings[$arg_name] = $arg_value;
+
+        if(false === isset($input)){
+            
+            //display requirements, options, usage, & examples
+            throw(new Exception('args required'));
         }
-        
-        //oauth config
-        //$consumer_key, $consumer_secret, $url, $params=array(), $request_method='GET', $token=null, $oauth_signature_method='HMAC'
-        $signed_params = $settings['oauth_client']->sign(
-            $settings['consumer_key'],
-            $settings['consumer_secret'],
-            $settings['url'],
-            $settings['params'],
+    
+        //apply arguments
+        foreach($input as $arg_name => $arg_value){
+            
+            //validate name
+            if(false === array_key_exists($arg_name, $settings)){
+                $exception = new Exception('invalid name');
+				self::handleException($settings, $exception);
+            }
+            
+			//validate value
+			try {
+				$settings[$arg_name]['validate']($arg_value);
+			} catch(Exception $exception) {
+				self::handleException($settings, $exception);
+			}
+			
+            $settings[$arg_name]['value'] = $arg_value;
+        }
+		
+		//enforce required input
+        foreach($settings as $key => $setting){
+            if($setting['required'] && !isset($setting['value'])){
+				$message = sprintf('%s is required', $key);
+				$exception = new Exception($message);
+				self::handleException($settings, $exception);
+            }
+        }
+
+        //BEGIN: oauth config
+        $signed_params = $settings['oauth_client']['value']->sign(array(
+            'consumer_key' => $settings['consumer_key'],
+            'consumer_secret' => $settings['consumer_secret'],
+            'url' => $settings['url']['value'],
+            'params' => $settings['params']['value'],
             
             //GET, POST, PUT, DELETE, etc
-            $request_method,
+            'request_method' => $request_method,
             
-            $settings['token'],
-            $settings['oauth_signature_method']
-        );
+            'token' => $settings['token']['value'],
+            'oauth_signature_method' => $settings['oauth_signature_method']['value']
+        ));
         
-        switch($settings['oauth_param_location']){
+        switch($settings['oauth_param_location']['value']){
             case 'url':
-                $settings['url'] .= '?'.http_build_query($signed_params);
+                $settings['url']['value'] .= '?'.http_build_query($signed_params);
                 break;
             case 'header':
-                $settings['headers'][] = $request->to_header();        
+                $settings['headers']['value'][] = $request->to_header();        
                 break;
             case 'post':
-                $settings['params'] = http_build_query($signed_params);
+                $settings['params']['value'] = http_build_query($signed_params);
                 break;
             default:
-                $message = "Invalid oauth param location (".$settings['oauth_param_location'].").  "
-                    ."Valid options are 'url', 'header' (default), or 'post'.";
-                throw(new Exception($message));
+                throw(new Exception('invalid param location'));
                 break;
         }
         //END: oauth config
         
         //make request
-        $response = $settings['request_client']->request(
-            $request_method, 
-            $settings['url'], 
-            $settings['headers'],
-            $settings['params']
-        );
+        $response = $settings['request_client']['value']->request(array(
+            'request_method' => $request_method,
+            'headers' => $settings['headers']['value'],
+            'url' => $settings['url']['value'],
+            'post_params' => $settings['params']['value']
+        ));
         
         return $response;
     }
