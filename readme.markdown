@@ -46,7 +46,7 @@ www.chine-informations.com/images/upload2/panda%20geant.jpg  -->  GlassGiant.com
 
 OauthPanda attempts to make requests to [OAuth](http://oauth.net)-secured web services as painless as possible.  The panda acts as a soft layer between an HTTP request client, a standard OAuth client, and a user.  
 
-OauthPanda relies on HttpRequestWrapper and OauthWrapper, to manage the HTTP request and OAuth clients, respectively.  All OauthPanda knows is that the user feeds it a set of required and optional parameters, OauthLibPanda uses some of them to create an OAuth signature, and HttpRequestPanda uses others to make the actual request.  The panda's magic comes from it's ability to make these two talk to each other and communicate with people as clearly as possible.  
+OauthPanda relies on HttpRequestWrapper and OauthWrapper, to manage the HTTP request and OAuth clients, respectively.  All OauthPanda knows is that the user feeds it a set of required and optional parameters, OauthWrapper uses some of them to create an OAuth signature, and HttpRequestWrapper uses others to make the actual request.  The panda's magic comes from it's ability to make these two talk to each other and communicate with people as clearly as possible.  
 
 OauthPanda is simple as a spoon to use, but detailed installation and usage instructions are given below.
 
@@ -61,6 +61,10 @@ OauthPanda is simple as a spoon to use, but detailed installation and usage inst
 * The [OAuth PHP library](http://oauth.googlecode.com/svn/code/php/OAuth.php)
 
 ## Usage
+
+### See required parameters for constructor
+
+Simply instantiate w/o any: `$panda = new OauthPanda;`
 
 ### Fetching the OAuth request token
 
