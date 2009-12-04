@@ -2,7 +2,7 @@
 error_reporting(E_ALL);
 
 require 'private.php';
-require 'OAuthPanda.class.php';
+require 'OauthPanda.class.php';
 
 // //test no args
 // new OauthPanda;

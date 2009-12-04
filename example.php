@@ -3,7 +3,7 @@
 error_reporting(E_ALL);
 
 require 'private.php';
-require 'OAuthPanda.class.php';
+require 'OauthPanda.class.php';
 
 $foo = new OauthPanda(array(
     'request_client' => new YahooCurlWrapper,
