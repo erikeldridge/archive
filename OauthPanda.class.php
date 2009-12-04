@@ -6,7 +6,7 @@ interface OauthWrapper
     function sign($consumer_key, $consumer_secret, $url, Array $params, $request_method, $token, $oauth_signature_method);
 }
 
-class StandardOauthWrapper implements OauthClientWrapper
+class StandardOauthWrapper implements OauthWrapper
 {
     //use hard enforcement because we're not interfacing w/ users
     function sign($consumer_key, $consumer_secret, $url, Array $params, $request_method, $token, $oauth_signature_method)
