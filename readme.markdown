@@ -65,8 +65,17 @@ OauthPanda is simple as a spoon to use, but detailed installation and usage inst
 ### Fetching the OAuth request token
 
     <?php
-	 //see example.php for full code
-	 //...
+    //see example.php for full code
+    require 'private.php';
+    require 'OauthPanda.class.php';
+
+    $foo = new OauthPanda(array(
+        'request_client' => new YahooCurlWrapper,
+        'oauth_client' => new StandardOauthWrapper,
+        'consumer_key' => YAHOO_OAUTH_CONSUMER_KEY,
+        'consumer_secret' => YAHOO_OAUTH_CONSUMER_SECRET
+    ));
+     //...
     $response = $foo->GET(array(
         'url' => 'https://api.login.yahoo.com/oauth/v2/get_request_token',
         'params' => array('oauth_callback' => OAUTH_CALLBACK_URL)
