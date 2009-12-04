@@ -1,43 +1,63 @@
-# OAuthPanda
+# OauthPanda
 
 ## Preamble
 
-OAuthPanda attempts to make requests to [OAuth](http://oauth.net)-secured web services as painless as possible.  OAuthPanda would like to be simple as a spoon to use, but tough when it comes to protecting the user.
+OauthPanda attempts to make requests to [OAuth](http://oauth.net)-secured web services as painless as possible.  The panda acts as a soft layer between an HTTP request client, a standard OAuth client, and a user.  
 
-OAuthPanda uses the standard OAuth library and an http request library to do the heavy lifting.  The panda's magic comes from it's ability to make these two talk to each other and communicate with people as clearly as possible.  Detailed installation and usage instructions are given below.
+OauthPanda relies on HttpRequestWrapper and OauthWrapper, to manage the HTTP request and OAuth clients, respectively.  All OauthPanda knows is that the user feeds it a set of required and optional parameters, OauthLibPanda uses some of them to create an OAuth signature, and HttpRequestPanda uses others to make the actual request.  The panda's magic comes from it's ability to make these two talk to each other and communicate with people as clearly as possible.  
+
+OauthPanda is simple as a spoon to use, but detailed installation and usage instructions are given below.
 
 ## Prerequisites
 
 * PHP 5.2 with [cURL](http://us.php.net/manual/en/ref.curl.php) enabled
-* The [Yahoo! Curl utility class](http://github.com/yahoo/yos-social-php5/blob/master/lib/Yahoo/YahooCurl.class.php)
+* The [Yahoo! Curl utility class](http://github.com/yahoo/yos-social-php5/blob/master/lib/Yahoo/YahooCurl.class.php).
 * A server that can serve content to an OAuth provider, i.e., that's accessible via a domain you have root access to.  
    * Confused?  Here's some documentation for getting started w/ [Yahoo!](http://developer.yahoo.com/oauth/).
 * OAuth consumer key and secret.  
    * The linked documentation above explains this too
-* The [OAuth PHP library]()
+* The [OAuth PHP library](http://oauth.googlecode.com/svn/code/php/OAuth.php)
 
 ## Usage
 
 ### Fetching the OAuth request token
 
     <?php
-    require_once 'private.php';
+	 //see example.php for full code
+	 //...
+    $response = $foo->GET(array(
+        'url' => 'https://api.login.yahoo.com/oauth/v2/get_request_token',
+        'params' => array('oauth_callback' => OAUTH_CALLBACK_URL)
+    ));
 
-    require_once 'OAuth.php';
-    require_once 'YahooCurl.class.php';
-    require_once 'OAuthPanda.class.php';
+    //extract token
+    parse_str($response['response_body'], $request_token_response);
 
-    $panda = new OAuthPanda(OAUTH_CONSUMER_KEY, OAUTH_CONSUMER_SECRET);
-    $response = $panda->set('oauth_param_location', 'url')->GET(
-        'https://api.login.yahoo.com/oauth/v2/get_request_token', 
-        array('oauth_callback' => OAUTH_CALLBACK_URL)
+    //sanity check
+    assert(isset($request_token_response['oauth_token']));
+
+    //standard oauth lib expects request token stdclass obj
+    $request_token = (object) array(
+        'key' => $request_token_response['oauth_token'],
+        'secret' => $request_token_response['oauth_token_secret']
     );
-    printf('<br/>===<pre>%s</pre>===<br/>', print_r($response, true));
+
+    //cache token for retreival after auth
+    file_put_contents('request_token.txt', serialize($request_token));
+
+    //redirect user for auth
+    $redirect_url = sprintf(
+        'https://api.login.yahoo.com/oauth/v2/request_auth?oauth_token=%s&oauth_callback=%s',
+    	$request_token_response['oauth_token'], 
+    	urlencode(OAUTH_CALLBACK_URL)
+    );
+    header('Location: '.$redirect_url);
+	 //...
     ?>
     
 ## License
 
-OAuthPanda
+OauthPanda
 
 * package: http://github.com/erikeldridge/oauthpanda
 * author: Erik Eldridge

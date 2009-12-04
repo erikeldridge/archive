@@ -28,7 +28,7 @@ require 'OAuthPanda.class.php';
 //test default setting value
 $foo = new OauthPanda(array(
     'request_client' => new stdclass,
-    'oauth_client' => new StandardOauthClient,
+    'oauth_client' => new StandardOauthWrapper,
     'consumer_key' => YAHOO_OAUTH_CONSUMER_KEY,
     'consumer_secret' => YAHOO_OAUTH_CONSUMER_SECRET
 ));
@@ -38,7 +38,7 @@ assert('print' == $foo->class_settings['exception_handling']['value']);
 $foo = new OauthPanda(array(
     'exception_handling' => 'throw',
     'request_client' => new YahooCurlWrapper,
-    'oauth_client' => new StandardOauthClient,
+    'oauth_client' => new StandardOauthWrapper,
     'consumer_key' => YAHOO_OAUTH_CONSUMER_KEY,
     'consumer_secret' => YAHOO_OAUTH_CONSUMER_SECRET
 ));
@@ -78,7 +78,7 @@ assert('baz' == $foo->class_settings['request_client']['value']->boo);
 $foo = new OauthPanda(array(
     'exception_handling' => 'throw',
     'request_client' => new YahooCurlWrapper,
-    'oauth_client' => new StandardOauthClient,
+    'oauth_client' => new StandardOauthWrapper,
     'consumer_key' => YAHOO_OAUTH_CONSUMER_KEY,
     'consumer_secret' => YAHOO_OAUTH_CONSUMER_SECRET
 ));
@@ -97,7 +97,7 @@ try {
 $foo = new OauthPanda(array(
     'exception_handling' => 'throw',
     'request_client' => new YahooCurlWrapper,
-    'oauth_client' => new StandardOauthClient,
+    'oauth_client' => new StandardOauthWrapper,
     'consumer_key' => YAHOO_OAUTH_CONSUMER_KEY,
     'consumer_secret' => YAHOO_OAUTH_CONSUMER_SECRET
 ));
@@ -157,7 +157,7 @@ $foo->GET(array(
 $foo = new OauthPanda(array(
     'exception_handling' => 'throw',
     'request_client' => new YahooCurlWrapper,
-    'oauth_client' => new StandardOauthClient,
+    'oauth_client' => new StandardOauthWrapper,
     'consumer_key' => YAHOO_OAUTH_CONSUMER_KEY,
     'consumer_secret' => YAHOO_OAUTH_CONSUMER_SECRET
 ));

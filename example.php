@@ -7,7 +7,7 @@ require 'OAuthPanda.class.php';
 
 $foo = new OauthPanda(array(
     'request_client' => new YahooCurlWrapper,
-    'oauth_client' => new StandardOauthClient,
+    'oauth_client' => new StandardOauthWrapper,
     'consumer_key' => YAHOO_OAUTH_CONSUMER_KEY,
     'consumer_secret' => YAHOO_OAUTH_CONSUMER_SECRET
 ));

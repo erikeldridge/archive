@@ -42,13 +42,13 @@ ZODDNMMMMM7O7MMMZMMMZDMMN$ZODOD=OMNO87$+O78NZ8MZ$I$$+O$D8OMMMO$MMMMMMMMON7$8DOD7
 www.chine-informations.com/images/upload2/panda%20geant.jpg  -->  GlassGiant.com
 */
 
-interface OauthClient
+interface OauthWrapper
 {
     //not static because we can't call static methods from objects assigned to arrays in php 5.2
     function sign($consumer_key, $consumer_secret, $url, Array $params, $request_method, $token, $oauth_signature_method);
 }
 
-class StandardOauthClient implements OauthClient
+class StandardOauthWrapper implements OauthClientWrapper
 {
     //use hard enforcement because we're not interfacing w/ users
     function sign($consumer_key, $consumer_secret, $url, Array $params, $request_method, $token, $oauth_signature_method)
