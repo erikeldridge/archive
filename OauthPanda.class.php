@@ -3,18 +3,31 @@
 interface OauthWrapper
 {
     //not static because we can't call static methods from objects assigned to arrays in php 5.2
+    //use multi-var params & type hinting because we're not interfacing w/ user
     function sign($consumer_key, $consumer_secret, $url, Array $params, $request_method, $token, $oauth_signature_method);
 }
 
 class StandardOauthWrapper implements OauthWrapper
 {
-    //use hard enforcement because we're not interfacing w/ users
     function sign($consumer_key, $consumer_secret, $url, Array $params, $request_method, $token, $oauth_signature_method)
     {
-        //http://oauth.googlecode.com/svn/code/php/OAuth.php
+        
+        //check for dependencies when sign() is called so oauthpanda can catch the exception
+        if (false === class_exists('OAuthClient') && false === is_file('OAuth.php')) {
+            $message = '<p>The standard OAuth client library is required.<br/>'
+            .'You can get it here:'
+            .'<i><a href="http://oauth.googlecode.com/svn/code/php/OAuth.php">'
+            .'http://oauth.googlecode.com/svn/code/php/OAuth.php'
+            .'</a></i>.<br/>'
+            .'This code is expected to be in a file called <i>OAuth.php</i>, located<br/>'
+            .'in the same directory as OauthPanda.class.php, e.g.,<br/>'
+            .dirname(__FILE__).'/OAuth.php.</p>';
+            throw new Exception($message);
+        } 
+        
         require_once 'OAuth.php';
         
-        //enforce contract
+        //terse enforcement of types because we're not interfacing w/ user
         assert(is_string($consumer_key));
         assert(is_string($consumer_secret));
         assert(is_string($url));
@@ -67,6 +80,7 @@ class StandardOauthWrapper implements OauthWrapper
 
 interface HttpRequestWrapper
 {
+    //use multi-var params & type hinting because we're not interfacing w/ user
     function request($request_method, Array $headers, $url, $param_string);
 }
 
