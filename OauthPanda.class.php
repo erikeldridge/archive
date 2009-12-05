@@ -74,6 +74,22 @@ class YahooCurlWrapper implements HttpRequestWrapper
 {   
     function request($request_method, Array $headers, $url, $param_string)
     {
+
+        //check for dependencies when request() is called so oauthpanda can catch the exception
+        if (false === class_exists('YahooCurl') && false === is_file('YahooCurl.class.php')) {
+            $message = '<p>The <i>YahooCurl</i> client library is required. You can get it here:<br/>'
+                .'<i><a href="http://github.com/yahoo/yos-social-php5/blob/master/lib/Yahoo/YahooCurl.class.php">'
+                .'http://github.com/yahoo/yos-social-php5/blob/master/lib/Yahoo/YahooCurl.class.php'
+                .'</a></i><br/>'
+                .'This code is expected to be in a file called <i>YahooCurl.class.php</i>, located<br/>'
+                .'in the same directory as OauthPanda.class.php, e.g.,<br/>'
+                .dirname(__FILE__).'/YahooCurl.class.php.</p>';
+            throw new Exception($message);
+        }
+        
+        require_once 'YahooCurl.class.php';
+        
+        //terse enforcement of types because we're not interfacing w/ user
         assert(is_string($url));
         assert(is_string($param_string) || is_null($param_string));
         
