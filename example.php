@@ -5,6 +5,34 @@ error_reporting(E_ALL);
 require 'private.php';
 require 'OauthPanda.class.php';
 
+//constructs object in format expected by standard oauth library
+function buildAccessTokenObject($oauth_token, $oauth_token_secret, $xoauth_yahoo_guid, $oauth_session_handle, $oauth_expires_in=null, $oauth_authorization_expires_in=null)
+{
+    $now = time();
+    $access_token = new stdclass();
+    $access_token->key = $oauth_token;
+    $access_token->secret = $oauth_token_secret;
+    $access_token->guid = $xoauth_yahoo_guid;
+    $access_token->consumer = YAHOO_OAUTH_CONSUMER_KEY;
+    $access_token->sessionHandle = $oauth_session_handle;
+
+    // Check to see if the access token ever expires.
+    if($oauth_expires_in) {
+        $access_token->tokenExpires = $now + $oauth_expires_in;
+    } else {
+        $access_token->tokenExpires = -1;
+    }
+
+    // Check to see if the access session handle ever expires.
+    if($oauth_authorization_expires_in) {
+        $access_token->handleExpires = $now + $oauth_authorization_expires_in;
+    } else {
+        $access_token->handleExpires = -1;
+    }
+    
+    return $access_token;
+}
+
 $foo = new OauthPanda(array(
     'request_client' => new YahooCurlWrapper,
     'oauth_client' => new StandardOauthWrapper,
@@ -17,6 +45,7 @@ if (is_file('access_token.txt')) {
     //retrieve token
     $access_token = unserialize(file_get_contents('access_token.txt'));
     
+    //attempt to request social for user corresponding w/ token
     $url = "http://social.yahooapis.com/v1/users.guid($access_token->guid)/profile";
     $params = array(
         'format' => 'json'
@@ -29,8 +58,49 @@ if (is_file('access_token.txt')) {
         'params' => $params
     ));
     
-    var_dump($response);
+    $response_body = json_decode($response['response_body']);
+        
+    //if the token's expired, refresh it as per http://developer.yahoo.com/oauth/guide/oauth-auth-flow.html#oauth-refreshaccesstoken
+    if (401 == $response['http_code'] && false !== strpos($response_body->error->description, 'token_expired')) {
+
+        $response = $foo->set(array(
+            'oauth_params_location' => 'url',
+            'token' => $access_token
+        ))->GET(array(
+            'url' => 'https://api.login.yahoo.com/oauth/v2/get_token',
+            'params' => array('oauth_session_handle' => $access_token->sessionHandle)
+        ));
+        
+        parse_str($response['response_body'], $access_token_data);
+
+        $access_token = buildAccessTokenObject(
+            $access_token_data['oauth_token'], 
+            $access_token_data['oauth_token_secret'], 
+            $access_token_data['xoauth_yahoo_guid'], 
+            $access_token_data['oauth_session_handle'], 
+            $access_token_data['oauth_expires_in'], 
+            $access_token_data['oauth_authorization_expires_in']
+        );
+        
+        file_put_contents('access_token.txt', serialize($access_token));
+        
+        //retry request for social data
+        $response = $foo->set(array(
+            'oauth_params_location' => 'header',
+            'token' => $access_token
+        ))->GET(array(
+            'url' => $url,
+            'params' => $params
+        ));
     
+        $response_body = json_decode($response['response_body']);
+        
+    } 
+    
+    //do something w/ data ...
+    var_dump($response_body);    
+
+//if oauth verifier's in url, this is the callback from auth
 } elseif (isset($_GET['oauth_verifier'])) {
     
     //fetch token
@@ -51,35 +121,21 @@ if (is_file('access_token.txt')) {
     assert(isset($access_token_data['oauth_token']));
     
     //format access token obj as expected by std oauth lib
-    $now = time();
-    $access_token = new stdclass();
-    $access_token->key = $access_token_data["oauth_token"];
-    $access_token->secret = $access_token_data["oauth_token_secret"];
-    $access_token->guid = $access_token_data["xoauth_yahoo_guid"];
-    $access_token->consumer = YAHOO_OAUTH_CONSUMER_KEY;
-    $access_token->sessionHandle = $access_token_data["oauth_session_handle"];
-
-    // Check to see if the access token ever expires.
-    if(array_key_exists("oauth_expires_in", $access_token_data)) {
-        $access_token->tokenExpires = $now + $access_token_data["oauth_expires_in"];
-    } else {
-        $access_token->tokenExpires = -1;
-    }
-
-    // Check to see if the access session handle ever expires.
-    if(array_key_exists("oauth_authorization_expires_in", $access_token_data)) {
-        $access_token->handleExpires = $now + $access_token_data["oauth_authorization_expires_in"];
-    } else {
-        $access_token->handleExpires = -1;
-    }
+    $access_token = buildAccessTokenObject(
+        $access_token_data['oauth_token'], 
+        $access_token_data['oauth_token_secret'], 
+        $access_token_data['xoauth_yahoo_guid'], 
+        $access_token_data['oauth_session_handle'], 
+        $access_token_data['oauth_expires_in'], 
+        $access_token_data['oauth_authorization_expires_in']
+    );
 
     //store token for future usage
     file_put_contents('access_token.txt', serialize($access_token));
     
     //fetch data using token 
-    $url = 'http://query.yahooapis.com/v1/public/yql';
+    $url = "http://social.yahooapis.com/v1/users.guid($access_token->guid)/profile";
     $params = array(
-        'q' => 'select%20*%20from%20social.profile%20where%20guid%3Dme',
         'format' => 'json'
     );
     $response = $foo->set(array(
@@ -89,8 +145,14 @@ if (is_file('access_token.txt')) {
         'url' => $url,
         'params' => $params
     ));
-    var_dump($response);
+    
+    $response_body = json_decode($response['response_body']);
+    
+    //do something w/ data ...
+    var_dump($response_body);
+    
 } else {
+    
     //get request token
     $response = $foo->GET(array(
         'url' => 'https://api.login.yahoo.com/oauth/v2/get_request_token',
