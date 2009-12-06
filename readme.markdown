@@ -64,9 +64,13 @@ OauthPanda is simple as a spoon to use, but detailed installation and usage inst
 
 ### See required parameters for constructor
 
-Simply instantiate w/o any: `$panda = new OauthPanda;`
+To see parameters req'd for the constructor, instantiate without any: 
 
-### Fetching the OAuth request token
+    <?php
+    require 'OauthPanda.class.php';
+    $panda = new OauthPanda;
+
+### Fetching the OAuth request token from Yahoo!
 
     <?php
     //see example.php for full code
@@ -79,37 +83,42 @@ Simply instantiate w/o any: `$panda = new OauthPanda;`
         'consumer_key' => YAHOO_OAUTH_CONSUMER_KEY,
         'consumer_secret' => YAHOO_OAUTH_CONSUMER_SECRET
     ));
+    
      //...
-    $response = $foo->GET(array(
-        'url' => 'https://api.login.yahoo.com/oauth/v2/get_request_token',
-        'params' => array('oauth_callback' => OAUTH_CALLBACK_URL)
-    ));
+     
+     $response = $foo->GET(array(
+         'url' => 'https://api.login.yahoo.com/oauth/v2/get_request_token',
+         'params' => array('oauth_callback' => OAUTH_CALLBACK_URL)
+     ));
 
-    //extract token
-    parse_str($response['response_body'], $request_token_response);
+     //extract token
+     parse_str($response['response_body'], $request_token_response);
 
-    //sanity check
-    assert(isset($request_token_response['oauth_token']));
+     //standard oauth lib expects request token stdclass obj
+     $request_token = (object) array(
+         'key' => $request_token_response['oauth_token'],
+         'secret' => $request_token_response['oauth_token_secret']
+     );
 
-    //standard oauth lib expects request token stdclass obj
-    $request_token = (object) array(
-        'key' => $request_token_response['oauth_token'],
-        'secret' => $request_token_response['oauth_token_secret']
-    );
+     //cache token for retrieval after auth
+     file_put_contents('request_token.txt', serialize($request_token));
 
-    //cache token for retreival after auth
-    file_put_contents('request_token.txt', serialize($request_token));
-
-    //redirect user for auth
-    $redirect_url = sprintf(
-        'https://api.login.yahoo.com/oauth/v2/request_auth?oauth_token=%s&oauth_callback=%s',
-    	$request_token_response['oauth_token'], 
-    	urlencode(OAUTH_CALLBACK_URL)
-    );
-    header('Location: '.$redirect_url);
-	 //...
+     //redirect user for auth
+     $redirect_url = sprintf(
+         'https://api.login.yahoo.com/oauth/v2/request_auth?oauth_token=%s&oauth_callback=%s',
+     	$request_token_response['oauth_token'], 
+     	urlencode(OAUTH_CALLBACK_URL)
+     );
+     header('Location: '.$redirect_url);
+     
+     //...
+     
     ?>
     
+## Examples
+
+See _example_ directory for examples of use with Yahoo! and Twitter
+
 ## License
 
 OauthPanda
