@@ -91,23 +91,28 @@ interface HttpRequestWrapper
 }
 
 class YahooCurlWrapper implements HttpRequestWrapper
-{   
+{       
+    function __construct($include_path=false)
+    {
+        $this->include_path = $include_path;
+    }
+    
     function request($request_method, Array $headers, $url, $param_string)
     {
-
         //check for dependencies when request() is called so oauthpanda can catch the exception
-        if (false === class_exists('YahooCurl') && false === is_file('YahooCurl.class.php')) {
-            $message = '<p>The <i>YahooCurl</i> client library is required. You can get it here:<br/>'
+        if (false === $this->include_path || false === is_file($this->include_path)) {
+            $message = sprintf('<p>The <i>YahooCurl</i> client library is required. You can get it here:<br/>'
                 .'<i><a href="http://github.com/yahoo/yos-social-php5/blob/master/lib/Yahoo/YahooCurl.class.php">'
                 .'http://github.com/yahoo/yos-social-php5/blob/master/lib/Yahoo/YahooCurl.class.php'
                 .'</a></i><br/>'
-                .'This code is expected to be in a file called <i>YahooCurl.class.php</i>, located<br/>'
-                .'in the same directory as OauthPanda.class.php, e.g.,<br/>'
-                .dirname(__FILE__).'/YahooCurl.class.php.</p>';
+                .'Pass the location of the base file into the %s constructor, e.g.,<br/>'
+                .'<i>\'oauth_client\' => new %s(\'path/to/YahooCurl.class.php\'),</i><br/>', 
+                __CLASS__,
+                __CLASS__);
             throw new Exception($message);
         }
         
-        require_once 'YahooCurl.class.php';
+        require_once $this->include_path;
         
         //terse enforcement of types because we're not interfacing w/ user
         assert(is_string($url));
