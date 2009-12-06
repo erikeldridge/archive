@@ -69,20 +69,26 @@ OauthPanda is simple as a spoon to use, but detailed installation and usage inst
     To quickly see parameters required for the constructor, just instantiate without any: 
 
         <?php
+        
         require 'OauthPanda.class.php';
+        
         $panda = new OauthPanda;
+        
         ?>
 
     Assuming you have the curl and OAuth client libraries available
 
         <?php
+        
         require 'OauthPanda.class.php';
+        
         $panda = new OauthPanda(array(
             'request_client' => new YahooCurlWrapper('../path/to/YahooCurl.class.php'),
             'oauth_client' => new StandardOauthWrapper('../path/to/OAuth.php'),
             'consumer_key' => '123qwe',
             'consumer_secret' => '456asd'
         ));
+        
         ?>
 
 2. Start making requests
@@ -92,6 +98,7 @@ OauthPanda is simple as a spoon to use, but detailed installation and usage inst
         <?php
     
         require 'OauthPanda.class.php';
+        
         $panda = new OauthPanda(array(
             'request_client' => new YahooCurlWrapper('../path/to/YahooCurl.class.php'),
             'oauth_client' => new StandardOauthWrapper('../path/to/OAuth.php'),
@@ -99,7 +106,7 @@ OauthPanda is simple as a spoon to use, but detailed installation and usage inst
             'consumer_secret' => '456asd'
         ));
      
-        $response = $foo->GET(array(
+        $response = $panda->GET(array(
          'url' => 'https://api.login.yahoo.com/oauth/v2/get_request_token',
          'params' => array('oauth_callback' => 'http://example.com')
         ));
