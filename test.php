@@ -66,13 +66,44 @@ try {
 // assert(false);
 
 //test chaining set()
-$foo->set(array(
-    'request_client' => (object) array('boo'=>'baz')
-))->set(array(
-    'exception_handling'=> 'print'
+$foo = new OauthPanda(array(
+    'exception_handling' => 'throw',
+    'request_client' => new YahooCurlWrapper,
+    'oauth_client' => new StandardOauthWrapper,
+    'consumer_key' => YAHOO_OAUTH_CONSUMER_KEY,
+    'consumer_secret' => YAHOO_OAUTH_CONSUMER_SECRET
 ));
-assert('print' == $foo->class_settings['exception_handling']['value']);
-assert('baz' == $foo->class_settings['request_client']['value']->boo);
+try {
+    $foo->set(array(
+        'request_client' => (object) array('boo'=>'baz')
+    ))->set(array(
+        'exception_handling'=> 'print'
+    ));
+    assert('print' == $foo->class_settings['exception_handling']['value']);
+    assert('baz' == $foo->class_settings['request_client']['value']->boo);
+} catch (Exception $e) {
+    
+    //an empty array shouldn't throw
+    assert(false);
+}
+
+//test set() w/ empty array
+$foo = new OauthPanda(array(
+    'exception_handling' => 'throw',
+    'request_client' => new YahooCurlWrapper,
+    'oauth_client' => new StandardOauthWrapper,
+    'consumer_key' => YAHOO_OAUTH_CONSUMER_KEY,
+    'consumer_secret' => YAHOO_OAUTH_CONSUMER_SECRET
+));
+try {
+    $foo->set(array(
+        // 'boo'=> 'baz'
+    ));
+} catch (Exception $e) {
+    
+    //an empty array shouldn't throw
+    assert(false);
+}
 
 //test key validation
 $foo = new OauthPanda(array(
