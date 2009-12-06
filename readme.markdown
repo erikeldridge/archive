@@ -80,8 +80,8 @@ OauthPanda is simple as a spoon to use, but detailed installation and usage inst
         $panda = new OauthPanda(array(
             'request_client' => new YahooCurlWrapper('../path/to/YahooCurl.class.php'),
             'oauth_client' => new StandardOauthWrapper('../path/to/OAuth.php'),
-            'consumer_key' => YAHOO_OAUTH_CONSUMER_KEY,
-            'consumer_secret' => YAHOO_OAUTH_CONSUMER_SECRET
+            'consumer_key' => '123qwe',
+            'consumer_secret' => '456asd'
         ));
         ?>
 
@@ -95,13 +95,13 @@ OauthPanda is simple as a spoon to use, but detailed installation and usage inst
         $panda = new OauthPanda(array(
             'request_client' => new YahooCurlWrapper('../path/to/YahooCurl.class.php'),
             'oauth_client' => new StandardOauthWrapper('../path/to/OAuth.php'),
-            'consumer_key' => YAHOO_OAUTH_CONSUMER_KEY,
-            'consumer_secret' => YAHOO_OAUTH_CONSUMER_SECRET
+            'consumer_key' => '123qwe',
+            'consumer_secret' => '456asd'
         ));
      
         $response = $foo->GET(array(
          'url' => 'https://api.login.yahoo.com/oauth/v2/get_request_token',
-         'params' => array('oauth_callback' => OAUTH_CALLBACK_URL)
+         'params' => array('oauth_callback' => 'http://example.com')
         ));
      
         ?>
