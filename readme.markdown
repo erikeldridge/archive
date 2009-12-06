@@ -1,4 +1,4 @@
-# OauthPanda
+# OAuthPanda
 
 <pre>
 I7$$$ZZ$Z8DNDDZZOZ$$$7$ZZ$$77$7$OZ$$$ZZZ$$$$$Z77ZZZZZ$$$$$$ZOOOOZZZZ$7$Z$$ZOOZZ$
@@ -44,11 +44,11 @@ www.chine-informations.com/images/upload2/panda%20geant.jpg  -->  GlassGiant.com
 	
 ## Preamble
 
-OauthPanda attempts to make requests to [OAuth](http://oauth.net)-secured web services as painless as possible.  The panda acts as a soft layer between an HTTP request client, a standard OAuth client, and a user.  
+OAuthPanda attempts to make requests to [OAuth](http://oauth.net)-secured web services as painless as possible.  The panda acts as a soft layer between an HTTP request client, a standard OAuth client, and a user.  
 
-OauthPanda relies on HttpRequestWrapper and OauthWrapper, to manage the HTTP request and OAuth clients, respectively.  All OauthPanda knows is that the user feeds it a set of required and optional parameters, OauthWrapper uses some of them to create an OAuth signature, and HttpRequestWrapper uses others to make the actual request.  The panda's magic comes from it's ability to make these two talk to each other and communicate with people as clearly as possible.  
+OAuthPanda relies on HttpRequestWrapper and OauthWrapper, to manage the HTTP request and OAuth clients, respectively.  All OAuthPanda knows is that the user feeds it a set of required and optional parameters, OauthWrapper uses some of them to create an OAuth signature, and HttpRequestWrapper uses others to make the actual request.  The panda's magic comes from it's ability to make these two talk to each other and communicate with people as clearly as possible.  
 
-OauthPanda is simple as a spoon to use, but detailed installation and usage instructions are given below.
+OAuthPanda is simple as a spoon to use, but detailed installation and usage instructions are given below.
 
 ## Prerequisites
 
@@ -119,7 +119,7 @@ OauthPanda is simple as a spoon to use, but detailed installation and usage inst
 
 ## License
 
-OauthPanda
+OAuthPanda
 
 * package: http://github.com/erikeldridge/oauthpanda
 * author: Erik Eldridge
