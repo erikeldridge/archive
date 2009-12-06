@@ -53,71 +53,60 @@ OauthPanda is simple as a spoon to use, but detailed installation and usage inst
 ## Prerequisites
 
 * PHP 5.2 with [cURL](http://us.php.net/manual/en/ref.curl.php) enabled
-* The [Yahoo! Curl utility class](http://github.com/yahoo/yos-social-php5/blob/master/lib/Yahoo/YahooCurl.class.php).
+* The [Yahoo! Curl utility class](http://github.com/yahoo/yos-social-php5/blob/master/lib/Yahoo/YahooCurl.class.php) or [Shuber's cURL library](http://github.com/shuber/curl).
 * A server that can serve content to an OAuth provider, i.e., that's accessible via a domain you have root access to.  
-   * Confused?  Here's some documentation for getting started w/ [Yahoo!](http://developer.yahoo.com/oauth/).
+   * Confused?  Here's some documentation for getting started w/ [Yahoo!](http://developer.yahoo.com/oauth/) and [Twitter](http://apiwiki.twitter.com/Authentication).
 * OAuth consumer key and secret.  
    * The linked documentation above explains this too
 * The [OAuth PHP library](http://oauth.googlecode.com/svn/code/php/OAuth.php)
 
 ## Usage
 
-### See required parameters for constructor
+1. Set required parameters for constructor
 
-To see parameters req'd for the constructor, instantiate without any: 
+In general, OAuthPanda requires request and oauth client wrappers and the consumer key and secret up front.  Please check out the examples of usage below and in the [_example_](http://github.com/erikeldridge/oauthpanda/tree/master/example/) directory for typical set ups.  
+
+To quickly see parameters required for the constructor, just instantiate without any: 
 
     <?php
     require 'OauthPanda.class.php';
     $panda = new OauthPanda;
+    ?>
 
-### Fetching the OAuth request token from Yahoo!
+Assuming you have the curl and OAuth client libraries available
 
     <?php
-    //see example.php for full code
-    require 'private.php';
     require 'OauthPanda.class.php';
-
-    $foo = new OauthPanda(array(
-        'request_client' => new YahooCurlWrapper,
-        'oauth_client' => new StandardOauthWrapper,
+    $panda = new OauthPanda(array(
+        'request_client' => new YahooCurlWrapper('../path/to/YahooCurl.class.php'),
+        'oauth_client' => new StandardOauthWrapper('../path/to/OAuth.php'),
         'consumer_key' => YAHOO_OAUTH_CONSUMER_KEY,
         'consumer_secret' => YAHOO_OAUTH_CONSUMER_SECRET
     ));
+    ?>
     
-     //...
+2. Start making requests
+
+Here's code for using OAuthPanda to get a request token from Yahoo!
+    
+    <?php
+    
+    require 'OauthPanda.class.php';
+    $panda = new OauthPanda(array(
+        'request_client' => new YahooCurlWrapper('../path/to/YahooCurl.class.php'),
+        'oauth_client' => new StandardOauthWrapper('../path/to/OAuth.php'),
+        'consumer_key' => YAHOO_OAUTH_CONSUMER_KEY,
+        'consumer_secret' => YAHOO_OAUTH_CONSUMER_SECRET
+    ));
      
-     $response = $foo->GET(array(
-         'url' => 'https://api.login.yahoo.com/oauth/v2/get_request_token',
-         'params' => array('oauth_callback' => OAUTH_CALLBACK_URL)
-     ));
-
-     //extract token
-     parse_str($response['response_body'], $request_token_response);
-
-     //standard oauth lib expects request token stdclass obj
-     $request_token = (object) array(
-         'key' => $request_token_response['oauth_token'],
-         'secret' => $request_token_response['oauth_token_secret']
-     );
-
-     //cache token for retrieval after auth
-     file_put_contents('request_token.txt', serialize($request_token));
-
-     //redirect user for auth
-     $redirect_url = sprintf(
-         'https://api.login.yahoo.com/oauth/v2/request_auth?oauth_token=%s&oauth_callback=%s',
-     	$request_token_response['oauth_token'], 
-     	urlencode(OAUTH_CALLBACK_URL)
-     );
-     header('Location: '.$redirect_url);
-     
-     //...
+    $response = $foo->GET(array(
+     'url' => 'https://api.login.yahoo.com/oauth/v2/get_request_token',
+     'params' => array('oauth_callback' => OAUTH_CALLBACK_URL)
+    ));
      
     ?>
     
-## Examples
-
-See _example_ directory for examples of use with Yahoo! and Twitter
+You can see the full OAuth flow for Twitter and Yahoo! in the [_example_](http://github.com/erikeldridge/oauthpanda/tree/master/example/) directory.
 
 ## License
 
