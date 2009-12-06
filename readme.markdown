@@ -64,16 +64,16 @@ OauthPanda is simple as a spoon to use, but detailed installation and usage inst
 
 1. Set required parameters for constructor
 
-In general, OAuthPanda requires request and oauth client wrappers and the consumer key and secret up front.  Please check out the examples of usage below and in the [_example_](http://github.com/erikeldridge/oauthpanda/tree/master/example/) directory for typical set ups.  
+    In general, OAuthPanda requires request and oauth client wrappers and the consumer key and secret up front.  Please check out the examples of usage below and in the [_example_](http://github.com/erikeldridge/oauthpanda/tree/master/example/) directory for typical set ups.  
 
-To quickly see parameters required for the constructor, just instantiate without any: 
+    To quickly see parameters required for the constructor, just instantiate without any: 
 
     <?php
     require 'OauthPanda.class.php';
     $panda = new OauthPanda;
     ?>
 
-Assuming you have the curl and OAuth client libraries available
+    Assuming you have the curl and OAuth client libraries available
 
     <?php
     require 'OauthPanda.class.php';
@@ -84,10 +84,10 @@ Assuming you have the curl and OAuth client libraries available
         'consumer_secret' => YAHOO_OAUTH_CONSUMER_SECRET
     ));
     ?>
-    
+
 2. Start making requests
 
-Here's code for using OAuthPanda to get a request token from Yahoo!
+    Here's code for using OAuthPanda to get a request token from Yahoo!
     
     <?php
     
@@ -106,7 +106,7 @@ Here's code for using OAuthPanda to get a request token from Yahoo!
      
     ?>
     
-You can see the full OAuth flow for Twitter and Yahoo! in the [_example_](http://github.com/erikeldridge/oauthpanda/tree/master/example/) directory.
+    You can see the full OAuth flow for Twitter and Yahoo! in the [_example_](http://github.com/erikeldridge/oauthpanda/tree/master/example/) directory.
 
 ## License
 
