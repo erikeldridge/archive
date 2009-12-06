@@ -422,29 +422,24 @@ class OauthPanda
     {
         if (count($args) == 0) {
             
-            $message = 'input reqd: ';
-            
             foreach($settings as $setting_name => $setting_value){
-                $message .= "<i>$setting_name";
+                $html = "<i>$setting_name</i>";
                 if ('true' == $setting_value['required']) {
-                    $message .= ' (required)';
+                     $html .= ' (required)';
                 }
-                $message .= '</i>, ';
+                $settings_list_html[] = $html;
             }
             
-            $exception = new VerboseException(rtrim($message, ', '));
+            $message = sprintf('<p>input reqd: %s</p>', implode(', ', $settings_list_html));
+            
+            $exception = new Exception($message);
             
         } elseif (false === is_array($args[0])) {
-            $exception = new VerboseException(sprintf(
+            $exception = new Exception(sprintf(
                 'input must be array, not: %s ', 
                 gettype($args[0])
             ));
-        } elseif (count($args[0]) == 0) {
-            $exception = new VerboseException(sprintf(
-                'input reqd: %s ', 
-                print_r($settings, true)
-            ));
-        }
+        } 
         
         if (isset($exception)) {
             $this->handleException($exception);
