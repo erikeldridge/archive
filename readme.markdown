@@ -68,10 +68,10 @@ OauthPanda is simple as a spoon to use, but detailed installation and usage inst
 
     To quickly see parameters required for the constructor, just instantiate without any: 
 
-    <?php
-    require 'OauthPanda.class.php';
-    $panda = new OauthPanda;
-    ?>
+        <?php
+        require 'OauthPanda.class.php';
+        $panda = new OauthPanda;
+        ?>
 
     Assuming you have the curl and OAuth client libraries available
 
@@ -105,6 +105,8 @@ OauthPanda is simple as a spoon to use, but detailed installation and usage inst
         ));
      
         ?>
+    
+    As with the constructor, you can see the parameters for GET(), by running it without any.
     
     You can see the full OAuth flow for Twitter and Yahoo! in the [_example_](http://github.com/erikeldridge/oauthpanda/tree/master/example/) directory.
 
