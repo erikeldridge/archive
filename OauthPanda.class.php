@@ -9,23 +9,29 @@ interface OauthWrapper
 
 class StandardOauthWrapper implements OauthWrapper
 {
+    function __construct($include_path=false)
+    {
+        $this->include_path = $include_path;
+    }
+    
+    //use hard enforcement because we're not interfacing w/ users
     function sign($consumer_key, $consumer_secret, $url, Array $params, $request_method, $token, $oauth_signature_method)
     {
-        
-        //check for dependencies when sign() is called so oauthpanda can catch the exception
-        if (false === class_exists('OAuthClient') && false === is_file('OAuth.php')) {
-            $message = '<p>The standard OAuth client library is required.<br/>'
+        // check for file when sign() is called so oauthpanda can catch the exception
+        if (false === $this->include_path || false === is_file($this->include_path)) {
+            $message = sprintf('<p>The standard OAuth client library is required.<br/>'
             .'You can get it here:'
             .'<i><a href="http://oauth.googlecode.com/svn/code/php/OAuth.php">'
             .'http://oauth.googlecode.com/svn/code/php/OAuth.php'
             .'</a></i>.<br/>'
-            .'This code is expected to be in a file called <i>OAuth.php</i>, located<br/>'
-            .'in the same directory as OauthPanda.class.php, e.g.,<br/>'
-            .dirname(__FILE__).'/OAuth.php.</p>';
+            .'Pass the location of the file into the %s constructor, e.g.,<br/>'
+            .'<i>\'oauth_client\' => new %s(\'path/to/OAuth.php\'),</i><br/>', 
+            __CLASS__,
+            __CLASS__);
             throw new Exception($message);
         } 
         
-        require_once 'OAuth.php';
+        require_once $this->include_path;
         
         //terse enforcement of types because we're not interfacing w/ user
         assert(is_string($consumer_key));
