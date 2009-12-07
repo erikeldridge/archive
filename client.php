@@ -22,6 +22,8 @@ $tests = get_class_methods('Tests');
         padding: 1ex;
         margin-bottom: 1ex;
     }
+    
+    /* note: these must correspond w/ 'result' field returned from server*/
     .pass {
         color: white;
         background-color: green;

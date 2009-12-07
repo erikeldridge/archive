@@ -1,4 +1,6 @@
 <?php
+
+// note: 'result' field must have corresponding css class for styles to be applied
 class Tests
 {
     function test1()
