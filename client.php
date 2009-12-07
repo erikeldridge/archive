@@ -10,14 +10,17 @@ $tests = get_class_methods('Tests');
     
     <style>
     body {
-        text-align: left;
+        text-align: left;        
+        padding: 1ex;
     }
-    ul {
-       margin: 1ex;
+    h1 {
+        font-weight: bold;
+        margin-bottom: 1ex;
     }
     li {
         width: 10em;
         padding: 1ex;
+        margin-bottom: 1ex;
     }
     .pass {
         color: white;
@@ -29,6 +32,7 @@ $tests = get_class_methods('Tests');
     </style>
 </head>
 <body>
+    <h1>results:</h1>
     <ul id="results">
         <? foreach($tests as $test): ?>
             <li id="<?= $test ?>"><?= $test ?>: loading ...</li>
@@ -44,14 +48,13 @@ $tests = get_class_methods('Tests');
         function complete(id, o, args) {
             var data = Y.JSON.parse(o.responseText),
                 html = data.id + ': ' + data.result;
-            Y.Node.get('#' + data.id).addClass(data.result);
-            Y.Node.get('#' + data.id).set('innerHTML', html);
+            Y.Node.get('#' + data.id).addClass(data.result).set('innerHTML', html);
         };
 
     	Y.on('io:complete', complete, this);
 	
     	for (var i = 0; i < tests.length; i++) {
-            Y.io('api.php?test=' + tests[i]);	
+            Y.io('server.php?test=' + tests[i]);	
     	}
     });
 
