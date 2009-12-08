@@ -114,7 +114,7 @@ class Tests
             TestUtils::assertTrue(false, 'passing invalid setting value to set() should throw');
         } catch (Exception $e) {
             TestUtils::assertTrue(
-                false !== strpos($e->getMessage(), 'invalid setting type: array')
+                false !== strpos($e->getMessage(), '<i>request_client</i> must be an object, not: array')
             );
         }
     }
@@ -210,8 +210,7 @@ class Tests
             TestUtils::assertTrue(false, 'bad consumer secret type should throw exception, ie we shouldn\'t get here');
         } catch (Exception $e) {
             TestUtils::assertTrue(
-                false !== strpos($e->getMessage(), '<i>consumer_key</i> must be a string not: array'),
-                'bad consumer secret type should throw exception'
+                false !== strpos($e->getMessage(), '<i>consumer_secret</i> must be a string not: array')
             );
         }
     }
@@ -223,21 +222,24 @@ class Tests
         $foo = new OauthPanda(array(
             'exception_handling' => 'throw',
             'request_client' => new YahooCurlWrapper,
-            'oauth_client' => new StandardOauthWrapper,
+            'oauth_client' => new StandardOauthWrapper('../OAuth.php'),
             'consumer_key' => YAHOO_OAUTH_CONSUMER_KEY,
             'consumer_secret' => YAHOO_OAUTH_CONSUMER_SECRET
         ));
         
         try {
-            //calling BAR() would throw error
-            $foo->set(array('request_client' => new YahooCurlWrapper))->BAR(array(
+            
+            //calling BAR() would throw error, but deliberately setting method overrides
+            $foo->set(array('request_client' => new YahooCurlWrapper('../YahooCurl.class.php')))->BAR(array(
                 'request_method' => 'GET',
                 'url' => 'https://api.login.yahoo.com/oauth/v2/get_request_token',
             ));
+            
+            TestUtils::respond(__FUNCTION__, 'pass');
         } catch (Exception $e) {
             TestUtils::assertTrue(
                 false,
-                'deliberately setting request method should not throw exception'
+                'deliberately setting request method should not throw exception<p/>'.print_r($e, true)
             );
         }
     }
