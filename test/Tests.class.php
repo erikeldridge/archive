@@ -1,5 +1,7 @@
 <?php
 
+require '../private.php';
+
 function createStandardPandaObj()
 {
     $foo = new OauthPanda(array(
@@ -379,6 +381,36 @@ class Tests
         } catch (Exception $e) {
             TestUtils::assertTrue(
                 false !== strpos($e->getMessage(), '<i>consumer_secret</i> must be a string not: array'),
+                ''.print_r($e, true)
+            );
+        }
+    }
+    
+    // BEGIN: yahoo! provider tests
+    
+    // test correct response from yahoo
+    static function test14()
+    {
+        require '../OauthPanda.class.php';
+        
+        $foo = createStandardPandaObj();
+        
+        try {
+            $response = $foo->GET(array(
+                'url' => 'https://api.login.yahoo.com/oauth/v2/get_request_token',
+                'params' => array('oauth_callback' => OAUTH_CALLBACK_URL)
+            ));
+            
+            //we should get a request token back
+            TestUtils::assertTrue(
+                false !== strpos($response['response_body'], 'oauth_token=')
+            );
+            
+        } catch (Exception $e) {
+            
+            //no exception should be thrown
+            TestUtils::assertTrue(
+                false
                 ''.print_r($e, true)
             );
         }
