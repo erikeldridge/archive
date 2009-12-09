@@ -52,6 +52,25 @@ class TestUtils
     }
 }
 
+// w/o setting exception handling to throw, panda should print and exit on error
+// //test no args
+// new OauthPanda;
+
+//test invalid setting name
+// $foo = new OauthPanda(array(
+//  'blah'=>'baz'
+// ));
+
+//test invalid setting value
+// new OauthPanda(array(
+//  'exception_handling'=>'bar'
+// ));
+
+//test required setting
+// new OauthPanda(array(
+//  'exception_handling'=> 'print'
+// ));
+
 class Tests
 {
     static function test1()
