@@ -4,7 +4,7 @@ require '../private.php';
 
 function createStandardPandaObj()
 {
-    $foo = new OauthPanda(array(
+    $panda = new OauthPanda(array(
         'exception_handling' => 'throw',
         'request_client' => new YahooCurlWrapper('../YahooCurl.class.php'),
         'oauth_client' => new StandardOauthWrapper('../OAuth.php'),
@@ -281,14 +281,14 @@ class Tests
             );
         } catch (Exception $e) {
             TestUtils::assertTrue(
-                false !== strpos($e->getMessage(), '<i>consumer_secret</i> must be a string not: array'),
-                ''.print_r($e, true)
+                false !== strpos($e->getMessage(), '<i>request_method</i> must be "GET" or "POST", not "BAR"')
+                // print_r($e, true)
             );
         }
     }
     
     // test method input name validation w/ invalid value
-    static function test10()
+    static function test11()
     {
         require '../OauthPanda.class.php';
         
@@ -308,8 +308,7 @@ class Tests
             );
         } catch (Exception $e) {
             TestUtils::assertTrue(
-                false !== strpos($e->getMessage(), '<i>consumer_secret</i> must be a string not: array'),
-                ''.print_r($e, true)
+                false !== strpos($e->getMessage(), '<i>url</i> is required')
             );
         }
     }
@@ -317,7 +316,7 @@ class Tests
     //BEGIN: standard oauth client tests
     
     //test oauth client w/ no scheme in url --> fail
-    static function test11()
+    static function test12()
     {
         require '../OauthPanda.class.php';
         
@@ -333,14 +332,13 @@ class Tests
             );
         } catch (Exception $e) {
             TestUtils::assertTrue(
-                false !== strpos($e->getMessage(), '<i>consumer_secret</i> must be a string not: array'),
-                ''.print_r($e, true)
+                false !== strpos($e->getMessage(), 'A valid url of the form <i>{scheme}://{host}</i> is required')
             );
         }
     }
     
     //test oauth client w/ non-(http|https) scheme --> pass
-    static function test12()
+    static function test13()
     {
         require '../OauthPanda.class.php';
         
@@ -364,7 +362,7 @@ class Tests
     }
     
     // test oauth client w/ bad url --> fail
-    static function test13()
+    static function test14()
     {
         require '../OauthPanda.class.php';
         
@@ -380,8 +378,10 @@ class Tests
             
         } catch (Exception $e) {
             TestUtils::assertTrue(
-                false !== strpos($e->getMessage(), '<i>consumer_secret</i> must be a string not: array'),
-                ''.print_r($e, true)
+                
+                //parse_url can't determine scheme-host split, so same error is thrown as for no scheme
+                false !== strpos($e->getMessage(), 'A valid url of the form <i>{scheme}://{host}</i> is required')
+                
             );
         }
     }
@@ -389,11 +389,17 @@ class Tests
     // BEGIN: yahoo! provider tests
     
     // test correct response from yahoo
-    static function test14()
+    static function test15()
     {
         require '../OauthPanda.class.php';
         
-        $foo = createStandardPandaObj();
+        $foo = new OauthPanda(array(
+            'exception_handling' => 'throw',
+            'request_client' => new YahooCurlWrapper('../YahooCurl.class.php'),
+            'oauth_client' => new StandardOauthWrapper('../OAuth.php'),
+            'consumer_key' => YAHOO_OAUTH_CONSUMER_KEY,
+            'consumer_secret' => YAHOO_OAUTH_CONSUMER_SECRET
+        ));
         
         try {
             $response = $foo->GET(array(
@@ -410,7 +416,7 @@ class Tests
             
             //no exception should be thrown
             TestUtils::assertTrue(
-                false
+                false,
                 ''.print_r($e, true)
             );
         }
