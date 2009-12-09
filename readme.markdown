@@ -119,7 +119,7 @@ OAuthPanda is simple as a spoon to use, but detailed installation and usage inst
 
 ## Tests
 
-Run the unit tests as-is, by loading [_test/client.php_](http://github.com/erikeldridge/oauthpanda/blob/master/test/client.php) in a browser.  Tests are run using the [_unpredictable-unit-tester_](http://github.com/erikeldridge/unpredictable-unit-tester) "framework".
+Run the unit tests as-is, by loading [_test/client.php_](http://github.com/erikeldridge/oauthpanda/blob/master/test/client.php) in a browser.  Tests are run using the [_asynchronous-unit-tester_](http://github.com/erikeldridge/asynchronous-unit-tester) "framework".
 
 ## License
 
