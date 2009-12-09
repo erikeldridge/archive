@@ -1,5 +1,18 @@
 <?php
 
+function createStandardPandaObj()
+{
+    $foo = new OauthPanda(array(
+        'exception_handling' => 'throw',
+        'request_client' => new YahooCurlWrapper('../YahooCurl.class.php'),
+        'oauth_client' => new StandardOauthWrapper('../OAuth.php'),
+        'consumer_key' => YAHOO_OAUTH_CONSUMER_KEY,
+        'consumer_secret' => YAHOO_OAUTH_CONSUMER_SECRET
+    ));
+    
+    return $panda;
+}
+
 class TestUtils
 {
     static function respond($test_name, $result, $message=null)
@@ -240,6 +253,133 @@ class Tests
             TestUtils::assertTrue(
                 false,
                 'deliberately setting request method should not throw exception<p/>'.print_r($e, true)
+            );
+        }
+    }
+    
+    static function test10()
+    {
+        require '../OauthPanda.class.php';
+        
+        $foo = new OauthPanda(array(
+            'exception_handling' => 'throw',
+            'request_client' => new YahooCurlWrapper('../YahooCurl.class.php'),
+            'oauth_client' => new StandardOauthWrapper('../OAuth.php'),
+            'consumer_key' => YAHOO_OAUTH_CONSUMER_KEY,
+            'consumer_secret' => YAHOO_OAUTH_CONSUMER_SECRET
+        ));
+        
+        try {
+            $foo->BAR(array(
+                'url' => 'https://api.login.yahoo.com/oauth/v2/get_request_token',
+            ));
+            TestUtils::assertTrue(
+                false,
+                'invalid request method should throw exception'
+            );
+        } catch (Exception $e) {
+            TestUtils::assertTrue(
+                false !== strpos($e->getMessage(), '<i>consumer_secret</i> must be a string not: array'),
+                ''.print_r($e, true)
+            );
+        }
+    }
+    
+    // test method input name validation w/ invalid value
+    static function test10()
+    {
+        require '../OauthPanda.class.php';
+        
+        $foo = new OauthPanda(array(
+            'exception_handling' => 'throw',
+            'request_client' => new YahooCurlWrapper('../YahooCurl.class.php'),
+            'oauth_client' => new StandardOauthWrapper('../OAuth.php'),
+            'consumer_key' => YAHOO_OAUTH_CONSUMER_KEY,
+            'consumer_secret' => YAHOO_OAUTH_CONSUMER_SECRET
+        ));
+        
+        try {
+            $foo->GET(array());
+            TestUtils::assertTrue(
+                false,
+                'request w/ empty array should throw exception'
+            );
+        } catch (Exception $e) {
+            TestUtils::assertTrue(
+                false !== strpos($e->getMessage(), '<i>consumer_secret</i> must be a string not: array'),
+                ''.print_r($e, true)
+            );
+        }
+    }
+    
+    //BEGIN: standard oauth client tests
+    
+    //test oauth client w/ no scheme in url --> fail
+    static function test11()
+    {
+        require '../OauthPanda.class.php';
+        
+        $foo = createStandardPandaObj();
+        
+        try {
+            $foo->GET(array(
+                'url' => 'example.com.php'
+            ));
+            TestUtils::assertTrue(
+                false,
+                'should throw exception'
+            );
+        } catch (Exception $e) {
+            TestUtils::assertTrue(
+                false !== strpos($e->getMessage(), '<i>consumer_secret</i> must be a string not: array'),
+                ''.print_r($e, true)
+            );
+        }
+    }
+    
+    //test oauth client w/ non-(http|https) scheme --> pass
+    static function test12()
+    {
+        require '../OauthPanda.class.php';
+        
+        $foo = createStandardPandaObj();
+        
+        try {
+            $foo->GET(array(
+                'url' => 'zzz://example.com.php',
+                'params' => array('oauth_callback' => OAUTH_CALLBACK_URL)
+            ));
+            
+            //shouldn't throw exception
+            TestUtils::assertTrue(true);
+            
+        } catch (Exception $e) {
+            TestUtils::assertTrue(
+                false,
+                'if we\'re here, there\'s a problem '.print_r($e, true)
+            );
+        }
+    }
+    
+    // test oauth client w/ bad url --> fail
+    static function test13()
+    {
+        require '../OauthPanda.class.php';
+        
+        $foo = createStandardPandaObj();
+        
+        try {
+            $foo->GET(array(
+                'url' => 'http//ovider.php'
+            ));
+            
+            //should throw exception
+            TestUtils::assertTrue(false);
+            
+        } catch (Exception $e) {
+            TestUtils::assertTrue(
+                false !== strpos($e->getMessage(), '<i>consumer_secret</i> must be a string not: array'),
+                ''.print_r($e, true)
             );
         }
     }
