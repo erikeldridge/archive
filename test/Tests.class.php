@@ -1,7 +1,6 @@
 <?php
 
 require '../private.php';
-require '../OauthWrapper.class.php';
 
 function createStandardPandaObj()
 {
