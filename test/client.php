@@ -51,7 +51,7 @@ $tests = get_class_methods('Tests');
             var data = Y.JSON.parse(o.responseText),
                 html = data.test_name + ': ' + data.result;
                 
-            if ('' !== data.message) {
+            if (data.message) {
                 html += ' (' + data.message + ')';
             }
             
