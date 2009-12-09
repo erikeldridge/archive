@@ -1,9 +1,9 @@
 <?php
 
 /*
-Unpredictable Unit Tester
+Asynchronous Unit Tester
 
-* package: http://github.com/erikeldridge/unpredictable-unit-tester
+* package: http://github.com/erikeldridge/asynchronous-unit-tester
 * author: Erik Eldridge
 * copyright: Copyrights for code authored by Erik Eldridge is licensed under the following terms:
 * license: BSD Open Source License
