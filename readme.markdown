@@ -59,7 +59,11 @@ OAuthPanda is simple as a spoon to use, but detailed installation and usage inst
 * OAuth consumer key and secret.  
    * The linked documentation above explains this too
 * The [OAuth PHP library](http://oauth.googlecode.com/svn/code/php/OAuth.php)
-
+   * NOTE: The OAuth PHP library seems to double-encode its signature, invalidating it.  As a workaround, change line 103 from 
+   `return OAuthUtil::urlencode_rfc3986($raw);`
+   to
+   `return $raw;`
+   
 ## Usage
 
 1. Set required parameters for constructor
