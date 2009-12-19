@@ -27,11 +27,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-require 'tests.php';
+require sprintf('test_cases/%s.class.php', $_GET['case_name']);
 
 header('Content-Type: application/javascript');
 
-$tests = new Tests;
-$tests->{$_GET['test']}();
+$test_case = new $_GET['case_name'];
+$test_case->$_GET['test_name']();
 
 ?>

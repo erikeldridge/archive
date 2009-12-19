@@ -8,8 +8,10 @@ The _asynchronous unit tester_ is useful when we need to test something, but we 
 
 ## Usage
 
-1. Define a class called _Tests_ that consists of the test functions to run in _tests.php_
-2. Run the tests by loading the file _client.php_ in a browser.
+1. Define a test case
+   1. Create a file in _test\_cases_ named _whatever you're going to name your test case class_._class.php_, e.g., _TestCase.class.php_
+   1. In this file, include _TestUtils.class.php_, define a class called _whatever you named the file_, e.g., _TestCase_, and create test functions as methods within this class
+1. Run the tests by loading the file _client.php_ in a browser.
 
 ## License
 

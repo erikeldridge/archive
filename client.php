@@ -27,9 +27,23 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-require 'tests.php';
-$tests = get_class_methods('Tests');
+// fetch the names of all the files defining test cases
+$file_names = glob('test_cases/*.class.php');
 
+foreach ($file_names as $file_name) {
+    require $file_name;
+    
+    //determine the name of the test case class from the file name
+    $case_name = str_replace(array('test_cases/', '.class.php'), '', $file_name);
+    
+    $test_cases[] = array(
+        'case_name' => $case_name,
+        
+        //determine the names of all the tests to run inside each class
+        'test_names' => get_class_methods($case_name)
+        
+    );
+}
 ?>
 
 <head>
@@ -45,7 +59,7 @@ $tests = get_class_methods('Tests');
         margin-bottom: 1ex;
     }
     li {
-        width: 10em;
+        width: 20em;
         padding: 1ex;
         margin-bottom: 1ex;
     }
@@ -61,34 +75,41 @@ $tests = get_class_methods('Tests');
     </style>
 </head>
 <body>
-    <h1>results:</h1>
-    <ul id="results">
-        <? foreach($tests as $test): ?>
-            <li id="<?= $test ?>"><?= $test ?>: loading ...</li>
-        <? endforeach ?>
-    </ul>
+    
+    <!-- display the results of each test case -->
+    <? foreach($test_cases as $test_case): ?>
+        <h1>test case <i><?= $test_case['case_name'] ?></i> results:</h1>
+        <ul id="results">
+            <? foreach($test_case['test_names'] as $test_name): ?>
+                <li id="<?= $test_case['case_name'].$test_name ?>"><?= $test_case['case_name'].$test_name ?>: loading ...</li>
+            <? endforeach ?>
+        </ul>
+    <? endforeach ?>
 
     <script src="http://yui.yahooapis.com/3.0.0/build/yui/yui-min.js"></script>
     <script>
     YUI().use('node', 'io-base', 'json-parse', function(Y) {
     
-        var tests = <?= json_encode($tests) ?>;
+        var test_cases = <?= json_encode($test_cases) ?>;
     
         function complete(id, o, args) {
             var data = Y.JSON.parse(o.responseText),
-                html = data.id + ': ' + data.result;
+                html = data.test_name + ': ' + data.result;
                 
             if (data.message) {
                 html += ' (' + data.message + ')';
             }
-                
-            Y.Node.get('#' + data.id).addClass(data.result).set('innerHTML', html);
+            
+            Y.Node.get('#' + data.case_name + data.test_name).addClass(data.result).set('innerHTML', html);
         };
 
     	Y.on('io:complete', complete, this);
 	
-    	for (var i = 0; i < tests.length; i++) {
-            Y.io('server.php?test=' + tests[i]);	
+	    //for each test case, fire a request for each test
+    	for (var i = 0; i < test_cases.length; i++) {
+    	    for (var j = 0; j < test_cases[i]['test_names'].length; j++) {
+                Y.io('server.php?case_name=' + test_cases[i]['case_name'] + '&test_name=' + test_cases[i]['test_names'][j]);	
+            }
     	}
     });
 
