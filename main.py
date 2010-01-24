@@ -71,21 +71,22 @@ class ProxyHandler(webapp.RequestHandler):
           html = load( data_url ).read()
           if (url == 'http%3A%2F%2F3w.unocha.org%2FWhoWhatWhere%2FprojectReportFwt4.php%3FrepId%3D3%26adminLevel%3D1%26mSno%3D2%26tabId%3Da2%26activeSection%3D'):
               import parser_orgs
+              def conv( row ):
+                  sector, org, dept, capital, coords = row
+                  return {
+                      'sector': sector,
+                      'org': org,
+                      'dept': dept,
+                      'capital': capital,
+                      'coords': coords,
+                      }
+              rows = [conv( row ) for row in rows]
               rows = list( parser_orgs.parse( html ) )
           else:
               import parser_contacts
               rows = list( parser_contacts.parse( html ) )
-          
-          def conv( row ):
-              sector, org, dept, capital, coords = row
-              return {
-                  'sector': sector,
-                  'org': org,
-                  'dept': dept,
-                  'capital': capital,
-                  'coords': coords,
-                  }
-          rows = [conv( row ) for row in rows]
+              # html = open( 'data2.html' ).read()
+              rows = [parser_contacts.privacyFilter( row ) for row in rows]
           json = simplejson.dumps( rows )
           
       self.response.out.write( json )

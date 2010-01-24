@@ -71,10 +71,10 @@ def privacyFilter( row ):
 
     return row
 
-if ( __name__ == '__main__' ):
-    html = open( 'data2.html' ).read()
-    rows = list( parse( html ) )
-    rows = [privacyFilter( row ) for row in rows]
-    print simplejson.dumps( rows )
+# if ( __name__ == '__main__' ):
+#     html = open( 'data2.html' ).read()
+#     rows = list( parse( html ) )
+#     rows = [privacyFilter( row ) for row in rows]
+#     print simplejson.dumps( rows )
     #for row in rows:
     #    print '\t'.join( row )
