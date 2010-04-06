@@ -1,5 +1,6 @@
 <?php
 $feed = simplexml_load_file( "http://www.panda.org/rss/rss.cfm?EE0CAA83-0D3D-1276-648870865FBA23F9" );
+// $feed = simplexml_load_file( "feed.xml" );
 
 $data = array(
     'header' => array(
@@ -211,7 +212,7 @@ header('Content-type: text/html; charset=utf-8');
                     </div>
                 </div>
                 <div>
-                    <yml:a params="large.php?id=<?= $item['article_id'] ?>" class="title"><?= $item['title'] ?></a>
+                    <yml:a params="canvas/large.php?id=<?= $item['article_id'] ?>" class="title"><?= $item['title'] ?></a>
                     <div class="description"><?= $item['description'] ?></div>
                     <div class="pubDate"><?= $item['pubDate'] ?></div>
                 </div>
