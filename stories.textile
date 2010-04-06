@@ -1,0 +1,6 @@
+* small view
+** go to small view
+** see snippit of article description, picture, and link to read more on canvas
+* read more on canvas
+** go to canvas
+** app shows me 1 page of content, picture, author, and link to read full article on origin site
