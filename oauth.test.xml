@@ -19,13 +19,12 @@
 			tableUri = tableUri || 'http://github.com/yql/yql-tables/raw/master/oauth/oauth.xml';
 						
 			//cases
-			//ref: http://openid.net/specs/openid-authentication-2_0.html#normalization_example
 			testCases = [
 				function(){
 					
 					//setup
 					var caseResults = {
-						'name':'fetch yahoo request token'
+						'details':'fetch yahoo request token'
 					};
 					var query = 'use "{tableUri}" as table; select * from table where uri="{uri}" and consumerKey="{consumerKey}" and consumerSecret="{consumerSecret}" and callbackUri="{callbackUri}"'.supplant({
 						tableUri: tableUri,
@@ -33,6 +32,36 @@
 						consumerSecret: '31b1fa6f03eb3363e042a124bc7ef51b9e69228a',
 						callbackUri: 'http://test.erikeldridge.com',
 						uri:'https://api.login.yahoo.com/oauth/v2/get_request_token'
+					});					
+					var queryResults = y.query( query ).results;
+					
+					//tests					
+					if ( -1 === queryResults.toString().indexOf( 'oauth_token' ) ) {
+						caseResults['fail'] = 'table should return valid req token, not '+queryResults;
+					}
+					
+					//pass if no tests fail
+					if ( !caseResults['fail'] ) {
+						caseResults['pass'] = '';
+					}
+					
+					return caseResults;
+				}(),
+				function(){
+					
+					//setup
+					//note: this can be tricky because we need unique req token, and we need to auth in btwn
+					var caseResults = {
+						'details':'exchange yahoo request token for access token'
+					};
+					var query = 'use "{tableUri}" as table; select * from table where uri="{uri}" and consumerKey="{consumerKey}" and consumerSecret="{consumerSecret}" and token="{token}" and tokenSecret="{tokenSecret}" and verifier="{verifier}"'.supplant({
+						tableUri: tableUri,
+						consumerKey:'dj0yJmk9MXN0dU1pdGNhVEJyJmQ9WVdrOVRYRjNSVTAzTjJzbWNHbzlNQS0tJnM9Y29uc3VtZXJzZWNyZXQmeD01Mg--',
+						consumerSecret: '31b1fa6f03eb3363e042a124bc7ef51b9e69228a',
+						token: 'khbhm6d',
+						tokenSecret: 'c4db2531f94963a191675f653dea4a0e08c3e7df',
+						verifier:'arapfj',
+						uri:'https://api.login.yahoo.com/oauth/v2/get_token'
 					});					
 					var queryResults = y.query( query ).results;
 					
