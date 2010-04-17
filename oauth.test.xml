@@ -3,12 +3,13 @@
     <meta>
         <author>Erik Eldridge</author>
         <description>Unit tests for oauth.xml</description>
-        <sampleQuery>select * from {table}</sampleQuery>
+        <sampleQuery>use 'http://test.erikeldridge.com/yql/oauth/oauth.test.xml' as table; select * from table where tableUri='http://github.com/yql/yql-tables/raw/master/oauth/oauth.xml' and run='2,3'</sampleQuery>
 		<documentationURL>http://wiki.github.com/erikeldridge/yql-oauth-support/</documentationURL>
     </meta>
     <bindings>
         <select>
             <inputs>
+				<key id="run" type="xs:string" paramType="variable"/>
 				<key id="tableUri" type="xs:string" paramType="variable"/>
 			</inputs>
             <execute><![CDATA[
@@ -46,7 +47,7 @@
 					}
 					
 					return caseResults;
-				}(),
+				},
 				function(){
 					
 					//setup
@@ -65,6 +66,7 @@
 					});					
 					var queryResults = y.query( query ).results;
 					y.log(queryResults);
+					
 					//tests					
 					if ( -1 === queryResults.toString().indexOf( 'oauth_token' ) ) {
 						caseResults['fail'] = 'table should return valid req token, not '+queryResults;
@@ -76,7 +78,7 @@
 					}
 					
 					return caseResults;
-				}(),
+				},
 				function(){
 					
 					//setup
@@ -94,6 +96,7 @@
 					});					
 					var queryResults = y.xmlToJson( y.query( query ).results );
 					y.log(queryResults);
+					
 					//tests					
 					if ( !queryResults.results['status'] ) {
 						caseResults['fail'] = 'table should return user\'s status, not '+queryResults;
@@ -105,9 +108,51 @@
 					}
 					
 					return caseResults;
-				}()
+				},
+				function(){
+					
+					//setup
+					//note: this can be tricky because we need an access token and some providers expire tokens
+					var caseResults = {
+						'details':'2-leg netflix'
+					};
+					var query = 'use "{tableUri}" as table; select * from table where uri="{uri}" and consumerKey="{consumerKey}" and consumerSecret="{consumerSecret}"'.supplant({
+						tableUri: tableUri,
+						consumerKey:'yourkey',
+						consumerSecret: 'yoursecret',
+						uri:'http://api.netflix.com/catalog/titles'
+					});					
+					var queryResults = y.xmlToJson( y.query( query ).results );
+					y.log(queryResults);
+					
+					//tests					
+					if ( !queryResults.results['catalog_titles'] ) {
+						caseResults['fail'] = 'table should return catalog_titles, not '+queryResults;
+					}
+					
+					//pass if no tests fail
+					if ( !caseResults['fail'] ) {
+						caseResults['pass'] = '';
+					}
+					
+					return caseResults;
+				}
 			];
-			response.object = { "case": testCases };
+			
+			//runner
+			var caseResults = [];
+			if ( run ) {
+				for each ( var i in run.split( ',' ) ) {
+					caseResults.push( testCases[i]() );
+				}
+			} else {
+				for each ( var testCase in testCases ) {
+					caseResults.push( testCase() );
+				}
+			}
+			
+			//results
+			response.object = { "case": caseResults };
             
         ]]></execute>
         </select>
