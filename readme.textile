@@ -4,7 +4,8 @@ This project contains support resources for the YQL OAuth table.  For more infor
 
 h2. YQL OAuth Quickstart
 
-# 'use "http://test.erikeldridge.com/yql/oauth/oauth.xml" as table; select * from table where uri="https://api.login.yahoo.com/oauth/v2/get_request_token" and consumerKey="dj0yJmk9MXN0dU1pdGNhVEJyJmQ9WVdrOVRYRjNSVTAzTjJzbWNHbzlNQS0tJnM9Y29uc3VtZXJzZWNyZXQmeD01Mg--" and consumerSecret="31b1fa6f03eb3363e042a124bc7ef51b9e69228a" and callbackUri="http://test.erikeldridge.com"':http://developer.yahoo.com/yql/console/?q=use%20%22http%3A%2F%2Ftest.erikeldridge.com%2Fyql%2Foauth%2Foauth.xml%22%20as%20table%3B%20select%20*%20from%20table%20where%20uri%3D%22https%3A%2F%2Fapi.login.yahoo.com%2Foauth%2Fv2%2Fget_request_token%22%20and%20consumerKey%3D%22dj0yJmk9MXN0dU1pdGNhVEJyJmQ9WVdrOVRYRjNSVTAzTjJzbWNHbzlNQS0tJnM9Y29uc3VtZXJzZWNyZXQmeD01Mg--%22%20and%20consumerSecret%3D%2231b1fa6f03eb3363e042a124bc7ef51b9e69228a%22%20and%20callbackUri%3D%22http%3A%2F%2Ftest.erikeldridge.com%22&debug=true
+# "use &#8220;http://test.erikeldridge.com/yql/oauth/oauth.xml&#8221; as table; select * from table where uri=&#8221;https://api.login.yahoo.com/oauth/v2/get_request_token&#8221; and consumerKey=&#8221;dj0yJmk9MXN0dU1pdGNhVEJyJmQ9WVdrOVRYRjNSVTAzTjJzbWNHbzlNQS0tJnM9Y29uc3VtZXJzZWNyZXQmeD01Mg&#8212;&#8221; and consumerSecret=&#8221;31b1fa6f03eb3363e042a124bc7ef51b9e69228a&#8221; and callbackUri=&#8221;http://test.erikeldridge.com&#8221;
+":http://developer.yahoo.com/yql/console/?q=use%20%22http%3A%2F%2Ftest.erikeldridge.com%2Fyql%2Foauth%2Foauth.xml%22%20as%20table%3B%20select%20*%20from%20table%20where%20uri%3D%22https%3A%2F%2Fapi.login.yahoo.com%2Foauth%2Fv2%2Fget_request_token%22%20and%20consumerKey%3D%22dj0yJmk9MXN0dU1pdGNhVEJyJmQ9WVdrOVRYRjNSVTAzTjJzbWNHbzlNQS0tJnM9Y29uc3VtZXJzZWNyZXQmeD01Mg--%22%20and%20consumerSecret%3D%2231b1fa6f03eb3363e042a124bc7ef51b9e69228a%22%20and%20callbackUri%3D%22http%3A%2F%2Ftest.erikeldridge.com%22&debug=true
 
 h2. License
 
