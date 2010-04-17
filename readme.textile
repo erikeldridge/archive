@@ -1,0 +1,21 @@
+h1. YQL OAuth Support
+
+This project contains support resources for the YQL OAuth table.  For more information, please refer to the "wiki":http://wiki.github.com/erikeldridge/yql-oauth-support/.
+
+h2. YQL OAuth Quickstart
+
+# 'use "http://test.erikeldridge.com/yql/oauth/oauth.xml" as table; select * from table where uri="https://api.login.yahoo.com/oauth/v2/get_request_token" and consumerKey="dj0yJmk9MXN0dU1pdGNhVEJyJmQ9WVdrOVRYRjNSVTAzTjJzbWNHbzlNQS0tJnM9Y29uc3VtZXJzZWNyZXQmeD01Mg--" and consumerSecret="31b1fa6f03eb3363e042a124bc7ef51b9e69228a" and callbackUri="http://test.erikeldridge.com"':http://developer.yahoo.com/yql/console/?q=use%20%22http%3A%2F%2Ftest.erikeldridge.com%2Fyql%2Foauth%2Foauth.xml%22%20as%20table%3B%20select%20*%20from%20table%20where%20uri%3D%22https%3A%2F%2Fapi.login.yahoo.com%2Foauth%2Fv2%2Fget_request_token%22%20and%20consumerKey%3D%22dj0yJmk9MXN0dU1pdGNhVEJyJmQ9WVdrOVRYRjNSVTAzTjJzbWNHbzlNQS0tJnM9Y29uc3VtZXJzZWNyZXQmeD01Mg--%22%20and%20consumerSecret%3D%2231b1fa6f03eb3363e042a124bc7ef51b9e69228a%22%20and%20callbackUri%3D%22http%3A%2F%2Ftest.erikeldridge.com%22&debug=true
+
+h2. License
+
+Software License Agreement (BSD License)
+Copyright (c) 2009, Yahoo! Inc.
+All rights reserved.
+
+Redistribution and use of this software in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+
+* Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+* Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+* Neither the name of Yahoo! Inc. nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission of Yahoo! Inc.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
