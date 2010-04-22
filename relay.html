@@ -1,0 +1,20 @@
+<script src="http://yui.yahooapis.com/3.1.0/build/yui/yui-min.js"></script>
+<script>
+//credit: http://javascript.crockford.com/remedial.html
+if(!String.prototype.supplant){String.prototype.supplant=function(o){return this.replace(/{([^{}]*)}/g,function(a,b){var r=o[b];return typeof r==='string'||typeof r==='number'?r:a;});};}if(!String.prototype.trim){String.prototype.trim=function(){return this.replace(/^\s+|\s+$/g,"");};}
+
+if ( -1 !== document.location.href.indexOf( 'openid.mode' )  ) {
+    document.location.href = 'http://test.erikeldridge.com/connect/_openid_complete.php?{name}&assert={assert}'.supplant({
+        
+        //fetch id & key
+        name: window.name,
+        
+        assert: encodeURIComponent( document.location.href )
+    });
+} else if ( -1 !== document.location.href.indexOf( 'request_token' ) ) {
+
+    //define token for index.html
+    var token = document.location.href.substr( document.location.href.indexOf( 'request_token' ) + 14 );
+
+} 
+</script>
