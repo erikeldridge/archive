@@ -4,12 +4,12 @@
 //credit: http://javascript.crockford.com/remedial.html
 if(!String.prototype.supplant){String.prototype.supplant=function(o){return this.replace(/{([^{}]*)}/g,function(a,b){var r=o[b];return typeof r==='string'||typeof r==='number'?r:a;});};}if(!String.prototype.trim){String.prototype.trim=function(){return this.replace(/^\s+|\s+$/g,"");};}
 
-var key = 'dj0yJmk9TDNTVXpvRnpsbjJHJmQ9WVdrOVpXRlBkWEJETm1zbWNHbzlNQS0tJnM9Y29uc3VtZXJzZWNyZXQmeD0wYw--';
+var key = '0yJmk9TDNTVXpvRnpsbjJHJmQ9WVdrOVpXRlBkWEJETm1zbWNHbzlNQS0tJnM9Y29uc3VtZXJzZWNyZXQmeD0wYw--';
 var id = 'yahoo.com';
-var uri = 'http://test.erikeldridge.com/connect/_openid_start.php?id={id}&key={key}&return_to={returnTo}'.supplant({
+var uri = 'http://example/_openid_start.php?id={id}&key={key}&return_to={returnTo}'.supplant({
 	id: id,
 	key: key,
-	returnTo: encodeURIComponent( 'http://test.erikeldridge.com/connect/relay.html' )
+	returnTo: encodeURIComponent( 'http://example.com/relay.html' )
 });
 
 YUI().use('node', 'event-custom', function(Y) {
