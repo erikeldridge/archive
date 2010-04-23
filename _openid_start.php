@@ -1,5 +1,6 @@
 <?php
 
+//http://gist.github.com/373491
 require 'SqliteStore.php';
 
 function yql( $query )
