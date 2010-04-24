@@ -25,7 +25,8 @@
 			y.include( 'http://example.com/openid-oauth-yql-yui-party/2.0.0-crypto-md5.js' );
 			
 			//normalize id
-			var query = "use 'http://gist.github.com/yql/yql-tables/raw/master/openid/openid.normalize.xml' as openid.normalize;" + "select id from openid.normalize where id='{id}'".supplant({
+			var query = "use 'http://gist.github.com/yql/yql-tables/raw/master/openid/openid.normalize.xml' as openid.normalize;" 
+				+ "select id from openid.normalize where id='{id}'".supplant({
 				"id": openid
 			});
 			var results = y.query(query).results;
@@ -49,11 +50,20 @@
 				hash: hash
 			}).get();
 			
+			if( 200 !== req.status && 404 !== req.status ) {
+				y.log('200 !== req.status && 404 !== req.status');
+				y.log(req);
+				y.exit();
+			}
+			
 			if ( 200 === req.status ) {
 				var assoc = JSON.parse( req.response );
-			} else if ( 404 === req.status ) {
+			}
+			
+			//if no assoc, or assoc is expired, create/store assoc
+			var time = new Date().getTime();
+			if ( 404 === req.status || ( assoc.expires && assoc.expires < time ) ) {
 				
-				//if no assoc, create one
 				query = "use 'http://gist.github.com/yql/yql-tables/raw/master/openid/openid.assoc.xml' as openid.assoc;" 
 					+ "use 'http://gist.github.com/yql/yql-tables/raw/master/openid/openid.discover.xml' as openid.discover;" 
 					+ "select * from openid.assoc where uri in ( select success from openid.discover where normalizedId='{id}')".supplant({
@@ -62,7 +72,10 @@
 				
 				results = y.xmlToJson( y.query(query).results );
 				var assoc = results.results.success;
-
+				
+				//calc assoc expiration time
+				assoc.expires = parseInt( assoc.expires_in, 10 ) + time;
+				
 				//store assoc
 				uri = "http://example.com/openid-oauth-yql-yui-party/jsonkv.php";
 				req = y.rest( uri ).query({
@@ -72,17 +85,16 @@
 				}).post();
 
 				if ( 204 !== req.status ) {
+					y.log('204 !== req.status');
 					y.log(req);
 					y.exit();
 				}
 				
-			} else {
-				y.log(req);
-				y.exit();
-			}
+			} 
 			
 			//get openid login url
-			query = "use 'http://gist.github.com/yql/yql-tables/raw/master/openid/openid.xml' as openid; select * from openid where id='{id}' and return_to='{uri}' and assoc_handle='{handle}' and oauthKey='{key}'".supplant({
+			query = "use 'http://gist.github.com/yql/yql-tables/raw/master/openid/openid.xml' as openid;"
+				+" select * from openid where id='{id}' and return_to='{uri}' and assoc_handle='{handle}' and oauthKey='{key}'".supplant({
 				id: normalizedId, 
 				uri: decodeURIComponent(returnTo),
 				handle: assoc.assoc_handle,
