@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table xmlns="http://query.yahooapis.com/v1/schema/table.xsd">
+    <meta>
+        <author>Erik Eldridge</author>
+        <description>Unit tests for oauth.xml</description>
+        <sampleQuery>use 'http://example.com/openid-oauth-yql-yui-party/start.xml' as table; select * from table where openid='yahoo.com' and oauthConsumerKey='{oauth provider key}' and assert='{uri encoded assert json from OP}'</sampleQuery>
+		<documentationURL>http://wiki.github.com/erikeldridge/openid-oauth-yql-yui-party</documentationURL>
+    </meta>
+    <bindings>
+        <select>
+            <inputs>
+				<key id="oauthConsumerKey" type="xs:string" paramType="variable" required="true"/>
+				<key id="normalizedOpenId" type="xs:string" paramType="variable" required="true"/>
+				<key id="assert" type="xs:string" paramType="variable" required="true"/>
+			</inputs>
+            <execute><![CDATA[
+			//credit: http://javascript.crockford.com/remedial.html
+				if(!String.prototype.supplant){String.prototype.supplant=function(o){return this.replace( /{([^{}]*)}/g,function(a,b){var r=o[b];return typeof r==='string'||typeof r==='number'?r:a;});};}if(!String.prototype.trim){String.prototype.trim=function(){return this.replace(/^\s+|\s+$/g,"");};}
+			
+			// parseUri 1.2.2
+			y.include( 'http://github.com/kvz/phpjs/raw/master/functions/url/parse_url.js' );
+			
+			//json
+			y.include( 'store://pitrYOXYb8vQfiui4rUYPX' );
+			
+			//kludge: native y.crypto md5 output doesn't match php's
+			//http://code.google.com/p/crypto-js/
+			y.include( 'http://example.com/openid-oauth-yql-yui-party/2.0.0-crypto-md5.js' );
+			
+			function parseQueryString ( str ) {
+				var pair = null,
+					obj = {};
+				for each ( var params in str.split( '&' ) ) {
+					pair = params.split( '=' );
+					obj[ pair[0] ] = decodeURIComponent( pair[1] );
+				}
+				return obj;
+			}
+			
+			//fetch assoc by app + OP
+			var assocKey = Crypto.MD5( oauthConsumerKey + normalizedOpenId );
+			var hash = Crypto.MD5( 'secret' + assocKey );
+			var uri = 'http://example.com/openid-oauth-yql-yui-party/jsonkv.php';
+			var req = y.rest(uri).query({
+				key: assocKey,
+				hash: hash
+			}).get();
+			
+			//fail if no assoc
+			if ( 200 !== req.status ) {
+				y.log(req);
+				response.object = {"error":"assoc required"};
+				y.exit();
+			}
+			
+			var parsedAssert = parse_url( decodeURIComponent( assert ) ); 
+			var parsedQuery = parseQueryString( parsedAssert['query'] );
+			
+			//verify assertion
+			var query = "use 'http://example.com/yql/openid/openid.verify.xml' as openid.verify;"
+				+"select * from openid.verify where localUrl='{url}' and assertJson='{assert}' and assocJson='{assoc}'".supplant({
+			    	url: parsedAssert['scheme']+'://'+parsedAssert['host']+parsedAssert['path'], 
+			
+					// >>> NOTE: there's an ongoing bug blocking verification of assert in YQL.  See PHP in the meantime <<<
+					assert: JSON.stringify( parsedQuery ), 
+					assoc: req.response
+				});
+			
+			var results = y.query( query ).results;
+			y.log(results);y.exit();
+			if ( !results.success ) {
+			    y.log( query );
+				response.object = {"error":"verification failed"};
+			    y.exit();
+			}
+			
+			response.object = {"success":""};
+        ]]></execute>
+        </select>
+    </bindings>
+</table>
