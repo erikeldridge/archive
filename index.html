@@ -5,40 +5,53 @@
 if(!String.prototype.supplant){String.prototype.supplant=function(o){return this.replace(/{([^{}]*)}/g,function(a,b){var r=o[b];return typeof r==='string'||typeof r==='number'?r:a;});};}if(!String.prototype.trim){String.prototype.trim=function(){return this.replace(/^\s+|\s+$/g,"");};}
 
 var openid = 'yahoo.com';
-var oauthConsumerKey = '{oauth key from OP, eg developer.yahoo.com}';
+var oauthConsumerKey = 'examplek9TDNTVXpvRnpsbjJHJmQ9WVdrOVpXRlBkWEJETm1zbWNHbzlNQS0tJnM9Y29uc3VtZXJzZWNyZXQmeD0wYw--';
+var returnTo = 'http://example.com/openid-oauth-yql-yui-party/relay.html';
 
 var Y = YUI({
     gallery: 'gallery-2010.01.27-20'
 });
 
-function verify ( assertion ) {
-    var query = ( "use 'http://gist.github.com/yql/yql-tables/raw/master/openid/openid.normalize.xml' as openid.normalize;"
-        +" use 'http://example.com/openid-oauth-yql-yui-party/hybrid.complete.xml' as complete;"
-        +" select * from complete where oauthConsumerKey='{key}' and assert='{assert}' and normalizedOpenId='http://yahoo.com/' "
-        +"" ).supplant({
-            // id: openid,
-    	    key: oauthConsumerKey,
-    	    assert: encodeURIComponent( assertion )
-        });
-    Y.log(query);
-    new Y.yql( query, function(r) {
-
-        if ( r.error ) {
-            Y.log(r);
-            return;
-        }
-
-        Y.log(r.query.results);
-             
-    }, {debug:true, diagnostics:true}, {secure:true} );
-}
 
 Y.use('node', 'gallery-yql', function(Y) {
-    var query = "use 'http://example.com/openid-oauth-yql-yui-party/hybrid.start.xml' as table;"
+    
+    var popup = null;
+    
+    function complete ( assertion ) {
+
+        var query = ( "use 'http://gist.github.com/yql/yql-tables/raw/master/openid/openid.normalize.xml' as openid.normalize;"
+            +" use 'http://example.com/openid-oauth-yql-yui-party/complete.xml' as complete;"
+            +" select * from complete where oauthConsumerKey='{key}' and assert='{assert}' and normalizedOpenId='{id}' "
+            +"" ).supplant({
+                id: 'http://yahoo.com/',
+        	    key: oauthConsumerKey, 
+        	    assert: encodeURIComponent( assertion )
+            });
+
+        new Y.yql( query, function(r) {
+
+            if ( r.error ) {
+                Y.log(r);
+                return;
+            }
+
+            if ( r.query.results.success ) {
+                Y.fire( 'openid-oauth-yql-yui-party:success' );
+            } else {
+                Y.fire( 'openid-oauth-yql-yui-party:fail' );
+            }
+            
+            popup.close();
+
+        }, {debug:true, diagnostics:true}, {secure:true} );
+    }
+    
+    //start
+    var query = "use 'http://example.com/openid-oauth-yql-yui-party/start.xml' as table;"
         +" select * from table where openid='{id}' and oauthConsumerKey='{key}' and returnTo='{uri}'".supplant({
             id: openid,
     	    key: oauthConsumerKey,
-    	    uri: 'http://example.com/openid-oauth-yql-yui-party/relay.html'
+    	    uri: returnTo
         });
     new Y.yql( query, function(r) {
         
@@ -48,31 +61,38 @@ Y.use('node', 'gallery-yql', function(Y) {
         }
         
         Y.one('button').set('disabled', false).on( 'click', function ( e ) {
-            var popup = window.open( r.query.results.uri,
+            
+            popup = window.open( r.query.results.uri,
 
         	    //pass key & id to relay.html thru window.name
         	    'key='+oauthConsumerKey+'&id='+openid,
 
-        	    'toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=500,height=500,left=200,top=200'
+        	    'toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=1000,height=500,left=200,top=200'
         	);
+        	
             var interval = setInterval( function(){
 
                 //poll popup as hacky 'listener'
                 try{
-                    if ( popup.location.href ) {
-                        // Y.log( popup.location.href );
-                        verify( popup.location.href );
+                    if ( popup.location && 0 === popup.location.href.indexOf( returnTo ) ) {
                         clearInterval( interval );
-                        popup.close();
+                        complete( popup.location.href );  
                     }
                     if ( popup.closed ) {
                         clearInterval( interval );
                     }
-                }catch(e){
-
-                }
-            }, 5000 );
+                }catch(e){}
+            }, 1000 );
+            
         });        
     }, {debug:true, diagnostics:true}, {secure:true} );
+    
+    //...
+    Y.on('openid-oauth-yql-yui-party:success', function() {
+        Y.log('hallelujah!');
+    });
+    Y.on('openid-oauth-yql-yui-party:fail', function() {
+        Y.log('hmmm');
+    });
 });
 </script>
