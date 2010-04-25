@@ -29,17 +29,15 @@
                 };
             }
 
-            // parseUri 1.2.2
-            y.include('http://github.com/kvz/phpjs/raw/master/functions/url/parse_url.js');
-
+            // parseUri 1.2.2, (c) Steven Levithan <stevenlevithan.com>, MIT License
+            function parseUri(e){var d=parseUri.options,a=d.parser[d.strictMode?"strict":"loose"].exec(e),c={},b=14;while(b--){c[d.key[b]]=a[b]||"";}c[d.q.name]={};c[d.key[12]].replace(d.q.parser,function(g,f,h){if(f){c[d.q.name][f]=h;}});return c;}parseUri.options={strictMode:false,key:["source","protocol","authority","userInfo","user","password","host","port","relative","path","directory","file","query","anchor"],q:{name:"queryKey",parser:/(?:^|&)([^&=]*)=?([^&]*)/g},parser:{strict:/^(?:([^:\/?#]+):)?(?:\/\/((?:(([^:@]*)(?::([^:@]*))?)?@)?([^:\/?#]*)(?::(\d*))?))?((((?:[^?#\/]*\/)*)([^?#]*))(?:\?([^#]*))?(?:#(.*))?)/,loose:/^(?:(?![^:@]+:[^:@\/]*@)([^:\/?#.]+):)?(?:\/\/)?((?:(([^:@]*)(?::([^:@]*))?)?@)?([^:\/?#]*)(?::(\d*))?)(((\/(?:[^?#](?![^?#\/]*\.[^?#\/.]+(?:[?#]|$)))*\/?)?([^?#\/]*))(?:\?([^#]*))?(?:#(.*))?)/}};
+            
             //json
             y.include('store://pitrYOXYb8vQfiui4rUYPX');
 
             //kludge: native y.crypto md5 output doesn't match php's
             //http://code.google.com/p/crypto-js/
             y.include('http://example.com/openid-oauth-yql-yui-party/2.0.0-crypto-md5.js');
-
-
 
             function parseQueryString(str) {
                 var pair = null,
@@ -78,12 +76,12 @@
                 y.exit();
             }
 
-            var parsedAssert = parse_url(decodeURIComponent(assert));
+            var parsedAssert = parseUri(decodeURIComponent(assert));
             var parsedQuery = parseQueryString(parsedAssert['query']);
 
             //verify assertion
-            var query = "use 'http://example.com/yql/openid/openid.verify.xml' as openid.verify;" + "select * from openid.verify where localUrl='{url}' and assertJson='{assert}' and assocJson='{assoc}'".supplant({
-                url: parsedAssert['scheme'] + '://' + parsedAssert['host'] + parsedAssert['path'],
+            var query = "use 'http://example.com/yql/openid/openid.verify.xml' as openid.verify; select * from openid.verify where localUrl='{url}' and assertJson='{assert}' and assocJson='{assoc}'".supplant({
+                url: parsedAssert['protocol'] + '://' + parsedAssert['host'] + parsedAssert['path'],
                 assert: encodeURIComponent(JSON.stringify(parsedQuery)),
                 assoc: encodeURIComponent(req.response)
             });
@@ -97,9 +95,14 @@
                 };
                 y.exit();
             }
-
+            
+            //exchange request token for access token & store
+            y.log("request token: "+parsedQuery['openid.oauth.request_token']);
+            
+            //...
+            
             response.object = {
-                "success": results.results.success
+                "success": ':)'
             };
 
         ]]></execute>
