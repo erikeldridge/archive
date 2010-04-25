@@ -80,7 +80,7 @@
             var parsedQuery = parseQueryString(parsedAssert['query']);
 
             //verify assertion
-            var query = "use 'http://example.com/yql/openid/openid.verify.xml' as openid.verify; select * from openid.verify where localUrl='{url}' and assertJson='{assert}' and assocJson='{assoc}'".supplant({
+            var query = "use 'http://github.com/yql/yql-tables/raw/master/openid/openid.verify.xml' as openid.verify; select * from openid.verify where localUrl='{url}' and assertJson='{assert}' and assocJson='{assoc}'".supplant({
                 url: parsedAssert['protocol'] + '://' + parsedAssert['host'] + parsedAssert['path'],
                 assert: encodeURIComponent(JSON.stringify(parsedQuery)),
                 assoc: encodeURIComponent(req.response)
