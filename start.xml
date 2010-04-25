@@ -12,6 +12,7 @@
 				<key id="oauthConsumerKey" type="xs:string" paramType="variable" required="true"/>
 				<key id="openid" type="xs:string" paramType="variable" required="true"/>
 				<key id="returnTo" type="xs:string" paramType="variable" required="true"/>
+				<key id="resetAssoc" type="xs:string" paramType="variable" default='false' />
 			</inputs>
             <execute><![CDATA[
 			//credit: http://javascript.crockford.com/remedial.html
@@ -57,12 +58,12 @@
 			}
 			
 			if ( 200 === req.status ) {
-				var assoc = JSON.parse( req.response );y.log('stored assoc: '+assoc);
+				var assoc = JSON.parse( req.response );
 			}
 			
 			//if no assoc, or assoc is expired, create/store assoc
 			var time = Math.floor( new Date().getTime() / 1000 );
-			if ( 404 === req.status || ( assoc.expires && assoc.expires < time ) ) {
+			if ( ( 'true' === resetAssoc ) || 404 === req.status || ( assoc.expires && assoc.expires < time ) ) {
 				
 				query = "use 'http://gist.github.com/yql/yql-tables/raw/master/openid/openid.assoc.xml' as openid.assoc;" 
 					+ "use 'http://gist.github.com/yql/yql-tables/raw/master/openid/openid.discover.xml' as openid.discover;" 
@@ -75,7 +76,6 @@
 
 				//calc assoc expiration time
 				assoc.expires = parseInt( assoc.expires_in, 10 ) + time;
-				y.log('new assoc: '+assoc);
 				
 				//store assoc
 				uri = "http://example.com/openid-oauth-yql-yui-party/jsonkv.php";
