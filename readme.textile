@@ -1,5 +1,30 @@
 h1. OpenID OAuth YQL YUI party
 
+This project explores what an authentication/authorization flow using OpenID, OAuth, YQL, and YUI might look like if we were all just out to have a good time.
+
+h2. Flow
+
+# On initial load, index.html will make a call to YQL to get the openid authentication URI using start.xml
+# If an association has not yet been made, start.xml will create one
+# After getting the URI from start.xml, index.html will launch a popup with it
+# After the user logs in, the OP will redirect the browser to relay.html
+# For now, index.html polls the popup for it's location.  When the popup redirects from the OP to relay.html, the location will become visible to index.html's javascript
+# Once index.html has the location, which is the OP assertion, it will pass this assertion to complete.xml
+# Complete.xml will check the signature on the assertion and return success if it's all good
+
+h2. Usage
+
+# Load index.html in a browser
+# Click the "click" button
+
+h2. Installation
+
+# Upload start.xml, complete.xml, index.html, and relay.html to a server
+# Create a new file called "SqliteStore.php" and copy the contents of http://gist.github.com/373491 into it
+# Create a new file called "jsonkv.php" and copy the contents of http://gist.github.com/376323 into it
+# Edit the URIs throughout to point to your domain instead of "example.com"
+# Edit the OAuth consumer key in index.html to use your OAuth consumer key
+
 h2. License
 
 Software License Agreement (BSD License)
