@@ -57,11 +57,11 @@
 			}
 			
 			if ( 200 === req.status ) {
-				var assoc = JSON.parse( req.response );
+				var assoc = JSON.parse( req.response );y.log('stored assoc: '+assoc);
 			}
 			
 			//if no assoc, or assoc is expired, create/store assoc
-			var time = new Date().getTime();
+			var time = Math.floor( new Date().getTime() / 1000 );
 			if ( 404 === req.status || ( assoc.expires && assoc.expires < time ) ) {
 				
 				query = "use 'http://gist.github.com/yql/yql-tables/raw/master/openid/openid.assoc.xml' as openid.assoc;" 
@@ -72,20 +72,21 @@
 				
 				results = y.xmlToJson( y.query(query).results );
 				var assoc = results.results.success;
-				
+
 				//calc assoc expiration time
 				assoc.expires = parseInt( assoc.expires_in, 10 ) + time;
+				y.log('new assoc: '+assoc);
 				
 				//store assoc
 				uri = "http://example.com/openid-oauth-yql-yui-party/jsonkv.php";
 				req = y.rest( uri ).query({
-					"key": key,
+					key: key,
 					val: JSON.stringify( assoc ),
-					"hash": hash
+					hash: hash
 				}).post();
-
-				if ( 204 !== req.status ) {
-					y.log('204 !== req.status');
+				
+				if ( 200 !== req.status ) {
+					y.log('200 !== req.status');
 					y.log(req);
 					y.exit();
 				}
