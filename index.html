@@ -5,7 +5,7 @@
 if(!String.prototype.supplant){String.prototype.supplant=function(o){return this.replace(/{([^{}]*)}/g,function(a,b){var r=o[b];return typeof r==='string'||typeof r==='number'?r:a;});};}if(!String.prototype.trim){String.prototype.trim=function(){return this.replace(/^\s+|\s+$/g,"");};}
 
 var openid = 'yahoo.com';
-var oauthConsumerKey = 'examplek9TDNTVXpvRnpsbjJHJmQ9WVdrOVpXRlBkWEJETm1zbWNHbzlNQS0tJnM9Y29uc3VtZXJzZWNyZXQmeD0wYw--';
+var oauthConsumerKey = 'example9TDNTVXpvRnpsbjJHJmQ9WVdrOVpXRlBkWEJETm1zbWNHbzlNQS0tJnM9Y29uc3VtZXJzZWNyZXQmeD0wYw--';
 var returnTo = 'http://example.com/openid-oauth-yql-yui-party/relay.html';
 
 var Y = YUI({
@@ -20,10 +20,10 @@ Y.use('node', 'gallery-yql', function(Y) {
     function complete ( assertion ) {
 
         var query = ( "use 'http://gist.github.com/yql/yql-tables/raw/master/openid/openid.normalize.xml' as openid.normalize;"
-            +" use 'http://example.com/openid-oauth-yql-yui-party/complete.xml' as complete;"
-            +" select * from complete where oauthConsumerKey='{key}' and assert='{assert}' and normalizedOpenId='{id}' "
-            +"" ).supplant({
-                id: 'http://yahoo.com/',
+            +" use 'http://example.com/openid-oauth-yql-yui-party/hybrid.complete.xml' as complete;"
+            +" select * from complete where oauthConsumerKey='{key}' and assert='{assert}' and normalizedOpenId in "
+            +" ( select id from openid.normalize where id='{id}' )" ).supplant({
+                id: openid,
         	    key: oauthConsumerKey, 
         	    assert: encodeURIComponent( assertion )
             });
@@ -47,7 +47,7 @@ Y.use('node', 'gallery-yql', function(Y) {
     }
     
     //start
-    var query = "use 'http://example.com/openid-oauth-yql-yui-party/start.xml' as table;"
+    var query = "use 'http://example.com/openid-oauth-yql-yui-party/hybrid.start.xml' as table;"
         +" select * from table where openid='{id}' and oauthConsumerKey='{key}' and returnTo='{uri}'".supplant({
             id: openid,
     	    key: oauthConsumerKey,
