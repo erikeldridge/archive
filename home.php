@@ -1,7 +1,10 @@
 <?php
 require '../yosdk/yahoo-yos-social-php5-86eef28/lib/OAuth/OAuth.php';
 require '../yosdk/yahoo-yos-social-php5-86eef28/lib/Yahoo/YahooOAuthApplication.class.php';
+
+//http://gist.github.com/387056
 require 'MysqlUtil.php';
+
 require 'config.php';
 
 // safely fetch input
