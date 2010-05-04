@@ -7,9 +7,12 @@ You are currently using "BBAuth":http://developer.yahoo.com/auth/ to access a Ya
 h2. Requirements
 
 * A publicly accessible server with a domain name
-* This sample code uses PHP 5 and Mysql 5.0, but these are not required for OAuth or BBAuth
+* This sample code uses the following, which are not required for OAuth or BBAuth:
+** PHP 5
+** Mysql 5.0
+** "Yahoo! Social PHP 5 SDK":http://github.com/yahoo/yos-social-php5
 
-h2. Steps
+h2. General Integration Steps
 
 # Sign up in the "Yahoo! Developer Network dashboard":https://developer.apps.yahoo.com/projects for an OAuth App and select an API you'd like to use.  For this example, I'll use the "Profile API":http://developer.yahoo.com/social/rest_api_guide/extended-profile-resource.html
 # Back in your code, allow the user to log in as usual.  In this code, I use BBAuth's Single Sign-On feature to manage user login.
@@ -26,6 +29,15 @@ fn1. Note two things: 1) I explain why I am going to open a window for the user 
 fn2. For a comparison of the BBAuth vs OAuth authentication process, please refer the YDN documentation for "Making Authenticated Service Calls using BBAuth":http://developer.yahoo.com/auth/authcalls.html and the "OAuth Authorization Flow":http://developer.yahoo.com/oauth/guide/oauth-auth-flow.html
 
 fn3. Yahoo! Implements the "Scalable OAuth extension":http://wiki.oauth.net/ScalableOAuth which gives end-users greater control over their data.  For developers, this just means we have to refresh the token periodically as described in the "YDN documentation":http://developer.yahoo.com/oauth/guide/oauth-refreshaccesstoken.html
+
+h2. Sample Code Usage
+
+# Upload these files to your server
+# Edit _config.php_ to use your OAuth and BBAuth keys and secrets, and database access parameters
+# Browse to _index.php_
+# Log in using BBAuth
+# Once logged in, click the "Upgrade Me!" button to launch the OAuth flow
+# After authorizing access, you'll be redirected back to _home.php_, which will now pull in your profile data
 
 h2. License
 
