@@ -20,14 +20,22 @@ if ( !$local_user_id ) {
 // check for oauth token in storage
 $db = new MysqlUtil( $db_host, $db_name, $db_user, $db_pass );
 
-$record = $db->select( array(
-    'local_user_id' => $local_user_id, 
-    'service' => 'yahoo' 
-), 'oauth_tokens' );
+try {
+    $results = $db->query(  
+        "SELECT * FROM `oauth_tokens` 
+        WHERE `local_user_id` = '%s' 
+        AND `service` = 'yahoo' 
+        LIMIT 0 , 1;",
+        $local_user_id
+    );
+} catch ( Exception $e ) {
+    printf( '<pre>%s</pre>', print_r( $e, true ) ); 
+    die;
+}
 
 // there may be a record, but it may not have a valid token in it
-if ( $record ){
-    $access_token = json_decode( $record['token_json'] );
+if ( count( $results ) > 0 ){
+    $access_token = json_decode( $results[0]['token_json'] );
 }
 
 // if there's a stored token, check if it's expired, and refresh if it is
@@ -37,22 +45,20 @@ if( $access_token && $access_token->expire_time < time() ){
     
     $access_token = $oauth_app->refreshAccessToken( $access_token );
     $access_token->expire_time = time() + $access_token->expires_in;
-
-    $db->update( 
-        
-        //set
-        array( 'token_json' => json_encode( $access_token ) ),
-        
-        //where
-        array(
-            'local_user_id' => $local_user_id, 
-            'service' => 'yahoo', 
-            'service_user_id' => $access_token->yahoo_guid
-        ), 
-        
-        //on table
-        'oauth_tokens' 
-    );
+    
+    try {
+        $results = $db->query( 
+            "UPDATE `oauth_tokens` 
+            SET `token_json` = '%s' 
+            WHERE `service` = 'yahoo' 
+            AND `local_user_id` = '%s', 
+            LIMIT 1;",
+            json_encode( $access_token ) , $local_user_id
+        );
+    } catch ( Exception $e ) {
+        printf( '<pre>%s</pre>', print_r( $e, true ) ); 
+        die;
+    }
 }
 
 if( $access_token ){

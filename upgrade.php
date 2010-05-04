@@ -36,12 +36,23 @@ if ( $oauth_verifier && $request_token ) {
     
     $db = new MysqlUtil( $db_host, $db_name, $db_user, $db_pass );
     
-    $db->insert( array(
-        'local_user_id' => $local_user_id, 
-        'service' => 'yahoo', 
-        'service_user_id' => $access_token->yahoo_guid, 
-        'token_json' => json_encode( $access_token )
-    ), 'oauth_tokens' );
+    // $db->insert( array(
+    //     'local_user_id' => $local_user_id, 
+    //     'service' => 'yahoo', 
+    //     'service_user_id' => $access_token->yahoo_guid, 
+    //     'token_json' => json_encode( $access_token )
+    // ), 'oauth_tokens' );
+    
+    try {
+        $results = $db->query(
+            "INSERT INTO `%s`.`oauth_tokens` (`local_user_id`, `service`, `token_json`) 
+            VALUES ( '%s', 'yahoo', '%s' );",
+            $db_name, $local_user_id, json_encode( $access_token )
+        );
+    } catch ( Exception $e ) {
+        printf( '<pre>%s</pre>', print_r( $e, true ) ); 
+        die;
+    }
     
     // redirect back to index w/ success message
     header( "Location: home.php?notice=upgrade_success" );
