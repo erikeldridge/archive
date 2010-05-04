@@ -8,9 +8,9 @@ require 'MysqlUtil.php';
 require 'config.php';
 
 // safely fetch input
-$notice = filter_var( $_REQUEST['notice'], FILTER_SANITIZE_STRING );
-$bbauth_token = filter_var( $_REQUEST['bbauth_token'], FILTER_SANITIZE_STRING );
-$local_user_id = filter_var( $_REQUEST['local_user_id'], FILTER_SANITIZE_STRING );
+$notice = filter_var( $_GET['notice'], FILTER_SANITIZE_STRING );
+$bbauth_token = filter_var( $_COOKIE['bbauth_token'], FILTER_SANITIZE_STRING );
+$local_user_id = filter_var( $_COOKIE['local_user_id'], FILTER_SANITIZE_STRING );
 
 // require bbauth session
 if ( !$local_user_id ) {

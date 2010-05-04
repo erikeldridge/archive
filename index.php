@@ -8,8 +8,8 @@ require 'config.php';
 // safely fetch input
 $notice = filter_var( $_GET['notice'], FILTER_SANITIZE_STRING );
 $bbauth_token = filter_var( $_GET['token'], FILTER_SANITIZE_STRING );
-$bbauth_userhash = filter_var( $_REQUEST['userhash'], FILTER_SANITIZE_STRING );
-$local_user_id = filter_var( $_REQUEST['local_user_id'], FILTER_SANITIZE_STRING );
+$bbauth_userhash = filter_var( $_GET['userhash'], FILTER_SANITIZE_STRING );
+$local_user_id = filter_var( $_COOKIE['local_user_id'], FILTER_SANITIZE_STRING );
 
 $bbauth_app = new YahooMailJSONRPC( $bbauth_application_id, $bbauth_consumer_secret );
 $auth_url = $bbauth_app->getAuthURL( null, true );

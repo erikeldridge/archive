@@ -34,14 +34,8 @@ if ( $oauth_verifier && $request_token ) {
     // calc time token will expire & add it to token obj
     $access_token->expire_time = time() + $access_token->expires_in;
     
+    // a convenience obj for mysql.  any persistent storage could be used here
     $db = new MysqlUtil( $db_host, $db_name, $db_user, $db_pass );
-    
-    // $db->insert( array(
-    //     'local_user_id' => $local_user_id, 
-    //     'service' => 'yahoo', 
-    //     'service_user_id' => $access_token->yahoo_guid, 
-    //     'token_json' => json_encode( $access_token )
-    // ), 'oauth_tokens' );
     
     try {
         $results = $db->query(
