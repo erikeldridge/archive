@@ -1,2 +1,42 @@
 h1. BBAuth to OAuth Example
 
+h2. Motivation
+
+You are currently using "BBAuth":http://developer.yahoo.com/auth/ to access a Yahoo! API, but would like to start using "OAuth":http://developer.yahoo.com/oauth/
+
+h2. Requirements
+
+* A publicly accessible server with a domain name
+* This sample code uses PHP 5 and Mysql 5.0, but these are not required for OAuth or BBAuth
+
+h2. Steps
+
+# Sign up in the "Yahoo! Developer Network dashboard":https://developer.apps.yahoo.com/projects for an OAuth App and select an API you'd like to use.  For this example, I'll use the "Profile API":http://developer.yahoo.com/social/rest_api_guide/extended-profile-resource.html
+# Back in your code, allow the user to log in as usual.  In this code, I use BBAuth's Single Sign-On feature to manage user login.
+# After the user has logged in, prompt him/her to authorize using the new method for accessing data, eg "This site is upgrading it's service.  To get started, please log into Yahoo! and allow us to access your name and profile picture: &lt;button&gt;Upgrade me!&lt;/button&gt;".[1]
+# After the user has authorized access, fetch an OAuth token using PHP.  See _upgrade.php_ for an example of how to do this.[2]
+# Store the OAuth access token in association with the existing user id.  This also happens in _upgrade.php_.
+# Use OAuth access token to request data henceforth.  See _home.php_.
+# Refresh the OAuth token periodically.  See _home.php_.[3]
+
+h3. Notes
+
+fn1. Note two things: 1) I explain why I am going to open a window for the user to log into, and 2) the access I request is limited and relevant.  Abruptly transitioning someone to a Yahoo! login page with no explanation is disorienting experience.
+
+fn2. For a comparison of the BBAuth vs OAuth authentication process, please refer the YDN documentation for "Making Authenticated Service Calls using BBAuth":http://developer.yahoo.com/auth/authcalls.html and the "OAuth Authorization Flow":http://developer.yahoo.com/oauth/guide/oauth-auth-flow.html
+
+fn3. Yahoo! Implements the "Scalable OAuth extension":http://wiki.oauth.net/ScalableOAuth which gives end-users greater control over their data.  For developers, this just means we have to refresh the token periodically as described in the "YDN documentation":http://developer.yahoo.com/oauth/guide/oauth-refreshaccesstoken.html
+
+h2. License
+
+This documentation and sample code is licensed using the Yahoo! BSD License:
+
+Software License Agreement (BSD License) Copyright (c) 2009, Yahoo! Inc. All rights reserved.
+
+Redistribution and use of this software in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+* Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+* Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+* Neither the name of Yahoo! Inc. nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission of Yahoo! Inc.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
