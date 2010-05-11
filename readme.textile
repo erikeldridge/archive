@@ -1,11 +1,13 @@
 h1. OpenID OAuth YQL YUI party
 
-This project explores what an authentication/authorization flow using OpenID, OAuth, YQL, and YUI might look like if we were all just out to have a good time.  This project is best explored with some good tunes, like those on "Friday Mixtape":http://fridaymixtape.com/.
+This project explores what an authentication/authorization flow using OpenID, OAuth, YQL, and YUI might look like if we were all just out to have a good time.  The project is best explored with some good tunes like those on "Friday Mixtape":http://fridaymixtape.com/.
 
 h2. Usage
 
 # Load index.html in a browser
-# Click the "Log in with Yahoo!" button
+# Click the "Log in with your Yahoo! ID" link
+# Authenticate and authorize with Yahoo!
+# Observe "loginSuccess" in index.html's console after successfully logging in
 
 h2. Installation
 
