@@ -1,98 +1,94 @@
-<button disabled="true">click</button>
-<script src="http://yui.yahooapis.com/3.1.0/build/yui/yui-min.js"></script>
+<ul id="login">
+    <li><a href="start.php?openid=yahoo.com&oauthConsumerKey=exampleNTVXpvRnpsbjJHJmQ9WVdrOVpXRlBkWEJETm1zbWNHbzlNQS0tJnM9Y2uc3VtZXJzZWNyZXQmeD0wYw--">Log in with your Yahoo! ID</a></li>
+    <li><a href="start.php?openid=google.com&oauthConsumerKey=exampleNTVXpvRnpsbjJHJmQ9WVdrOVpXRlBkWEJETm1zbWNHbzlNQS0tJnM9Y2uc3VtZXJzZWNyZXQmeD0wYw--">Log in with your Google ID</a></li>
+    <li><a href="start.php?openid=wordpress.com&oauthConsumerKey=exampleNTVXpvRnpsbjJHJmQ9WVdrOVpXRlBkWEJETm1zbWNHbzlNQS0tJnM9Y2uc3VtZXJzZWNyZXQmeD0wYw--">Log in with your Wordpress ID</a></li>
+</ul>
+<script type="text/javascript" charset="utf-8" src="http://yui.yahooapis.com/3.1.1/build/yui/yui-min.js"></script>
 <script>
-//credit: http://javascript.crockford.com/remedial.html
-if(!String.prototype.supplant){String.prototype.supplant=function(o){return this.replace(/{([^{}]*)}/g,function(a,b){var r=o[b];return typeof r==='string'||typeof r==='number'?r:a;});};}if(!String.prototype.trim){String.prototype.trim=function(){return this.replace(/^\s+|\s+$/g,"");};}
-
-var openid = 'yahoo.com';
-var oauthConsumerKey = 'example9TDNTVXpvRnpsbjJHJmQ9WVdrOVpXRlBkWEJETm1zbWNHbzlNQS0tJnM9Y29uc3VtZXJzZWNyZXQmeD0wYw--';
-var returnTo = 'http://example.com/openid-oauth-yql-yui-party/relay.html';
-
 var Y = YUI({
-    gallery: 'gallery-2010.01.27-20'
+	gallery: 'gallery-2010.01.27-20',
+	modules: {
+		'String': {
+			fullpath: 'http://gist.github.com/raw/395070/16759ebe9860f04a7e10811c337d9cdf84ce59b0/yui3-string-utils.js'
+		}
+	}
 });
 
+Y.namespace('party');
 
-Y.use('node', 'gallery-yql', function(Y) {
-    
-    var popup = null;
-    
-    function complete ( assertion ) {
+Y.party.openid = null;
+Y.party.oauthConsumerKey = null;
 
-        var query = ( "use 'http://gist.github.com/yql/yql-tables/raw/master/openid/openid.normalize.xml' as openid.normalize;"
-            +" use 'http://example.com/openid-oauth-yql-yui-party/complete.xml' as complete;"
-            +" select * from complete where oauthConsumerKey='{key}' and assert='{assert}' and normalizedOpenId in "
-            +" ( select id from openid.normalize where id='{id}' )" ).supplant({
-                id: openid,
-        	    key: oauthConsumerKey, 
-        	    assert: encodeURIComponent( assertion )
-            });
+Y.party.completeLogin = function(assert) {
 
-        new Y.yql( query, function(r) {
-
-            if ( r.error ) {
-                Y.log(r);
-                return;
-            }
-
-            if ( r.query.results.success ) {
-                Y.fire( 'openid-oauth-yql-yui-party:success' );
-            } else {
-                Y.fire( 'openid-oauth-yql-yui-party:fail' );
-            }
-            
-            popup.close();
-
-        }, {debug:true, diagnostics:true}, {secure:true} );
-    }
-    
-    //start
-    var query = "use 'http://example.com/openid-oauth-yql-yui-party/start.xml' as table;"
-        +" select * from table where openid='{id}' and oauthConsumerKey='{key}' and returnTo='{uri}'".supplant({
-            id: openid,
-    	    key: oauthConsumerKey,
-    	    uri: returnTo
-        });
-    new Y.yql( query, function(r) {
-        
-        if ( r.error ) {
-            Y.log(r);
-            return;
+	// verify assertion
+	var query = Y.String.supplant(
+	    "use 'http://gist.github.com/yql/yql-tables/raw/master/openid/openid.normalize.xml' as openid.normalize;" 
+	    + " use 'http://example.com/openid-oauth-yql-yui-party/complete.xml' as complete;" 
+	    + " select * from complete where oauthConsumerKey='{key}' and assert='{assert}' and normalizedOpenid in " 
+	    + " ( select id from openid.normalize where id='{id}' )", 
+        {
+    	    id: Y.party.openid,
+    	    key: Y.party.oauthConsumerKey,
+    	    assert: encodeURIComponent(assert)
         }
-        
-        Y.one('button').set('disabled', false).on( 'click', function ( e ) {
-            
-            popup = window.open( r.query.results.uri,
+    );
 
-        	    //pass key & id to relay.html thru window.name
-        	    'key='+oauthConsumerKey+'&id='+openid,
+	new Y.yql(query, function(r) {
 
-        	    'toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=500,height=500,left=200,top=200'
-        	);
-        	
-            var interval = setInterval( function(){
+		if (r.error) {
+			Y.log(r);
+			return;
+		}
 
-                //poll popup as hacky 'listener'
-                try{
-                    if ( popup.location && 0 === popup.location.href.indexOf( returnTo ) ) {
-                        clearInterval( interval );
-                        complete( popup.location.href );  
-                    }
-                    if ( popup.closed ) {
-                        clearInterval( interval );
-                    }
-                }catch(e){}
-            }, 1000 );
-            
-        });        
-    }, {debug:true, diagnostics:true}, {secure:true} );
-    
-    //...
-    Y.on('openid-oauth-yql-yui-party:success', function() {
-        Y.log('hallelujah!');
-    });
-    Y.on('openid-oauth-yql-yui-party:fail', function() {
-        Y.log('hmmm');
-    });
+		if (r.query.results.success) {
+			Y.fire('party:loginSuccess');
+		} else {
+			Y.fire('party:loginError');
+		}
+
+	},
+	{
+		debug: true,
+		diagnostics: true
+	},
+	{
+		secure: true
+	});
+};
+
+Y.party.startLogin = function(e) {
+
+	// apply single listener to ul & only pay attention to links
+	if ('A' !== e.target.get('nodeName')) {
+		return;
+	}
+
+	// prevent default click behavior for links
+	e.preventDefault();
+
+	// extract & cache key, openid from clicked link uri
+	var parsedUri = Y.String.parseUri(e.target.get('href'));
+	Y.party.openid = parsedUri.queryKey.openid;
+	Y.party.oauthConsumerKey = parsedUri.queryKey.oauthConsumerKey;
+
+	// open popup for auth
+	var popup = window.open(
+	    e.target.get('href'), 
+	    '', 
+	    'toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=500,height=500,left=200,top=200'
+	);
+};
+
+Y.use('node', 'gallery-yql', 'String', 'json', function(Y) {
+	Y.one('#login').on('click', Y.party.startLogin);
+	Y.on('party:assertReady', Y.party.completeLogin);
+	Y.on('party:loginSuccess', function() {
+		Y.log('hallelujah!');
+	});
+	Y.on('party:loginError', function() {
+		Y.log('hmmm');
+	});
 });
+  
 </script>
