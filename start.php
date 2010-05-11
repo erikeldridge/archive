@@ -22,7 +22,7 @@ $query = sprintf( "use '%s' as start; select * from start where oauthConsumerKey
     'http://example.com/openid-oauth-yql-yui-party/start.xml',
     $_GET['oauthConsumerKey'],
 	$_GET['openid'],
-	'http://example.com/openid-oauth-yql-yui-party/return_to.html'
+	'http://example.com/openid-oauth-yql-yui-party/relay.html'
 );
 $response = yql( $query );
 
