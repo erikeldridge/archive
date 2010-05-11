@@ -18,12 +18,30 @@ function yql( $query ) {
     return $response;
 }
 
-// fetch auth URI
+// look up app definition to get return_to uri
+$key = 'app-'.$_GET['oauthConsumerKey'];
+$hash = md5( 'secret'.$key );
+
+// jsonkv src: http://gist.github.com/376323
+$uri = 'http://example.com/openid-oauth-yql-yui-party/jsonkv.php?'.http_build_query( array(
+    'key'=>$key, 
+    'hash'=>$hash
+) );
+
+// reuse yql fn so we don't have to write all the curl config
+$query = "select * from json where url='$uri'";
+$response = yql( $query );
+
+if ( !$response->query->results->return_to ) {
+    die('error: OAuth app definition required');
+}
+
+// pass off control to start.xml
 $query = sprintf( "use '%s' as start; select * from start where oauthConsumerKey='%s' and openid='%s' and returnTo='%s'",
-    'http://example.com/openid-oauth-yql-yui-party/start.xml',
+    'http://example.com/authparty/start.xml',
     $_GET['oauthConsumerKey'],
 	$_GET['openid'],
-	'http://example.com/openid-oauth-yql-yui-party/relay.html'
+	$response->query->results->return_to
 );
 $response = yql( $query );
 
@@ -31,6 +49,8 @@ $response = yql( $query );
 if ( $response && $response->query->results->uri ) {
     header( "Location: ".$response->query->results->uri );
 } else {
+    
+    // dump error & be sure it's not cached
     header('Cache-Control: no-cache, must-revalidate');
     var_dump($response);
 }
