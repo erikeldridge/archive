@@ -18,6 +18,7 @@ function yql( $query ) {
     return $response;
 }
 
+// fetch auth URI
 $query = sprintf( "use '%s' as start; select * from start where oauthConsumerKey='%s' and openid='%s' and returnTo='%s'",
     'http://example.com/openid-oauth-yql-yui-party/start.xml',
     $_GET['oauthConsumerKey'],
@@ -26,7 +27,7 @@ $query = sprintf( "use '%s' as start; select * from start where oauthConsumerKey
 );
 $response = yql( $query );
 
-//4) redirect user to log in
+// redirect user to log in
 if ( $response && $response->query->results->uri ) {
     header( "Location: ".$response->query->results->uri );
 } else {
