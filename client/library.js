@@ -23,7 +23,7 @@
  **/
 var sdk = function () {
 	var requests = {},
-	    url = 'http://localhost/~eldridge/github/erikeldridge/iframeio/server/',
+	    serverUrl = 'http://localhost/~eldridge/github/erikeldridge/iframeio/server/',
 		request = function (params, userCallback) {
 			var iframe = document.createElement('iframe'),
 				id = null,
@@ -56,18 +56,19 @@ var sdk = function () {
 				id = now + rand;
 			} while (request[id]);
 			
+			//build out request params
+			var src = serverUrl + '?id=' + id;
+			for (var key in params) {
+				src += '&' + key + '=' + params[key];
+			}
+			
 			//init iframe channel
 			iframe.style.display = 'none';
-			iframe.src = 'iframe.html';
+            // iframe.src = 'iframe.html';
+            iframe.src = src;
 			iframe.id = id;
 			document.body.appendChild(iframe);
 			
-			//build out request params
-			url += '?id=' + id;
-			for (var key in params) {
-				url += '&'+key+'='+params[key];
-			}
-			iframe.src = url;
 			
 			return {
 				'id' : id,
@@ -76,7 +77,7 @@ var sdk = function () {
 		};
 
 	return {
-	    url: url,
+	    serverUrl: serverUrl,
 		'makeRequest' : function (params, userCallback) {
 			var req = request(params, userCallback);
 			requests[req.id] = req;
