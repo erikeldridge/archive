@@ -64,7 +64,6 @@ var sdk = function () {
 			
 			//init iframe channel
 			iframe.style.display = 'none';
-            // iframe.src = 'iframe.html';
             iframe.src = src;
 			iframe.id = id;
 			document.body.appendChild(iframe);
