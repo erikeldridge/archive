@@ -29,6 +29,7 @@
         <script src="library.js"></script>
         <script>
         //example
+        sdk.serverUrl = 'http://localhost/~eldridge/github/erikeldridge/iframeio/server/';
         sdk.makeRequest(
             {
                 'method':'get', 
@@ -39,6 +40,7 @@
                 console.log(data);
             }
         );
+        console.log(sdk.serverUrl);
         </script>
     </body>
 </html>
