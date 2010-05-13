@@ -26,14 +26,14 @@
 <html>
     <head></head>
     <body>
-        <script src="library.js"></script>
+        <script src="../client/library.js"></script>
         <script>
         //example
         sdk.serverUrl = 'http://localhost/~eldridge/github/erikeldridge/iframeio/server/';
         sdk.makeRequest(
             {
                 'method':'get', 
-                'url':encodeURIComponent('http://localhost/~eldridge/github/erikeldridge/iframeio/client/example.txt'), 
+                'url':encodeURIComponent('http://localhost/~eldridge/github/erikeldridge/iframeio/example/data.txt'), 
                 'params':encodeURIComponent('foo=bar&boo=baz')
             }, 
             function (data) {
