@@ -24,6 +24,9 @@
  *   THE SOFTWARE.
  **/
  
+// xdr url should be set using stored association w/ app-id/oauth-key passed in
+$xdrUrl = 'http://localhost/~eldridge/github/erikeldridge/iframeio/client/iframe.html';
+
 //fetch input
 $filters = array(
     
@@ -67,5 +70,5 @@ $total = count($chunks);
 ?>
 
 <? foreach($chunks as $index => $chunk): ?>
-    <iframe src="http://localhost/~eldridge/foxbat/client/iframe.html?id=<?= $input['id'] ?>&index=<?= $index ?>&total=<?= $total ?>&chunk=<?= $chunk ?>"></iframe>
+    <iframe src="<?= $xdrUrl ?>?id=<?= $input['id'] ?>&index=<?= $index ?>&total=<?= $total ?>&chunk=<?= $chunk ?>"></iframe>
 <? endforeach ?>
