@@ -21,7 +21,7 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  **/
-var sdk = function () {
+var iframeio = (function () {
 	var requests = {},
 	    serverUrl = 'http://localhost/~eldridge/github/erikeldridge/iframeio/server/',
 		request = function (params, userCallback) {
@@ -83,4 +83,4 @@ var sdk = function () {
 		},
 		'requests' : requests
 	};
-}();
+}());
