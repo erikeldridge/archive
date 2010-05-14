@@ -31,7 +31,8 @@
         //example
         sdk.serverUrl = 'http://localhost/~eldridge/github/erikeldridge/iframeio/server/';
         sdk.makeRequest(
-            {
+            {                
+                'oauthConsumerKey': 'asd123',
                 'method':'get', 
                 'url':encodeURIComponent('http://localhost/~eldridge/github/erikeldridge/iframeio/example/data.txt'), 
                 'params':encodeURIComponent('foo=bar&boo=baz')
