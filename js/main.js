@@ -101,12 +101,6 @@ var handleBodyKeyDown = function(event) {
     // case 32: // space
       nextSlide();
       break;
-    case 50: // 2
-      showNotes();          
-      break;
-    case 51: // 3
-      //switch3D();          
-      break;
   }
 };
 
