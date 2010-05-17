@@ -7,8 +7,8 @@ require 'nokogiri'
 require 'RedCloth'
 
 slide_content_file_path = 'slides.textile'
-template_html_file_path = 'template.html'
-out_file_path = 'index.html'
+template_html_file_path = '../../template.html'
+out_file_path = '../../index.html'
 
 slide_content = IO.read( slide_content_file_path )
 slide_html_strings = RedCloth.new( slide_content ).to_html.split('<hr />')
