@@ -59,7 +59,7 @@ h4. CSS3
 
 h3. Follow up
 
-Put your slides up on "Github pages":http://pages.github.com/ like "Gathright's YQL talk ":http://drgath.github.com/talks/20100515_MusicHackday/
+Put your slides up on "Github pages":http://pages.github.com/ like "Gathright's YQL talk":http://drgath.github.com/talks/20100515_MusicHackday/
 
 h3. Resources
 
