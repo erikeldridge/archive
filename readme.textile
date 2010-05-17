@@ -1,16 +1,14 @@
 h1. SlideKit
 
-table{width:100%}.
 |Textile  
 + Ruby  
 + HTML5  
 + CSS3   
 = WebKit-ready presentation|!http://farm1.static.flickr.com/47/152459282_3c6c3ddfaa.jpg!:http://www.flickr.com/photos/captured-spirit_/152459282/| 
 
-
 h2. Credit
 
-* Inspired by Derek Gathright's talk on YQL.  He created this presentation-style, developed the HTML/CSS/JS, and defined the UI
+* Inspired by "Derek Gathright's talk on YQL":http://drgath.github.com/talks/20100515_MusicHackday/.  He created this presentation-style, developed the HTML/CSS/JS, and defined the UI
 
 h2. Syntax
 
@@ -55,6 +53,7 @@ h2. CSS3
 
 h2. Resources
 
-* "Derek Gathright's original YQL preso":http://drgath.github.com/talks/20100515_MusicHackday/
+* "Derek Gathright's YQL preso":http://drgath.github.com/talks/20100515_MusicHackday/
+* "Derek Gathright's Code":http://github.com/drgath/drgath.github.com/tree/master/talks/20100515_MusicHackday
 * "RedCloth Textile reference":http://redcloth.org/textile
 
