@@ -1,0 +1,11 @@
+.slide.intro
+  %header
+    %h1= "SlideKit"
+  %section
+    %pre
+      SELECT *
+      FROM weather.forecast
+      WHERE location = "<input id='weatherZipInput'/>"
+      %button(onclick="foobar();")= 'Execute'
+    %pre#asd
+    
