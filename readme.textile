@@ -34,9 +34,7 @@ h3. Haml
 
 h3. HTML5
 
-* Not quite sure why HTML5 is necessary
-* &lt;header&gt; and &lt;section&gt; tags
-   
+* &lt;header&gt; and &lt;section&gt; tags define rows well
 
 h3. CSS3
 
