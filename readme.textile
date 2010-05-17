@@ -12,32 +12,27 @@ h2. Credit
 
 h2. Syntax
 
-* Slides are delimited by "- - -"
-* The title slide is assumed to be 1st
-* If there's an h3 tag in the slide, it's stuck in the header
+* Slides are delimited by ".slide"
+* The title slide is identified by ".intro"
 
 
 h2. Organization
 
-* template.html defines the presentation wrapper and provides template html for each slide
-* slides.textile defines slide contents
-* build.rb renders textile, parses the template html, and maps the textile to template
-* the css directory contains css for preso display and syntax highlighting css
-* the css directory contains js for preso control and syntax highlighting js
-
-
-h2. Textile
-
-* Textile balances minimalist syntax & expressibility (CSS/tag access)
-* There's a full-featured Ruby parser for Textile (RedCloth)
-* Allows embedded html/css/js
-
+* main.html contains html required for basic functionality
+* build.rb renders haml, parses the main html (& custom css/js) and maps the haml to main
+* css/ contains css for preso display and syntax highlighting css
+* js/ contains js for preso control and syntax highlighting js
 
 h2. Ruby
 
 * Ruby is widely available
 * Ruby is fun to work with
 
+h2. Haml
+
+* Haml offers nice balance of minimalist syntax & expressibility (CSS/tag access, Textile/Markdown)
+* Haml plays super-nice w/ Ruby
+* Haml allows embedded JS for running script on slides
 
 h2. HTML5
 
@@ -55,5 +50,5 @@ h2. Resources
 
 * "Derek Gathright's YQL preso":http://drgath.github.com/talks/20100515_MusicHackday/
 * "Derek Gathright's Code":http://github.com/drgath/drgath.github.com/tree/master/talks/20100515_MusicHackday
-* "RedCloth Textile reference":http://redcloth.org/textile
+* "Haml":http://haml-lang.com/
 

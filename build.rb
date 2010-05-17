@@ -11,10 +11,9 @@ require 'haml'
 require 'tilt'
 
 # settings
-slide_content_file_path = 'slides.haml'
-custom_css_file_path = 'examples/haml/custom.css'
-base_html_file_path = '../../main.html'
-out_file_path = '../../index.html'
+slide_content_file_path = 'example/slides.haml'
+base_html_file_path = 'main.html'
+out_file_path = 'index.html'
 
 # load & render haml template
 slide_html = Tilt.new( slide_content_file_path ).render
