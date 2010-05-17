@@ -133,7 +133,7 @@ div.slides {
 }
 
 
-/* default display */
+/* BEGIN: default display */
 /* note: override this in a custom css file added in build.rb */
 body {
     font: 14px "Lucida Grande", "Trebuchet MS", Verdana, sans-serif;
@@ -200,14 +200,6 @@ section {
     display: block;
     overflow: hidden;
 }
-section.center {
-  line-height: 180%;
-  text-align: center;
-  display: table-cell;
-  vertical-align: middle;
-  height: 700px;
-  width: 900px;
-}
 
 ul>li {
   list-style: disc;
@@ -218,7 +210,25 @@ ol>li {
 	list-style:decimal;
 }
 
+/* convenience classes for 2-col sections */
+div.left {
+   float: left;
+}
+div.right {
+   float: right;
+}
 
+/* convenience class for centering a section */
+section.center {
+  line-height: 180%;
+  text-align: center;
+  display: table-cell;
+  vertical-align: middle;
+  height: 700px;
+  width: 900px;
+}
+
+/* END: default display */
 
 /*
 .summary li::before, .bullets li::before {
