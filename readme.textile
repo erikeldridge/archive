@@ -1,52 +1,50 @@
 h1. SlideKit
 
-|Textile  
-+ Ruby  
-+ HTML5  
-+ CSS3   
-= WebKit-ready presentation|!http://farm1.static.flickr.com/47/152459282_3c6c3ddfaa.jpg!:http://www.flickr.com/photos/captured-spirit_/152459282/| 
+h2. Ruby + Haml + HTML5 + CSS3 --> WebKit-ready presentation
 
-h2. Credit
+!http://farm1.static.flickr.com/47/152459282_3c6c3ddfaa.jpg!:http://www.flickr.com/photos/captured-spirit_/152459282/
+
+h3. Credit
 
 * Inspired by "Derek Gathright's talk on YQL":http://drgath.github.com/talks/20100515_MusicHackday/.  He created this presentation-style, developed the HTML/CSS/JS, and defined the UI
 
-h2. Syntax
+h3. Syntax
 
 * Slides are delimited by ".slide"
 * The title slide is identified by ".intro"
 
 
-h2. Organization
+h3. Organization
 
 * main.html contains html required for basic functionality
 * build.rb renders haml, parses the main html (& custom css/js) and maps the haml to main
 * css/ contains css for preso display and syntax highlighting css
 * js/ contains js for preso control and syntax highlighting js
 
-h2. Ruby
+h3. Ruby
 
 * Ruby is widely available
 * Ruby is fun to work with
 
-h2. Haml
+h3. Haml
 
 * Haml offers nice balance of minimalist syntax & expressibility (CSS/tag access, Textile/Markdown)
 * Haml plays super-nice w/ Ruby
 * Haml allows embedded JS for running script on slides
 
-h2. HTML5
+h3. HTML5
 
 * Not quite sure why HTML5 is necessary
 * &lt;header&gt; and &lt;section&gt; tags
    
 
-h2. CSS3
+h3. CSS3
 
 * Powers the awesome transitions
 * Gives us the awesome table layout control
 
 
-h2. Resources
+h3. Resources
 
 * "Derek Gathright's YQL preso":http://drgath.github.com/talks/20100515_MusicHackday/
 * "Derek Gathright's Code":http://github.com/drgath/drgath.github.com/tree/master/talks/20100515_MusicHackday
