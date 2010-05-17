@@ -1,18 +1,16 @@
 h1. SlideKit
 
+table{width:100%}.
 |Textile  
 + Ruby  
 + HTML5  
 + CSS3   
 = WebKit-ready presentation|!http://farm1.static.flickr.com/47/152459282_3c6c3ddfaa.jpg!:http://www.flickr.com/photos/captured-spirit_/152459282/| 
 
----
 
 h2. Credit
 
 * Inspired by Derek Gathright's talk on YQL.  He created this presentation-style, developed the HTML/CSS/JS, and defined the UI
-
----
 
 h2. Syntax
 
@@ -20,7 +18,6 @@ h2. Syntax
 * The title slide is assumed to be 1st
 * If there's an h3 tag in the slide, it's stuck in the header
 
----
 
 h2. Organization
 
@@ -30,7 +27,6 @@ h2. Organization
 * the css directory contains css for preso display and syntax highlighting css
 * the css directory contains js for preso control and syntax highlighting js
 
----
 
 h2. Textile
 
@@ -38,28 +34,24 @@ h2. Textile
 * There's a full-featured Ruby parser for Textile (RedCloth)
 * Allows embedded html/css/js
 
----
 
 h2. Ruby
 
 * Ruby is widely available
 * Ruby is fun to work with
 
----
 
 h2. HTML5
 
 * Not quite sure why HTML5 is necessary
 * &lt;header&gt; and &lt;section&gt; tags
    
----
 
 h2. CSS3
 
 * Powers the awesome transitions
 * Gives us the awesome table layout control
 
----
 
 h2. Resources
 
