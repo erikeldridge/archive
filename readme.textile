@@ -8,11 +8,25 @@ h3. Credit
 
 * Inspired by "Derek Gathright's talk on YQL":http://drgath.github.com/talks/20100515_MusicHackday/.  He created this presentation-style, developed the HTML/CSS/JS, and defined the UI
 
+h3. Usage
+
+# Download or clone this project
+# Run the build.rb build script
+# Open your WebKit browser and go to path/to/slidekit/index.html
+
+h3. Prerequisites
+
+* Ruby 1.8.6
+* Ruby gems: 
+** Haml, (_gem install haml_)
+** RedCloth, (_gem install RedCloth_)
+** Nokogiri, (_gem install nokogiri_)
+* Chrome or Safari
+
 h3. Syntax
 
 * Slides are delimited by ".slide"
 * The title slide is identified by ".intro"
-
 
 h3. Organization
 
@@ -21,30 +35,34 @@ h3. Organization
 * css/ contains css for preso display and syntax highlighting css
 * js/ contains js for preso control and syntax highlighting js
 
-h3. Ruby
+h3. Components
+
+h4. Ruby
 
 * Ruby is widely available
 * Ruby is fun to work with
 
-h3. Haml
+h4. Haml
 
 * Haml offers nice balance of minimalist syntax & expressibility (CSS/tag access, Textile/Markdown)
 * Haml plays super-nice w/ Ruby
 * Haml allows embedded JS for running script on slides
 
-h3. HTML5
+h4. HTML5
 
 * &lt;header&gt; and &lt;section&gt; tags define rows well
 
-h3. CSS3
+h4. CSS3
 
 * Powers the awesome transitions
 * Gives us the awesome table layout control
 
+h3. Follow up
+
+Put your slides up on "Github pages":http://pages.github.com/ like "Gathright's YQL talk ":http://drgath.github.com/talks/20100515_MusicHackday/
 
 h3. Resources
 
-* "Derek Gathright's YQL preso":http://drgath.github.com/talks/20100515_MusicHackday/
-* "Derek Gathright's Code":http://github.com/drgath/drgath.github.com/tree/master/talks/20100515_MusicHackday
+* Derek Gathright's "YQL preso":http://drgath.github.com/talks/20100515_MusicHackday/ and "preso code":http://github.com/drgath/drgath.github.com/tree/master/talks/20100515_MusicHackday
 * "Haml":http://haml-lang.com/
 
