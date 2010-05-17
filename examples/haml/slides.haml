@@ -1,0 +1,97 @@
+.slide.intro
+  %header
+    %h1= "SlideKit"
+  %section
+    .left
+      :textile
+        Textile
+        + Ruby
+        + HTML5
+        + CSS3
+        = WebKit-ready
+    .right
+      :textile
+        !http://farm1.static.flickr.com/47/152459282_3c6c3ddfaa.jpg!:http://www.flickr.com/photos/captured-spirit_/152459282/
+
+.slide
+  %header
+    %h3= "Presentation Outline"
+  %section
+    :textile
+      # Credit
+      # Syntax
+      # Organization
+      # Textile
+      # Ruby
+      # HTML5
+      # CSS3
+      # Resources
+      
+.slide
+  %header
+    %h3= "Credit"
+  %section
+    :textile
+      * Inspired by Derek Gathright's talk on YQL.  He created this presentation-style, developed the HTML/CSS/JS, and defined the UI
+
+.slide
+  %header
+    %h3= "Syntax"
+  %section
+    :textile
+      * Slides are delimited by "- - -"
+      * The title slide is assumed to be 1st
+      * If there's an h3 tag in the slide, it's stuck in the header
+
+.slide
+  %header
+    %h3= "Organization"
+  %section
+    :textile
+      * template.html defines the presentation wrapper and provides template html for each slide
+      * slides.textile defines slide contents
+      * build.rb renders textile, parses the template html, and maps the textile to template
+      * the css directory contains css for preso display and syntax highlighting css
+      * the css directory contains js for preso control and syntax highlighting js
+
+.slide
+  %header
+    %h3= "Textile"
+  %section
+    :textile
+      * Textile balances minimalist syntax & expressibility (CSS/tag access)
+      * There's a full-featured Ruby parser for Textile (RedCloth)
+      * Allows embedded html/css/js
+
+.slide
+  %header
+    %h3= "Ruby"
+  %section
+    :textile
+      * Ruby is widely available
+      * Ruby is fun to work with
+
+.slide
+  %header
+    %h3= "HTML5"
+  %section
+    :textile
+      * Not quite sure why HTML5 is necessary
+      * &lt;header&gt; and &lt;section&gt; tags
+
+.slide
+  %header
+    %h3= "CSS3"
+  %section
+    :textile
+      * Powers the awesome transitions
+      * Gives us the awesome table layout control
+
+.slide
+  %header
+    %h3= "Resources"
+  %section
+    :textile
+      * "Derek Gathright's original YQL preso":http://drgath.github.com/talks/20100515_MusicHackday/
+      * "RedCloth Textile reference":http://redcloth.org/textile
+  
