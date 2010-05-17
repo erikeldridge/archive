@@ -1,0 +1,80 @@
+h1. SlideKit
+
+|Textile  
++ Ruby  
++ HTML5  
++ CSS3   
+= WebKit-ready presentation|!http://farm1.static.flickr.com/47/152459282_3c6c3ddfaa.jpg!:http://www.flickr.com/photos/captured-spirit_/152459282/| 
+
+---
+
+h3. Presentation Outline
+
+# Credit
+# Syntax
+# Organization
+# Textile
+# Ruby
+# HTML5
+# CSS3
+# Resources
+
+---
+
+h3. Credit
+
+* Inspired by Derek Gathright's talk on YQL.  He created this presentation-style, developed the HTML/CSS/JS, and defined the UI
+
+---
+
+h3. Syntax
+
+* Slides are delimited by "- - -"
+* The title slide is assumed to be 1st
+* If there's an h3 tag in the slide, it's stuck in the header
+
+---
+
+h3. Organization
+
+* template.html defines the presentation wrapper and provides template html for each slide
+* slides.textile defines slide contents
+* build.rb renders textile, parses the template html, and maps the textile to template
+* the css directory contains css for preso display and syntax highlighting css
+* the css directory contains js for preso control and syntax highlighting js
+
+---
+
+h3. Textile
+
+* Textile balances minimalist syntax & expressibility (CSS/tag access)
+* There's a full-featured Ruby parser for Textile (RedCloth)
+* Allows embedded html/css/js
+
+---
+
+h3. Ruby
+
+* Ruby is widely available
+* Ruby is fun to work with
+
+---
+
+h3. HTML5
+
+* Not quite sure why HTML5 is necessary
+* &lt;header&gt; and &lt;section&gt; tags
+   
+---
+
+h3. CSS3
+
+* Powers the awesome transitions
+* Gives us the awesome table layout control
+
+---
+
+h3. Resources
+
+* "Derek Gathright's original YQL preso":http://drgath.github.com/talks/20100515_MusicHackday/
+* "RedCloth Textile reference":http://redcloth.org/textile
