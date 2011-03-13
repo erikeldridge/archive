@@ -2,7 +2,6 @@ require 'router'
 require 'mustache'
 require 'net/http'
 require 'json'
-require 'pp'
 
 # read: http://mislav.uniqpath.com/2011/03/click-hijack/
 
