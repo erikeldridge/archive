@@ -3,7 +3,6 @@ GEM
   specs:
     json (1.5.1)
     mustache (0.99.2)
-    rubygems-update (1.6.0)
 
 PLATFORMS
   ruby
@@ -11,4 +10,3 @@ PLATFORMS
 DEPENDENCIES
   json (= 1.5.1)
   mustache (= 0.99.2)
-  rubygems-update (= 1.6.0)

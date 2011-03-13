@@ -1,7 +1,6 @@
 require 'rubygems'
 require 'router'
 require 'mustache'
-require 'net/http'
 require 'json'
 
 # read: http://mislav.uniqpath.com/2011/03/click-hijack/
@@ -29,14 +28,8 @@ run Router.new([
         end
         
         def timeline
-          url = "http://#{host}/static/timeline_github.json"
-          res = Net::HTTP.get_response URI.parse url
-          begin
-            timeline = JSON.parse res.body
-          rescue Exception => e
-            p e
-            timeline = []
-          end
+          json = IO.readlines('static/timeline_github.json').first
+          timeline = JSON.parse json
         end
       
         self.template_file = self.template_path + '/index.mustache'
@@ -58,14 +51,8 @@ run Router.new([
         end
         
         def timeline
-          p url = "http://#{host}/static/timeline_yahoo.json"
-          res = Net::HTTP.get_response URI.parse url
-          begin
-            timeline = JSON.parse res.body
-          rescue Exception => e
-            p e
-            timeline = []
-          end
+          json = IO.readlines('static/timeline_yahoo.json').first
+          timeline = JSON.parse json
         end
       
         self.template_file = self.template_path + '/index.mustache'
