@@ -1,3 +1,3 @@
 source :rubygems
-mustache
-json
+gem 'mustache'
+gem 'json'
