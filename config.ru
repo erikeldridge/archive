@@ -1,3 +1,4 @@
+require 'rubygems'
 require 'router'
 require 'mustache'
 require 'net/http'
