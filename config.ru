@@ -32,7 +32,12 @@ run Router.new([
         def timeline
           url = "http://#{host}/static/timeline_github.json"
           res = Net::HTTP.get_response URI.parse url
-          timeline = JSON.parse res.body
+          begin
+            timeline = JSON.parse res.body
+          rescue Exception => e
+            p e
+            timeline = []
+          end
         end
       
         self.template_file = self.template_path + '/index.mustache'
@@ -56,7 +61,12 @@ run Router.new([
         def timeline
           url = "http://#{host}/static/timeline_yahoo.json"
           res = Net::HTTP.get_response URI.parse url
-          timeline = JSON.parse res.body
+          begin
+            timeline = JSON.parse res.body
+          rescue Exception => e
+            p e
+            timeline = []
+          end
         end
       
         self.template_file = self.template_path + '/index.mustache'
