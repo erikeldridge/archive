@@ -11,7 +11,7 @@ use Rack::ShowExceptions
 use Rack::Lint
 use Rack::Static, :urls => ["/static"]
 
-Mustache.template_path = '/Users/erik/Sites/test/static'
+Mustache.template_path = 'static'
 
 run Router.new([
   {
@@ -21,11 +21,17 @@ run Router.new([
       PP.pp env['SERVER_NAME']
       
       class Index < Mustache
+        
         def initialize(username)
           @username = username
         end
+        
+        def host
+          ENV['host'] || 'localhost:9393'
+        end
+        
         def timeline
-          url = "http://api.twitter.com/1/statuses/user_timeline.json?screen_name=github"
+          url = "http://#{host}/static/timeline_github.json"
           res = Net::HTTP.get_response URI.parse url
           timeline = JSON.parse res.body
         end
@@ -43,8 +49,13 @@ run Router.new([
     :controller => lambda do |env, match|
     
       class Index < Mustache
+        
+        def host
+          ENV['host'] || 'localhost:9393'
+        end
+        
         def timeline
-          url = 'http://api.twitter.com/1/statuses/user_timeline.json?screen_name=yahoo'
+          url = "http://#{host}/static/timeline_yahoo.json"
           res = Net::HTTP.get_response URI.parse url
           timeline = JSON.parse res.body
         end

@@ -1,6 +1,6 @@
 <script type="text/javascript">
 var rpc;
-var provider = 'http://localhost:9393';
+var provider = 'http://{{host}}';
 
 function init() {
 
@@ -16,12 +16,12 @@ function init() {
 }
 
 head.js(
-	"static/jquery-1.5.1.min.js",
-	"static/mustache.js",
-	"static/json2.js",
-	"static/easyXDM.min.js",
-	"static/controllers.js",
-	"static/routing.js",
+	"/static/jquery-1.5.1.min.js",
+	"/static/mustache.js",
+	"/static/json2.js",
+	"/static/easyXDM.min.js",
+	"/static/controllers.js",
+	"/static/routing.js",
 	init
 );
 </script>

@@ -5,7 +5,7 @@ function github(){
   var html;
   
   rpc.request({
-      url: provider+"/static/timeline_yahoo.json",
+      url: provider+"/static/timeline_github.json",
       method: "GET"
   }, function(response){
       data = {
