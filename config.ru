@@ -59,7 +59,7 @@ run Router.new([
       
       end
     
-      [ 200, {'Content-Type' => 'text/html'}, Index.render ]
+      [ 200, {'Content-Type' => 'text/html'}, Index.new.render ]
   
     end
   }
