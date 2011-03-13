@@ -1,0 +1,14 @@
+GEM
+  remote: http://rubygems.org/
+  specs:
+    json (1.5.1)
+    mustache (0.99.2)
+    rubygems-update (1.6.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  json (= 1.5.1)
+  mustache (= 0.99.2)
+  rubygems-update (= 1.6.0)
