@@ -17,8 +17,6 @@ run Router.new([
     :pattern => %r{^/github$}, 
     :controller => lambda do |env, match|
       
-      PP.pp env['SERVER_NAME']
-      
       class Index < Mustache
         
         def initialize(username)
@@ -59,7 +57,7 @@ run Router.new([
         end
         
         def timeline
-          url = "http://#{host}/static/timeline_yahoo.json"
+          p url = "http://#{host}/static/timeline_yahoo.json"
           res = Net::HTTP.get_response URI.parse url
           begin
             timeline = JSON.parse res.body
