@@ -2,26 +2,11 @@
 var rpc;
 var provider = 'http://{{host}}';
 
-function init() {
-
-    // Create reusable iframe channel
-    rpc = new easyXDM.Rpc({
-        remote: provider+"/static/easyXDM_cors_index.html"
-    },
-    {
-        remote: {
-            request: {}
-        }
-    });
-}
-
 head.js(
 	"/static/jquery-1.5.1.min.js",
 	"/static/mustache.js",
 	"/static/json2.js",
-	"/static/easyXDM.min.js",
 	"/static/controllers.js",
-	"/static/routing.js",
-	init
+	"/static/routing.js"
 );
 </script>

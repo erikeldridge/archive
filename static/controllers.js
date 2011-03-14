@@ -4,33 +4,30 @@ function github(){
   var template;
   var html;
   
-  rpc.request({
-      url: provider+"/static/timeline_github.json",
-      method: "GET"
-  }, function(response){
+  $.ajax({
+    url: provider+"/static/timeline_github.json",
+    success: function(o){
       data = {
-        "timeline": JSON.parse(response.data)
+        "timeline": o
       };
-      if(template && !html){
-        html = Mustache.to_html(template, data);
-        $("body").trigger("htmlReady");
-      }
+      $("body").trigger("ping");
+    }
   });
   
-  rpc.request({
-      url: provider+"/static/partial_timeline.mustache",
-      method: "GET"
-  }, function(response){
-      template = response.data;
-      if(data && !html){
-        html = Mustache.to_html(template, data);
-        $("body").trigger("htmlReady");
-      }
+  $.ajax({
+    url: provider+"/static/partial_timeline.mustache",
+    success: function(o){
+      template = o;
+      $("body").trigger("ping");
+    }
   });
   
-  $("body").bind("htmlReady", function(){
-    $(this).unbind("htmlReady");
-    $(html).replaceAll("#timeline");
+  $("body").bind("ping", function(){
+    if(data && template){
+      html = Mustache.to_html(template, data);
+      $(this).unbind("ping");
+      $(html).replaceAll("#timeline");
+    }
   });
   
   window.history.pushState({}, "github", "github");
@@ -42,33 +39,30 @@ function yahoo(){
   var template;
   var html;
   
-  rpc.request({
-      url: provider+"/static/timeline_yahoo.json",
-      method: "GET"
-  }, function(response){
+  $.ajax({
+    url: provider+"/static/timeline_yahoo.json",
+    success: function(o){
       data = {
-        "timeline": JSON.parse(response.data)
+        "timeline": o
       };
-      if(template && !html){
-        html = Mustache.to_html(template, data);
-        $("body").trigger("htmlReady");
-      }
+      $("body").trigger("ping");
+    }
   });
   
-  rpc.request({
-      url: provider+"/static/partial_timeline.mustache",
-      method: "GET"
-  }, function(response){
-      template = response.data;
-      if(data && !html){
-        html = Mustache.to_html(template, data);
-        $("body").trigger("htmlReady");
-      }
+  $.ajax({
+    url: provider+"/static/partial_timeline.mustache",
+    success: function(o){
+      template = o;
+      $("body").trigger("ping");
+    }
   });
   
-  $("body").bind("htmlReady", function(){
-    $(this).unbind("htmlReady");
-    $(html).replaceAll("#timeline");
+  $("body").bind("ping", function(){
+    if(data && template){
+      html = Mustache.to_html(template, data);
+      $(this).unbind("ping");
+      $(html).replaceAll("#timeline");
+    }
   });
   
   window.history.pushState({}, "yahoo", "yahoo");
