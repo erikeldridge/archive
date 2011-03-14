@@ -19,12 +19,8 @@ run Router.new([
       
       class Index < Mustache
         
-        def initialize(username)
-          @username = username
-        end
-        
         def host
-          ENV['host'] || 'localhost:9393'
+          ENV['HOST'] || 'ajax-nav-1.heroku.com'
         end
         
         def timeline
@@ -36,7 +32,7 @@ run Router.new([
       
       end
 
-      [ 200, {'Content-Type' => 'text/html'}, Index.new(match[1]).render ]
+      [ 200, {'Content-Type' => 'text/html'}, Index.render ]
 
     end
   },
@@ -47,7 +43,7 @@ run Router.new([
       class Index < Mustache
         
         def host
-          ENV['host'] || 'localhost:9393'
+          ENV['HOST'] || 'ajax-nav-1.heroku.com'
         end
         
         def timeline
@@ -59,7 +55,7 @@ run Router.new([
       
       end
     
-      [ 200, {'Content-Type' => 'text/html'}, Index.new.render ]
+      [ 200, {'Content-Type' => 'text/html'}, Index.render ]
   
     end
   }
