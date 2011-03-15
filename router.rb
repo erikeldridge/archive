@@ -1,3 +1,4 @@
+# See http://erikeldridge.wordpress.com/2010/02/21/simple-ruby-rack-router/
 class Router
   
   def initialize(routes)    
