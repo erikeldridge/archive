@@ -20,7 +20,7 @@ run Router.new([
       class Index < Mustache
         
         def host
-          ENV['HOST'] || 'ajax-nav-1.heroku.com'
+          ENV['HOST'] || 'ajaxy-nav.heroku.com'
         end
         
         def timeline
@@ -43,7 +43,7 @@ run Router.new([
       class Index < Mustache
         
         def host
-          ENV['HOST'] || 'ajax-nav-1.heroku.com'
+          ENV['HOST'] || 'ajaxy-nav.heroku.com'
         end
         
         def timeline
