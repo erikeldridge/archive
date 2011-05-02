@@ -17,13 +17,20 @@ function validate(){
     error.arguments = args;
     error.type = 'invalid argument error';
 
+    // log error to get 
     for(var key in error) {
-      console.log(key + ':', error[key]);
+      validate.log(key + ':', error[key]);
     }
 
     throw error;
   }
 }
+/**
+ * Abstracted logger for testing in browsers w/o console.log
+ */
+validate.log = function(){
+  window.console && console.log && console.log(arguments);
+};
 /**
  * syntactic sugar for determining object type
  * @credit QUnit
