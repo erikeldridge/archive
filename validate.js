@@ -26,20 +26,20 @@ function validate(){
   }
 }
 /**
- * Abstracted logger for testing in browsers w/o console.log
+ * Abstracted logger for cross-browser safety
  */
-validate.log = function(){
-  window.console && console.log && console.log(arguments);
+validate.log = function(k, v){
+  window.console && console.log && console.log(k, v);
 };
 /**
- * syntactic sugar for determining object type
+ * Syntactic sugar for determining object type
  * @credit QUnit
  */
 validate.is = function( type, obj ) {
   return validate.objectType( obj ) == type;
 };
 /**
- * unambiguous method for determining object type
+ * Unambiguous method for determining object type
  * @credit QUnit
  */
 validate.objectType = function( obj ) {
@@ -73,5 +73,5 @@ validate.objectType = function( obj ) {
   if (typeof obj === "object") {
       return "object";
   }
-  return undefined;
+  return "undefined";
 };

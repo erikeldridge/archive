@@ -56,7 +56,7 @@ The `validate` function throws an error if an argument has an invalid type, and 
 
 ### Valid types
 
-* undefined
+* 'undefined'
 * 'nan'
 * 'object'
 * 'number'
