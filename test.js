@@ -1,89 +1,62 @@
 module('validate');
 
-test('single string arg', function(){
+test('all types', function(){
 
-  expect(1);
+  var types = ['undefined', 'null', 'nan', 'number', 'string', 'boolean', 'array', 'date', 'regexp', 'function', 'object'];
 
-  function rabbit(foo){
-    validate(arguments, 'string');
-  }
+  expect(types.length);
 
-  try{
-    rabbit(123);
-  }catch(e){
-    ok(e.message === "123 is not a string");
+  var validValues = [undefined, null, NaN, 1, 'asd', true, [], new Date(), (/^foo$/), function(){}, {}];
+  var invalidValues = ['undefined', 'null', 'NaN', '1', 123, 'true', '[]', 'new Date()', '(/^foo$/)', 'function(){}', '{}'];
+
+  for(var i = 0; i < types.length; i++){
+
+    var type = types[i];
+    var valid = validValues[i];
+    var invalid = invalidValues[i];
+
+    var rabbit = function(arg){
+      validate(arguments, type);
+    };
+
+    try{
+      rabbit(valid);
+    }catch(e){
+      console.log('validate - error - debug info: ', i, type, valid, invalid);
+      ok(false, "should not throw error on valid arg ");
+    }
+
+    try{
+      rabbit(invalid);
+    }catch(e){
+      equal(e.message, invalid + " is not a " + type, "should throw error on invalid arg");
+    }
   }
 
 });
 
-test('multi string arg', function(){
+
+test('multiple args', function(){
 
   expect(3);
 
   function rabbit(foo, bar){
-    validate(arguments, 'string', 'string');
+    validate(arguments, 'number', 'string');
   }
 
   try{
-    rabbit(123, 'asd');
-  }catch(e){
-    ok(e.message === "123 is not a string");
-  }
-  try{
-    rabbit('asd', 456);
-  }catch(e){
-    ok(e.message === "456 is not a string");
-  }
-
-  rabbit('asd', '456');
-  ok(true, "two strings should pass");
-});
-
-test('single number arg', function(){
-
-  expect(3);
-
-  function rabbit(foo){
-    validate(arguments, 'number');
-  }
-
-  try{
-    rabbit('123');
+    rabbit('123', '456');
   }catch(e){
     equal(e.message, "123 is not a number", "should throw error on string arg");
   }
 
   try{
-    rabbit(NaN);
+    rabbit(123, 456);
   }catch(e){
-    equal(e.message, "NaN is not a number", "should throw error on NaN arg");
+    equal(e.message, "456 is not a string", "should throw error on string arg");
   }
 
-  rabbit(456);
-  ok(true, "a single number should pass");
-});
-
-test('multi number arg', function(){
-
-  expect(3);
-
-  function rabbit(foo, bar){
-    validate(arguments, 'number', 'number');
-  }
-
-  try{
-    rabbit('123', 456);
-  }catch(e){
-    equal(e.message, "123 is not a number", "should throw error on string arg");
-  }
-
-  try{
-    rabbit(123, '456');
-  }catch(e){
-    equal(e.message, "456 is not a number", "should throw error on string arg");
-  }
-
-  rabbit(123, 456);
+  rabbit(123, '456');
   ok(true, "two numbers should pass");
 });
 
