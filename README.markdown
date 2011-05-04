@@ -1,10 +1,10 @@
-# Validate
+# Validate-arguments
 
 Validates JavaScript function argument types
 
 ## Quickstart
 
-1. Get [`validate` code](https://github.com/erikeldridge/validate/blob/master/validate.js)
+1. Get [`validate` code](https://github.com/erikeldridge/validate-arguments/blob/master/validate.js)
 1. Use it:
 
     function foo(bar, baz){
@@ -18,7 +18,7 @@ Catch errors early. `validate` belongs to the fail-fast-and-loud school of thoug
 
 ## Usage
 
-1. Include the [`validate` code](https://github.com/erikeldridge/validate/blob/master/validate.js)
+1. Include the [`validate` code](https://github.com/erikeldridge/validate-arguments/blob/master/validate.js)
 1. Define your function
 1. Call `validate` inside your function, passing:
   * the function's _arguments_ object
@@ -66,6 +66,10 @@ The `validate` function throws an error if an argument has an invalid type, and 
 * 'date'
 * 'regexp'
 * 'function'
+
+### Suppression
+
+Set `validate.isActive = false;` to suppress validation.
 
 ## Copyright and License
 
