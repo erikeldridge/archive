@@ -4,7 +4,7 @@ Validates JavaScript function argument types
 
 ## Quickstart
 
-1. Get [`validate` code]('validate.js')
+1. Get [`validate` code](https://github.com/erikeldridge/validate/blob/master/validate.js)
 1. Use it:
 
     function foo(bar, baz){
@@ -18,7 +18,7 @@ Catch errors early. `validate` belongs to the fail-fast-and-loud school of thoug
 
 ## Usage
 
-1. Include the [`validate` code]('validate.js')
+1. Include the [`validate` code](https://github.com/erikeldridge/validate/blob/master/validate.js)
 1. Define your function
 1. Call `validate` inside your function, passing:
   * the function's _arguments_ object
