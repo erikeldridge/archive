@@ -1,5 +1,10 @@
 function validate(){
 
+  if(!validate.isActive){
+    return;
+  }
+
+  // Shift the arguments to validate off this fn's argument list.
   var args = Array.prototype.shift.call(arguments);
 
   for(var i = 0; i < arguments.length; i++){
@@ -23,6 +28,11 @@ function validate(){
     throw error;
   }
 }
+
+/**
+ * Setting for turning validator on/off 
+ */
+validate.isActive = true;
 
 /**
  * Abstracted logger for cross-browser safety

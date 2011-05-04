@@ -86,3 +86,29 @@ test('multi number arg', function(){
   rabbit(123, 456);
   ok(true, "two numbers should pass");
 });
+
+test('isActive setting', function(){
+
+  expect(1);
+
+  validate.isActive = false;
+
+  function rabbit(foo){
+    validate(arguments, 'string');
+  }
+
+  try{
+    rabbit(456);
+  }catch(e){
+    ok(false, "should deactivate validation when false");
+  }
+
+  validate.isActive = true;
+
+  try{
+    rabbit(123);
+  }catch(e){
+    ok(true, "should activate validation when true");
+  }
+
+});
