@@ -6,11 +6,10 @@ Validates JavaScript function argument types
 
 1. Get [`validate` code](https://github.com/erikeldridge/validate-arguments/blob/master/validate.js)
 1. Use it:
-
-    function foo(bar, baz){
+    <pre><code>function foo(bar, baz){
       validate(arguments, 'number', 'string');
       //...
-    }
+    }</code></pre>
 
 ## Goal
 
