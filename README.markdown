@@ -41,18 +41,6 @@ For example:
       validate(arguments, 'number');
     }
 
-### Output
-
-The `validate` function throws an error if an argument has an invalid type, and also pretty-prints the error's fields to the console for convenience. The error contains the following fields:
-
-* _name_. The name of the error object
-* _arguments_. The arguments passed into the validated function
-* _type_. The error type
-* _message_. A human-readable error message
-* _fileName_. The name of the file generating the error. Firefox 4 only.
-* _lineNumber_. The line number of the file generating the error. Firefox 4 only.
-* _stack_. The execution stack. Because error generation is abstracted into _validate.js_, all file and line references, which would be super-helpful, simply point back to _validate.js_. The stack allows us to see the file name and line number where _validate_ failed.
-
 ### Valid types
 
 * 'undefined'
@@ -69,6 +57,18 @@ The `validate` function throws an error if an argument has an invalid type, and 
 ### Suppression
 
 Set `validate.isActive = false;` to suppress validation.
+
+## Output
+
+The `validate` function throws an error if an argument has an invalid type, and also pretty-prints the error's fields to the console for convenience. The error contains the following fields:
+
+* _name_. The name of the error object
+* _arguments_. The arguments passed into the validated function
+* _type_. The error type
+* _message_. A human-readable error message
+* _fileName_. The name of the file generating the error. Firefox 4 only.
+* _lineNumber_. The line number of the file generating the error. Firefox 4 only.
+* _stack_. The execution stack. Because error generation is abstracted into _validate.js_, all file and line references, which would be super-helpful, simply point back to _validate.js_. The stack allows us to see the file name and line number where _validate_ failed.
 
 ## Copyright and License
 
