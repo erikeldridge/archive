@@ -1,4 +1,5 @@
 function validate(){
+
   var args = Array.prototype.shift.call(arguments);
 
   for(var i = 0; i < arguments.length; i++){
@@ -12,25 +13,33 @@ function validate(){
 
     var msg = value + " is not a " + type;
 
-    var error = new Error(msg)
+    var error = new Error(msg);
 
     error.arguments = args;
     error.type = 'invalid argument error';
 
-    // log error to get 
-    for(var key in error) {
-      validate.log(key + ':', error[key]);
-    }
+    validate.prettyPrint(error);
 
     throw error;
   }
 }
+
 /**
  * Abstracted logger for cross-browser safety
  */
 validate.log = function(k, v){
   window.console && console.log && console.log(k, v);
 };
+
+/**
+ * Dumps object fields to log
+ */
+validate.prettyPrint = function(obj){
+  for(var key in obj) if( obj.hasOwnProperty(key) ) {
+    validate.log(key + ':', obj[key]);
+  }
+};
+
 /**
  * Syntactic sugar for determining object type
  * @credit QUnit
