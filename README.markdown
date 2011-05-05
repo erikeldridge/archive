@@ -6,8 +6,8 @@ Validates JavaScript function argument types
 
 1. Get [`validate` code](https://github.com/erikeldridge/validate-arguments/blob/master/validate.js)
 1. Use it:
-    <pre><code>function foo(bar, baz){
-      validate(arguments, 'number', (/[a-z]+/), function(arg){ return 'foo' === arg.bar; } );
+    <pre><code>function foo(bar, baz, bax){
+      validate(arguments, 'number', (/[a-z]+/), function(arg){ return 'foo' === arg; } );
       //...
     }</code></pre>
 
