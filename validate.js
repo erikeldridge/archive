@@ -9,22 +9,36 @@ function validate(){
 
   for(var i = 0; i < arguments.length; i++){
 
-    var type = arguments[i];
+    var test = arguments[i];
     var value = args[i];
 
-    if( validate.is('string', type) && validate.is(type, value) ){
-      continue;
-    }
+    if( validate.is('string', test) ){
 
-    if( validate.is('regexp', type) && type.test(value) ){
-      continue;
-    }
+      if( validate.is(test, value) ){
+        continue;
+      }else{
+        var msg = value + " is not a " + test;
+      }
 
-    if( validate.is('function', type) && type(value) ){
-      continue;
-    }
+    }else if( validate.is('regexp', test) ){
 
-    var msg = value + " is not a " + type;
+      if( test.test(value) ){
+        continue;
+      }else{
+        var msg = value + " does not match " + test;
+      }
+
+    }else if( validate.is('function', test) ){
+
+      if( test(value) ){
+        continue;
+      }else{
+        var msg = value + " does not pass " + test;
+      }
+
+    }else{
+      var msg = "Invalid test type! Valid types are: string, regexp, function";
+    }
 
     var error = new Error(msg);
 

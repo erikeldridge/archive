@@ -1,4 +1,8 @@
-module('validate');
+module('validate', {
+  setup: function(){
+    validate.isActive = true;
+  }
+});
 
 test('all types', function(){
 
@@ -90,8 +94,6 @@ test('regexp test for alpha string', function(){
 
   expect(1);
 
-  validate.isActive = true;
-
   function rabbit(foo){
     validate(arguments, (/[a-z]+/) );
   }
@@ -113,8 +115,6 @@ test('regexp test for alpha string', function(){
 test('functional test for hash', function(){
 
   expect(1);
-
-  validate.isActive = true;
 
   function rabbit(foo){
     validate(arguments, function(arg){ return 'bar' === arg.foo; } );
