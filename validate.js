@@ -12,7 +12,11 @@ function validate(){
     var type = arguments[i];
     var value = args[i];
 
-    if( validate.is(type, value) ){
+    if( validate.is('string', type) && validate.is(type, value) ){
+      continue;
+    }
+
+    if( validate.is('regexp', type) && type.test(value) ){
       continue;
     }
 

@@ -85,3 +85,27 @@ test('isActive setting', function(){
   }
 
 });
+
+test('regexp test for alpha string', function(){
+
+  expect(1);
+
+  validate.isActive = true;
+
+  function rabbit(foo){
+    validate(arguments, (/[a-z]+/) );
+  }
+
+  try{
+    rabbit('asd');
+  }catch(e){
+    ok(false, "should pass on alpha chars");
+  }
+
+  try{
+    rabbit(123);
+  }catch(e){
+    ok(true, "should fail on numeric input");
+  }
+
+});
