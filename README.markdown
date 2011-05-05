@@ -7,7 +7,7 @@ Validates JavaScript function argument types
 1. Get [`validate` code](https://github.com/erikeldridge/validate-arguments/blob/master/validate.js)
 1. Use it:
     <pre><code>function foo(bar, baz){
-      validate(arguments, 'number', 'string');
+      validate(arguments, 'number', (/[a-z]+/), function(arg){ return 'foo' === arg.bar; } );
       //...
     }</code></pre>
 
@@ -21,12 +21,28 @@ Catch errors early. `validate` belongs to the fail-fast-and-loud school of thoug
 1. Define your function
 1. Call `validate` inside your function, passing:
   * the function's _arguments_ object
-  * the types of each argument to validate
+  * the type of each argument to validate, and/or
+    a regexp to test the arg, and/or
+    a function to test the arg
 
-For example:
+### Example 1:
 
     function foo(bar, baz){
       validate(arguments, 'number', 'string');
+      //...
+    }
+
+### Example 2:
+
+    function foo(bar, baz){
+      validate(arguments, (/[\d]+/), 'string');
+      //...
+    }
+
+### Example 3:
+
+    function foo(bar, baz){
+      validate(arguments, (/[\d]+/), function(arg){ return 'foo' === arg; });
       //...
     }
 
@@ -41,18 +57,21 @@ For example:
       validate(arguments, 'number');
     }
 
-### Valid types
+### Valid test types
 
-* 'undefined'
-* 'nan'
-* 'object'
-* 'number'
-* 'string'
-* 'boolean'
-* 'array'
-* 'date'
-* 'regexp'
-* 'function'
+* String
+    * 'undefined'
+    * 'nan'
+    * 'object'
+    * 'number'
+    * 'string'
+    * 'boolean'
+    * 'array'
+    * 'date'
+    * 'regexp'
+    * 'function'
+* RegExp
+* Function
 
 ### Suppression
 
