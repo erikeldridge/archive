@@ -1,4 +1,14 @@
-function validate(){
+/**
+ * Validate arguments by checking type, or testing with regexp or function
+ *
+ * @param   arguments a sequence of arguments looking like 
+ *                    arguments, test1, test2 ..., e.g. 
+ *                    arguments, 'string', (/[a-z]+/) ...
+ * @throws  invalidArgumentError
+ * @return  undefined if validate.isActive is false
+ * @note    pretty prints invalidArgumentError to log, if avail.
+ */
+function validate(/* arguments, test1, test2 ... */){
 
   if(!validate.isActive){
     return;
@@ -43,7 +53,7 @@ function validate(){
     var error = new Error(msg);
 
     error.arguments = args;
-    error.type = 'invalid argument error';
+    error.type = 'invalidArgumentError';
 
     validate.prettyPrint(error);
 
@@ -57,14 +67,17 @@ function validate(){
 validate.isActive = true;
 
 /**
- * Abstracted logger for cross-browser safety
+ * Abstracted object logger for cross-browser safety
+ * @param key is the object key
+ * @param value is the object value
  */
-validate.log = function(k, v){
-  window.console && console.log && console.log(k, v);
+validate.log = function(key, value){
+  window.console && console.log && console.log(key, value);
 };
 
 /**
  * Dumps object fields to log
+ * @obj the obj to pretty print
  */
 validate.prettyPrint = function(obj){
   for(var key in obj) if( obj.hasOwnProperty(key) ) {
@@ -79,6 +92,7 @@ validate.prettyPrint = function(obj){
 validate.is = function( type, obj ) {
   return validate.objectType( obj ) == type;
 };
+
 /**
  * Unambiguous method for determining object type
  * @credit QUnit
