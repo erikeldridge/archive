@@ -109,3 +109,27 @@ test('regexp test for alpha string', function(){
   }
 
 });
+
+test('functional test for hash', function(){
+
+  expect(1);
+
+  validate.isActive = true;
+
+  function rabbit(foo){
+    validate(arguments, function(arg){ return 'bar' === arg.foo; } );
+  }
+
+  try{
+    rabbit({foo:'bar'});
+  }catch(e){
+    ok(false, "should pass w/ valid input");
+  }
+
+  try{
+    rabbit("{foo:'bar'}");
+  }catch(e){
+    ok(true, "should fail on invalid input");
+  }
+
+});

@@ -20,6 +20,10 @@ function validate(){
       continue;
     }
 
+    if( validate.is('function', type) && type(value) ){
+      continue;
+    }
+
     var msg = value + " is not a " + type;
 
     var error = new Error(msg);
