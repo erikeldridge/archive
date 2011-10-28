@@ -1,7 +1,9 @@
 Code review checklist
+=====================
 
-Credit @timtruman
+Credit @timtruman for the original list
 
+- Should anyone else be on the review?
 - Is anything missing i18n?
 - Do all the resource paths look sane?
 - Stage it. Understand what it does. Try to break it.
