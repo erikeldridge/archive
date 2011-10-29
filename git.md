@@ -24,3 +24,4 @@ Git
 * Revert single file to specific commit: `git checkout <hash> -- <path to file>`
 * GitX gui; handy for live editing staged changes
 * Determine if branch exists on remote repo: `git log <repo name>/<branch name>`
+* Revision-specific blame: `git blame <sha> -- <path>`. Useful if global change assigns ownership for all lines to one user
