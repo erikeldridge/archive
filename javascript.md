@@ -30,3 +30,4 @@ JavaScript
 * JS learning tool: https://github.com/liammclennan/JavaScript-Koans
 * JS learning tool: http://www.codecademy.com/
 * Recommended JS book: JavaScript: The Good Parts
+* Masonry, a dynamic layout plugin for jQuery: http://masonry.desandro.com/
