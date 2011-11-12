@@ -1,6 +1,7 @@
 CSS
 ===
 
+* Instacss docs: http://instacss.com/
 * Skeleton "A Beautiful Boilerplate for Responsive, Mobile-Friendly Development": http://getskeleton.com/
 * Twitter Bootstrap: http://twitter.github.com/bootstrap
 * CSS lint: https://github.com/stubbornella/csslint
