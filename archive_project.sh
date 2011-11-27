@@ -9,61 +9,59 @@ fi
 # Extract project name from repo url
 project_name=$( ruby -e "print '$1'.scan(/(\w+)\.git/)[0][0]" );
 
-echo 'Cloning project';
+echo "$0: Cloning project";
 git clone $1 ../$project_name;
 
-echo 'Deleting merge_branch';
-git branch -D merge_branch;
-git reset --hard ;
+echo "$0: Changing directory to ../$project_name";
+cd ../$project_name
 
-echo 'Creating merge_branch';
-git co -b merge_branch;
+archive_dir="${project_name}_archive"
+mkdir $archive_dir;
+echo "$0: Making '$archive_dir' directory to house project files";
 
-echo 'Defining remote pointing at local copy of project';
-git remote rm merge_remote;
-git remote add merge_remote ../$project_name;
-
-echo 'Merging in project';
-git pull merge_remote master;
-
-echo 'Making directory to house project files';
-mkdir $project_name;
-
-echo 'Identifying new files:';
-file_names=`git diff master --name-only`
-echo $file_names;
-
-echo 'Moving files into project dir'
-for f in $file_names
-do 
-
-  # Skip this file if it's in the list
-  if [ $f = `basename $0` ]
+echo "$0: Moving files into archive directory";
+for f in *
+do
+  if [ $f = $archive_dir ]
   then
     continue
   fi
 
-  # If the file is nested, only move the parent dir ...
-  dir_name=`dirname $f`
-  if [ $dir_name = '.' ]
-  then
-    mv "$f" "$project_name"
-
-  # ... unless the parent dir is already defined.
-  elif [ ! -d $project_name/$dir_name ]
-  then
-    mv "$dir_name" "$project_name";
-  fi
-
+  mv "$f" $archive_dir
 done
 
-echo 'Committing changes to merge_branch' 
-git add $project_name
-git ci -am "Create $project_name dir & add files"
+echo "$0: Committing archive directory";
+git add $archive_dir
+git ci -am "Create $archive_dir dir & add files"
 
-echo 'Merging merge_branch into master'
+echo "$0: Changing directory back to archive project";
+cd -
+
+echo "$0: Creating merge_branch";
+git co -b merge_branch;
+
+echo "$0: Defining remote pointing at local copy of project";
+git remote rm merge_remote;
+git remote add merge_remote ../$project_name;
+
+echo "$0: Merging in project";
+git pull merge_remote master;
+
+echo "$0: Removing '_archive' from archive directory name"
+if [ -d $project_name ]
+  then
+  echo "$0: Error: directory with this name already exists"
+  exit 1
+fi
+mv $archive_dir $project_name
+
+echo "$0: Committing changes to merge_branch"
+git add $project_name
+git ci -am "Remove '_archive' from archive directory name"
+
+echo "$0: Merging merge_branch into master"
 git co master
 git merge merge_branch
 
-echo 'Pushing to github'
-git push github master
+echo "$0: Deleting merge_branch";
+git branch -d merge_branch;
