@@ -1,0 +1,80 @@
+<!--
+Copyright (c) 2009, Erik Eldridge. All rights reserved.
+Code licensed under the BSD License:
+http://github.com/erikeldridge/foxbatexample/blob/master/license.txt
+-->
+<html>
+    <head></head>
+    <a href="#" id="openid"><img src="http://l.yimg.com/a/i/reg/openid/buttons/2_new.png" style="border:none"/></a>
+    <body>
+        <script src="http://yui.yahooapis.com/3.0.0/build/yui/yui-min.js"></script>
+        <script src="library.js">dj0yJmk9aWhaR09McnVxUVBQJmQ9WVdrOU56RmlaMGxXTjJzbWNHbzlNVEl5TWprNE16a3gmcz1jb25zdW1lcnNlY3JldCZ4PTI5</script>
+        <script>
+        
+        var queryString = document.location.search.substr(1);
+        
+        //parse query string
+        var pairs = queryString.split('&'),
+        	params = {};
+        for (var i = 0; i < pairs.length; i++) {
+        	var pair = pairs[i].split('=');
+        	params[pair[0]] = pair[1];
+        }
+        
+        YUI().use('json-parse', 'node', 'cookie', function (Y) {
+            if (params['openid.oauth.request_token']) {
+                
+                //use req token as session id
+                Y.Cookie.set('sessionId', params['openid.oauth.request_token']);
+                
+                //prelim request 2 of 2: exchange req token for access token
+                sdk.makeRequest(
+                    { 
+                        'action':'exchangeRequestToken',
+                        'requestToken' : params['openid.oauth.request_token']
+                    }, 
+                    
+                    //now we can start making calls for private data
+                    function (data) {
+                        sdk.makeRequest(
+                            { 
+                                'action':'makeRequest',
+                                
+                                //all proxy request calls must contain session id
+                                'requestToken' : params['openid.oauth.request_token'],
+                                
+                                'method' : 'get',
+                                'url' : encodeURIComponent('http://query.yahooapis.com/v1/yql'),
+                                'params' : encodeURIComponent('q=select * from social.profile where guid = me&format=json')
+                            },   
+                            
+                            function (data) {
+                                var json = decodeURIComponent(data),
+                                    response = Y.JSON.parse(json),
+                                    givenName = response.response.query.results.profile.givenName,
+                                    imageUrl = response.response.query.results.profile.image.imageUrl;   
+                                Y.get('#openid').setStyle('display', 'none');
+                                Y.get('body').append('<img src="'+imageUrl+'"/><p>' + givenName + '</p>');
+                            }
+                        );
+                    }
+                );
+            } else {
+                
+                //prelim request 1 of 2: have user sign in
+                sdk.makeRequest(
+                    { 
+                        'action':'fetchHybridAuthUrl'
+                    }, 
+                    function (data) {
+                        var json = decodeURIComponent(data),
+                            url = Y.JSON.parse(json).url,
+                            a = document.getElementById('openid');
+                        a.href = url;
+                    }
+                );
+            }
+        });
+        </script>
+    </body>
+</html>
