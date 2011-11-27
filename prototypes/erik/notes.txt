@@ -1,0 +1,4 @@
+* naming conventions for files, eg raw/yy/mm/dd/{filename}.{extension} vs. raw/{filename}_dd-mm-yy.{extension} etc.
+* most files are written w/o file extensions because they need not be in a particular language, ie we only need to be able to say "cat ftp/raw/file.csv | adaptor/excavation/clean/map", so it doesn't matter if "adaptor/excavation/clean/map" is written in python, ruby, etc
+* cleaner and conversion scripts are structured as "maps" so they can be used by hadoop or stand-alone 
+* this architecture is based around a core ftp server that stores the raw input files and clean output files.  batch processes can be run by a throw

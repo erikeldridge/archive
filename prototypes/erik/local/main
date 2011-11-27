@@ -1,0 +1,100 @@
+#!/usr/bin/python
+
+"""
+purpose
+
+* handle files as they are ingested
+
+process
+
+* run this script to handle ingested file
+* if small file, eg file size < 1 mb
+** clean locally and drop in ftp/clean/{dept}/{date}/{file}.{format}
+** convert to default formats, eg xml & json, linearly, eg "local$ cat ftp/clean/{dept}/{date}/{file}.{format} | adapters/convert/xml/map.py | sort | adapters/convert/xml/reduce.py >> ftp/clean/{dept}/{date}/{file}.xml"
+** (optional) record metadata for file in index db
+
+* if big file
+** construct job definition
+** push job def to batch queue
+"""
+
+import os, commands
+
+# assume the ingestion process has placed a file in ftp/raw
+rawFilePath = '../ftp/raw/excavation/09-09-12/excavation.csv'
+
+# assume user inputing file has defined this data
+inputFileMeta = {
+    'dept' : 'excavation', # origin dept
+    'format' : 'csv', # the default format
+    'date' : '09-09-12', # yy-mm-dd, date data created
+    'fileName' : 'excavation', # what to name the output files
+    'conversions' : 'json, xml' # by default, convert input data into these formats
+}
+
+cleanFilePath = '../ftp/clean/%s/%s/%s.%s' % (
+    inputFileMeta['dept'], 
+    inputFileMeta['date'], 
+    inputFileMeta['fileName'],
+    inputFileMeta['format'])
+    
+fileSize = os.path.getsize(rawFilePath)
+
+if fileSize < 1048576: # if file size < 1 mb, handle it locally
+
+    # clean the data
+    command = 'cat %s | ../adapters/excavation/clean/map' % rawFilePath
+    output = commands.getoutput(command)
+    
+    # save the clean data in /ftp/clean
+    cleanFile = open(cleanFilePath, 'w')
+    cleanFile.write(output)
+    cleanFile.close()
+    
+    # translate to default alternative formats
+    command = 'cat %s | ../adapters/excavation/convert/xml/map' % cleanFilePath
+    output = commands.getoutput(command)
+    
+    # save the clean data in /ftp/clean
+    xmlFile = open('../ftp/clean/%s/%s/%s.%s' % (
+        inputFileMeta['dept'], 
+        inputFileMeta['date'], 
+        inputFileMeta['fileName'],
+        'xml'), 'w')
+    xmlFile.write(output)
+    xmlFile.close()
+    
+    # todo: add meta to index db so user's can find these files
+    
+else:
+    
+    # define job
+    jobDef = {
+        'type' : 'clean',
+        'baseFtpUri' : 'ftp://test.erikeldridge.com/civicdb/ftp',
+        'inputFileMeta' : inputFileMeta,
+        'defaultConversions' : 'xml, json'
+    }
+    
+    # push definition onto make-shift queue for batch process to pick up
+    simpleQueueFile = open('../batch/queue', 'r')
+    
+    exec(simpleQueueFile.read())
+    
+    queue.append(jobDef)
+    simpleQueueFile.close()
+    
+    simpleQueueFile = open('../batch/queue', 'w')
+    simpleQueueFile.write('queue='+str(queue))
+    simpleQueueFile.close()
+    
+# inputFile = open('../example/09-09-12_excavation.csv') # file
+# 
+# dept = 'excavation'
+# date = '09-09-12'
+# fileName = 'excavation'
+# format = 'csv'
+# cleanFile = open('../ftp/raw/%s/%s/%s.%s' % (dept, date, fileName, format), 'w')
+# cleanFile.write(inputFile.read())
+# inputFile.close()
+# cleanFile.close()
