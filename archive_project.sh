@@ -48,7 +48,7 @@ git remote add merge_remote ../$repository_name;
 echo "$0: Merging in repository";
 git pull merge_remote archive_branch;
 
-echo "$0: Renaming archive directory to repository name"
+echo "$0: Renaming archive directory to $repository_name"
 if [ -d $repository_name ]
   then
   echo "$0: Error: directory with this name already exists"
