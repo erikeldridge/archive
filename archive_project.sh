@@ -66,5 +66,8 @@ git remote rm merge_remote;
 echo "$0: Deleting archive branch"
 cd -
 git co master
-git branch -d archive_branch
+
+# Force deletion because branch is not merged into master
+git branch -D archive_branch
+
 cd -
