@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table xmlns="http://query.yahooapis.com/v1/schema/table.xsd">
+    <meta>
+        <author>Erik Eldridge</author>
+        <description>Unit tests for oauth.xml</description>
+        <sampleQuery>use 'http://test.erikeldridge.com/yql/oauth/oauth.test.xml' as table; select * from table where tableUri='http://github.com/yql/yql-tables/raw/master/oauth/oauth.xml' and run='2,3'</sampleQuery>
+		<documentationURL>http://wiki.github.com/erikeldridge/yql-oauth-support/</documentationURL>
+    </meta>
+    <bindings>
+        <select>
+            <inputs>
+				<key id="run" type="xs:string" paramType="variable"/>
+				<key id="tableUri" type="xs:string" paramType="variable"/>
+			</inputs>
+            <execute><![CDATA[
+			
+			//credit: http://javascript.crockford.com/remedial.html
+			if(!String.prototype.supplant){String.prototype.supplant=function(o){return this.replace(/{([^{}]*)}/g,function(a,b){var r=o[b];return typeof r==='string'||typeof r==='number'?r:a;});};}if(!String.prototype.trim){String.prototype.trim=function(){return this.replace(/^\s+|\s+$/g,"");};}
+			
+			tableUri = tableUri || 'http://github.com/yql/yql-tables/raw/master/oauth/oauth.xml';
+						
+			//cases
+			testCases = [
+				function(){
+					
+					//setup
+					var caseResults = {
+						'details':'fetch yahoo request token'
+					};
+					var query = 'use "{tableUri}" as table; select * from table where uri="{uri}" and consumerKey="{consumerKey}" and consumerSecret="{consumerSecret}" and callbackUri="{callbackUri}"'.supplant({
+						tableUri: tableUri,
+						consumerKey:'dj0yJmk9MXN0dU1pdGNhVEJyJmQ9WVdrOVRYRjNSVTAzTjJzbWNHbzlNQS0tJnM9Y29uc3VtZXJzZWNyZXQmeD01Mg--',
+						consumerSecret: '31b1fa6f03eb3363e042a124bc7ef51b9e69228a',
+						callbackUri: 'http://test.erikeldridge.com',
+						uri:'https://api.login.yahoo.com/oauth/v2/get_request_token'
+					});					
+					var queryResults = y.query( query ).results;
+					y.log(queryResults);
+					//tests					
+					if ( -1 === queryResults.toString().indexOf( 'oauth_token' ) ) {
+						caseResults['fail'] = 'table should return valid req token, not '+queryResults;
+					}
+					
+					//pass if no tests fail
+					if ( !caseResults['fail'] ) {
+						caseResults['pass'] = '';
+					}
+					
+					return caseResults;
+				},
+				function(){
+					
+					//setup
+					//note: this can be tricky because we need unique req token, and we need to auth in btwn
+					var caseResults = {
+						'details':'exchange yahoo request token for access token'
+					};
+					var query = 'use "{tableUri}" as table; select * from table where uri="{uri}" and consumerKey="{consumerKey}" and consumerSecret="{consumerSecret}" and token="{token}" and tokenSecret="{tokenSecret}" and verifier="{verifier}"'.supplant({
+						tableUri: tableUri,
+						consumerKey:'dj0yJmk9MXN0dU1pdGNhVEJyJmQ9WVdrOVRYRjNSVTAzTjJzbWNHbzlNQS0tJnM9Y29uc3VtZXJzZWNyZXQmeD01Mg--',
+						consumerSecret: '31b1fa6f03eb3363e042a124bc7ef51b9e69228a',
+						token: 'khbhm6d',
+						tokenSecret: 'c4db2531f94963a191675f653dea4a0e08c3e7df',
+						verifier:'arapfj',
+						uri:'https://api.login.yahoo.com/oauth/v2/get_token'
+					});					
+					var queryResults = y.query( query ).results;
+					y.log(queryResults);
+					
+					//tests					
+					if ( -1 === queryResults.toString().indexOf( 'oauth_token' ) ) {
+						caseResults['fail'] = 'table should return valid req token, not '+queryResults;
+					}
+					
+					//pass if no tests fail
+					if ( !caseResults['fail'] ) {
+						caseResults['pass'] = '';
+					}
+					
+					return caseResults;
+				},
+				function(){
+					
+					//setup
+					//note: this can be tricky because we need an access token and some providers expire tokens
+					var caseResults = {
+						'details':'make 3-leg request'
+					};
+					var query = 'use "{tableUri}" as table; select * from table where uri="{uri}" and consumerKey="{consumerKey}" and consumerSecret="{consumerSecret}" and token="{token}" and tokenSecret="{tokenSecret}"'.supplant({
+						tableUri: tableUri,
+						consumerKey:'dj0yJmk9MXN0dU1pdGNhVEJyJmQ9WVdrOVRYRjNSVTAzTjJzbWNHbzlNQS0tJnM9Y29uc3VtZXJzZWNyZXQmeD01Mg--',
+						consumerSecret: '31b1fa6f03eb3363e042a124bc7ef51b9e69228a',
+						token: 'A=aBW3.tz6niU_BD0r.yyaAP4Fyk9EqmU3egeT14Owq8ntaStHctGsJgLvYO75QiGBEXevFpotJRaWzKav9vaTPtCZ2GgSSG7iKc42k0evmhOSvB7.WX_iW9rBLR1JSyDdUc.2tMB.1DUJTkYTYiSTrhzFM_NzWHYxkOquF8RpZDsz_hPQwst6SbES.g5uYSYBWoEYtjjm9TNdJ.DAdh3yFhr9qvhGV_kL599xJ89qT9QfsPi_Wk95nbq2Evvu.C1jigr93RA53BijWDe_keWPkaftVVdzQGu5Hr.iCfnQ3nGEWOKDH7vpiEIrDHKBdCPmI0oBeV.JlWQqZdUFJYMREHfBy363e4zo81rEO.UjNWvnHiKaI0Q7AWzRqdGDkNumccD_R980ATXvobR0T.0tFmGJASimQc41PfE1ghEaP26OMh6zjHDy8DZ1nti5HexW_iO0cC.0ybivGORO0pUfT3jlhgqc67F_pVeEH8nwN11B8hDi_t2_ekl.saFYQa8XgYf6Tq43GgIsWhuxwpp0xOM_EdgNGcT8olMWtO7LvqbIGS3vYPzcf00aMGekfNaJqhV5vsb5jLpNRVWpdikO3MU7PrKArAFbyjWQ6sk.0EOGy379QmY.lS3Iy61n84aCKXSCkg4xlpWa9ZXc2a7xWBNE7yA0kfYuc9q_tnvRQ_7cb1CvJKWzwCYADIg4iL8ZzirgoOryrJjjPHvhcwB.eg--',
+						tokenSecret: 'bac9c8d54ae00f8ae3bb043a398c972c52375a0b',
+						uri:'http://social.yahooapis.com/v1/user/BG5BMUK24OOYGHWKTJBCX2TN5E/profile/status'
+					});					
+					var queryResults = y.xmlToJson( y.query( query ).results );
+					y.log(queryResults);
+					
+					//tests					
+					if ( !queryResults.results['status'] ) {
+						caseResults['fail'] = 'table should return user\'s status, not '+queryResults;
+					}
+					
+					//pass if no tests fail
+					if ( !caseResults['fail'] ) {
+						caseResults['pass'] = '';
+					}
+					
+					return caseResults;
+				},
+				function(){
+					
+					//setup
+					//note: this can be tricky because we need an access token and some providers expire tokens
+					var caseResults = {
+						'details':'2-leg netflix'
+					};
+					var query = 'use "{tableUri}" as table; select * from table where uri="{uri}" and consumerKey="{consumerKey}" and consumerSecret="{consumerSecret}"'.supplant({
+						tableUri: tableUri,
+						consumerKey:'yourkey',
+						consumerSecret: 'yoursecret',
+						uri:'http://api.netflix.com/catalog/titles'
+					});					
+					var queryResults = y.xmlToJson( y.query( query ).results );
+					y.log(queryResults);
+					
+					//tests					
+					if ( !queryResults.results['catalog_titles'] ) {
+						caseResults['fail'] = 'table should return catalog_titles, not '+queryResults;
+					}
+					
+					//pass if no tests fail
+					if ( !caseResults['fail'] ) {
+						caseResults['pass'] = '';
+					}
+					
+					return caseResults;
+				}
+			];
+			
+			//runner
+			var caseResults = [];
+			if ( run ) {
+				for each ( var i in run.split( ',' ) ) {
+					caseResults.push( testCases[i]() );
+				}
+			} else {
+				for each ( var testCase in testCases ) {
+					caseResults.push( testCase() );
+				}
+			}
+			
+			//results
+			response.object = { "case": caseResults };
+            
+        ]]></execute>
+        </select>
+    </bindings>
+</table>
