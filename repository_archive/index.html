@@ -1,0 +1,62 @@
+<ul id="login">
+    <li>
+        <a href="start.php?openid=yahoo.com&oauthConsumerKey=dj0yJmk9TDNTVXpvRnpsbjJHJmQ9WVdrOVpXRlBkWEJETm1zbWNHbzlNQS0tJnM9Y29uc3VtZXJzZWNyZXQmeD0wYw--">Log in with your Yahoo! ID</a>
+    </li>
+</ul>
+
+<script type="text/javascript" charset="utf-8" src="http://yui.yahooapis.com/3.1.1/build/yui/yui-min.js"></script>
+<script>
+
+var Y = YUI({
+	gallery: 'gallery-2010.01.27-20',
+    modules: {
+        'string': {
+            fullpath: 'http://gist.github.com/raw/395070/b51aa01e4c60b8899427b73f8ecb5f4426f40bea/yui3-string-utils.js'
+        },
+        'authparty': {
+            
+            // break cache in dev mode
+            fullpath: 'http://test.erikeldridge.com/openid-oauth-yql-yui-party/module.authparty.js?t='+(new Date().getTime())
+        },
+    }
+}); 
+
+Y.use( 'node', 'gallery-yql', 'string', 'json', 'authparty', 'event-custom', function(Y) {
+    var oauthConsumerKey = null;
+    var openid = null;
+    
+    // complete auth flow
+    Y.on( "authparty:assertionReady", function ( assertion ) { 
+        Y.AuthParty.loginComplete( openid, oauthConsumerKey, assertion );
+    } );  
+    
+    // start auth flow
+    Y.one('#login').on('click', function ( e ) {
+        
+        // apply single listener to ul & only pay attention to links
+        if ( 'A' !== e.target.get('nodeName') ) {
+            return;
+        }
+        
+        // prevent default click behavior for links
+        e.preventDefault();
+        
+        // extract & cache key, openid from clicked link uri
+        var parsedUri = Y.String.parseUri( e.target.get('href') );
+        openid = parsedUri.queryKey.openid;
+        oauthConsumerKey = parsedUri.queryKey.oauthConsumerKey;
+        
+        Y.AuthParty.loginStart(e.target.get('href'));
+    } );
+    
+    // register user session
+    Y.on('authparty:loginSuccess', function() {
+        Y.log('loginSuccess');
+    });
+    
+    // handle auth error
+    Y.on('authparty:loginError', function() {
+        Y.log('loginError');
+    });
+});    
+</script>

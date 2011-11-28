@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table xmlns="http://query.yahooapis.com/v1/schema/table.xsd">
+    <meta>
+        <author>Erik Eldridge</author>
+        <description>Unit tests for oauth.xml</description>
+        <sampleQuery>use 'http://example.com/openid-oauth-yql-yui-party/start.xml' as table; select * from table where openid='yahoo.com' and oauthConsumerKey='{hybrid auth provider oauth key}' and returnTo='http://example.com/openid-oauth-yql-yui-party/'</sampleQuery>
+		<documentationURL>http://wiki.github.com/erikeldridge/openid-oauth-yql-yui-party</documentationURL>
+    </meta>
+    <bindings>
+        <select>
+            <inputs>
+				<key id="oauthConsumerKey" type="xs:string" paramType="variable" required="true"/>
+				<key id="openid" type="xs:string" paramType="variable" required="true"/>
+				<key id="returnTo" type="xs:string" paramType="variable" required="true"/>
+				<key id="resetAssoc" type="xs:string" paramType="variable" default='false' />
+			</inputs>
+            <execute><![CDATA[
+			//credit: http://javascript.crockford.com/remedial.html
+				if(!String.prototype.supplant){String.prototype.supplant=function(o){return this.replace( /{([^{}]*)}/g,function(a,b){var r=o[b];return typeof r==='string'||typeof r==='number'?r:a;});};}if(!String.prototype.trim){String.prototype.trim=function(){return this.replace(/^\s+|\s+$/g,"");};}
+			
+			//json
+			y.include( 'store://pitrYOXYb8vQfiui4rUYPX' );
+			
+			//kludge: native y.crypto md5 output doesn't match php's
+			//http://code.google.com/p/crypto-js/
+			y.include( 'http://example.com/openid-oauth-yql-yui-party/2.0.0-crypto-md5.js' );
+			
+			//normalize id
+			var query = "use 'http://gist.github.com/yql/yql-tables/raw/master/openid/openid.normalize.xml' as openid.normalize;" 
+				+ "select id from openid.normalize where id='{id}'".supplant({
+				"id": openid
+			});
+			var results = y.query(query).results;
+			
+			//kludge: it's necessary to stringify obj in result set
+			var normalizedId = results.result.id.toString();
+			
+			if (!normalizedId) {
+				response.object = {
+					"error": 'id was unnormalizable (see "normalization" section of openid docs for more info)'
+				};
+				y.exit();
+			}
+
+			//fetch assoc
+			var key = Crypto.MD5( oauthConsumerKey + normalizedId );
+			var hash = Crypto.MD5( 'secret' + key );
+			var uri = 'http://example.com/openid-oauth-yql-yui-party/jsonkv.php';
+			var req = y.rest(uri).query({
+				key: key,
+				hash: hash
+			}).get();
+			
+			if( 200 !== req.status && 404 !== req.status ) {
+				y.log('200 !== req.status && 404 !== req.status');
+				y.log(req);
+				y.exit();
+			}
+			
+			if ( 200 === req.status ) {
+				var assoc = JSON.parse( req.response );
+			}
+			
+			//if no assoc, or assoc is expired, create/store assoc
+			var time = Math.floor( new Date().getTime() / 1000 );
+			if ( ( 'true' === resetAssoc ) || 404 === req.status || ( assoc.expires && assoc.expires < time ) ) {
+				
+				query = "use 'http://gist.github.com/yql/yql-tables/raw/master/openid/openid.assoc.xml' as openid.assoc;" 
+					+ "use 'http://gist.github.com/yql/yql-tables/raw/master/openid/openid.discover.xml' as openid.discover;" 
+					+ "select * from openid.assoc where uri in ( select success from openid.discover where normalizedId='{id}')".supplant({
+						id: normalizedId
+					});
+				
+				results = y.xmlToJson( y.query(query).results );
+				var assoc = results.results.success;
+
+				//calc assoc expiration time
+				assoc.expires = parseInt( assoc.expires_in, 10 ) + time;
+				
+				//store assoc
+				uri = "http://example.com/openid-oauth-yql-yui-party/jsonkv.php";
+				req = y.rest( uri ).query({
+					key: key,
+					val: JSON.stringify( assoc ),
+					hash: hash
+				}).post();
+				
+				if ( 200 !== req.status ) {
+					y.log('200 !== req.status');
+					y.log(req);
+					y.exit();
+				}
+				
+			} 
+			
+			//get openid login url
+			query = "use 'http://gist.github.com/yql/yql-tables/raw/master/openid/openid.xml' as openid;"
+				+" select * from openid where id='{id}' and return_to='{uri}' and assoc_handle='{handle}' and oauthKey='{key}'".supplant({
+				id: normalizedId, 
+				uri: decodeURIComponent(returnTo),
+				handle: assoc.assoc_handle,
+				key: oauthConsumerKey
+			});
+			results = y.query( query ).results;
+			
+			//kludge: it's necessary to stringify obj in result set
+			uri = results.success.toString();
+
+			//results
+			response.object = {
+				"uri": uri
+			};
+
+        ]]></execute>
+        </select>
+    </bindings>
+</table>
