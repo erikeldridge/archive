@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table xmlns="http://query.yahooapis.com/v1/schema/table.xsd">
+    <meta>
+        <author>Erik Eldridge</author>
+        <description>
+        </description>
+        <sampleQuery>select * from {table} where url="{url of OCHA page}"</sampleQuery>
+    </meta>
+    <bindings>
+        <select produces="JSON">
+            <inputs>
+                <key id="url" type="xs:string" paramType="variable" required="true"/>
+                <key id="xpath" type="xs:string" paramType="variable"/>
+            </inputs>
+            <execute><![CDATA[
+                    
+                response.object = function(url) {
+                    
+                    //try fetching url w/ native yql html table
+                    var query = 'select * from html where url = "'+url+'"',
+                        results = y.query(query).results;
+                        
+                    //if robots.txt denies access, fetch via proxy
+                    if (!y.xmlToJson(results).results) {
+                        query = 'select * from json where url = "http://{project name}.appspot.com/proxy'
+                            + '?url='+encodeURIComponent(url) + '"';
+                        
+                        if (xpath) {
+                            query += ' and xpath="'+xpath+'"'
+                        }
+                        
+                        results = y.query(query).results
+                        y.log(results);
+                    }
+                    
+                    return results;
+
+                }(url);
+                
+            ]]></execute>
+        </select>
+    </bindings>
+</table>
+
