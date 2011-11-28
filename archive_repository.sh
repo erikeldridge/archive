@@ -58,7 +58,7 @@ mv $archive_dir $repository_name
 
 echo "$0: Committing changes to merge_branch"
 git add $repository_name
-git ci -am "Renaming archive directory to repository name"
+git ci -am "Renaming archive directory to $repository_name"
 
 echo "$0: Deleting remote definition";
 git remote rm merge_remote;
