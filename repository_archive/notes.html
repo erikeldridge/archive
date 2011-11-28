@@ -1,0 +1,294 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+    "http://www.w3.org/TR/html4/strict.dtd">
+    <html>
+    <head>
+        <style>
+        body {
+            font-family: sans-serif;
+        }
+        h1 {
+            font-weight: bold;
+            font-size: 200%;
+            background-color: #FFFD7C;
+            padding: 1ex;
+        }
+        h2 {
+            border-bottom: 1px solid black;
+            padding: 1ex;
+        }
+        </style>
+    </head>
+    <body>
+        <h1>
+            An Introduction to Web Development
+        </h1>
+        <h2 id="html_the_foundation_of_web_pages">
+            HTML: the foundation of web pages
+        </h2>
+        <ol>
+            <li>Open <a href="foundation.html">foundation.html</a>
+                <ul>
+                    <li>Foundation.html contains only HTML, the basic structure for information on a web page
+                    </li>
+                </ul>
+            </li>
+            <li>Right click on the <em><a href="foundation.html">foundation.html</a></em> page and select <em>View Page Source</em>, to see the HTML<br>
+                <ul>
+                    <li>Notice that the code tells a story about the information on the page.
+                    </li>
+                    <li>The <code>&lt;html&gt;</code> tag says "this is html".
+                    </li>
+                    <li>The <code>&lt;body&gt;</code> tag says "this is the body of this document".
+                    </li>
+                    <li>
+                        <code>&lt;div&gt;</code> tags define a division, or section, in the document.
+                    </li>
+                    <li>The text <code>class="image"</code> within a <code>&lt;div&gt;</code> tag describes the division as containing an image
+                    </li>
+                </ul>
+            </li>
+            <li>Close the window containing the foundation source
+            </li>
+            <li>Browse to <em><a href="http://facebook.com">Facebook</a></em> and view the page source
+                <ul>
+                    <li>Even though the code is very complicated, you can see commonalities with the basic code: <code>&lt;html&gt;</code>, <code>&lt;body&gt;</code>, etc
+                    </li>
+                </ul>
+            </li>
+            <li>Close the window containing the Facebook source
+            </li>
+        </ol>
+        <h2 id="styling_making_a_web_page_look_good">
+            Styling: making a web page look good
+        </h2>
+        <ol>
+            <li>Go back to <em><a href="foundation.html">foundation.html</a></em> and click the <em>Styling: making a web page look good</em> link at the bottom to go to <em><a href="styling.html">styling.html</a></em>
+                <ul>
+                    <li>Notice that the way the information is being presented has changed.
+                    </li>
+                    <li>Colors have been added.
+                    </li>
+                </ul>
+            </li>
+            <li>View the source of this page.<br>
+                <ul>
+                    <li>There's a new <code>&lt;style&gt;</code> tag. Within the <code>&lt;style&gt;</code> tag there are rules describing how the page should look.
+                    </li>
+                    <li>The code inside the <code>&lt;style&gt;</code> tag is called CSS
+                    </li>
+                    <li>Rules affecting tags are named with the name of the tag, so the rule starting with <code>body {</code> affects the <code>&lt;body</code> tag.
+                    </li>
+                    <li>The lines beginning with <code>/*</code> are called comments. They provide a way for the person who built the page to explain what she was doing
+                    </li>
+                </ul>
+            </li>
+            <li>Open a new window, browse to <em><a href="http://en.wikipedia.org/wiki/Main_Page">Wikipedia's English site</a></em>, view the page source, look for a tag named <em>link</em>, and click on the link in it. The link will look something like:<br>
+                <em>http://bits.wikimedia.org/skins-1.5/common/shared.css?257z31</em>
+                <ul>
+                    <li>Find some similarities between the simple styles in <em><a href="styling.html">styling.html</a></em> and the styles for <em>Wikipedia</em>.
+                    </li>
+                    <li>Do you see <code>body {</code> and <code>/*</code>?
+                    </li>
+                </ul>
+            </li>
+            <li>Switch back to <em><a href="styling.html">styling.html</a></em>
+            </li>
+            <li>In the toolbar, go to <em>Tools</em> &gt; <em>Firebug</em> &gt; <em>Open Firebug</em> (if you don't have Firebug, you can get it from the <a href="http://getfirebug.com/">Firebug site</a>)
+            </li>
+            <li>In the panel that opens at the bottom of the page, click the <em>inspect</em> button next to the "firebug"
+            </li>
+            <li>Move the mouse pointer over an image on the page
+                <ul>
+                    <li>You should see a blue outline surround the image (or element) your pointer is over
+                    </li>
+                    <li>In the firebug panel, you should see an <code>&lt;img</code> tag highlighted in turquoise
+                    </li>
+                    <li>On the right-hand side of the panel, you should see the style rule being applied to the <code>&lt;img&gt;</code> tag. Hint: it starts with <code>img {</code>
+                    </li>
+                </ul>
+            </li>
+            <li>Click the mouse button on the image to fix the inspection on a particular image
+            </li>
+            <li>In the style rule for image, click the text <em>10px solid black</em> next to the word "border"
+                <ul>
+                    <li>It should change into something you can type into
+                    </li>
+                </ul>
+            </li>
+            <li>Change the word "black" to "red"
+                <ul>
+                    <li>Note that the color of the border around all the images is now red
+                    </li>
+                </ul>
+            </li>
+            <li>Play around with the other styles.
+                <ul>
+                    <li>Refresh the page to reset the styling
+                    </li>
+                </ul>
+            </li>
+            <li>Switch back to <em><a href="http://en.wikipedia.org/wiki/Main_Page">Wikipedia</a></em> and play with the styling there
+                <ul>
+                    <li>You may need to click the <em>Apply settings for wikipedia.org</em> button in Firebug
+                    </li>
+                </ul>
+            </li>
+            <li>On your computer's desktop there is an icon for Notepad. Double click it to launch Notepad
+            </li>
+            <li>In Notepad, open <em><a href="styling.html">styling.html</a></em> in a folder called <em>mbits</em> on your desktop
+            </li>
+            <li>Find the definition for the <em>img</em> style rule and change the border color to "green"
+            </li>
+            <li>In Firefox, refresh <em><a href="styling.html">styling.html</a></em> and observe the borders are now all green
+            </li>
+            <li>Refresh the page and observe the changes persist
+                <ul>
+                    <li>You are now web programmers
+                    </li>
+                    <li>If you put this page on a server, you would have
+                    </li>
+                </ul>
+            </li>
+        </ol>
+        <h2 id="scripting_making_a_web_page_interactive">
+            Scripting: making a web page interactive
+        </h2>
+        <ol>
+            <li>In Firefox, click the <em>Scripting: making a web page interactive</em> link at the bottom of <em><a href="styling.html">styling.html</a></em>
+                <ul>
+                    <li>Observe that there is now only one image displayed
+                    </li>
+                </ul>
+            </li>
+            <li>Click the arrows under the picture to rotate through the images
+            </li>
+            <li>View the source and scroll to the bottom of the code
+                <ul>
+                    <li>Observe there is now a <code>&lt;script&gt;</code> tag in the HTML
+                    </li>
+                    <li>The code inside the <code>&lt;script&gt;</code> tag is called JavaScript
+                    </li>
+                    <li>Nothing else in the file has changed, ie the HTML and CSS are the same, and JavaScript has changed the way we interact with the content
+                    </li>
+                    <li>step through the script
+                        <ol>
+                            <li>get all div tags on the page
+                            </li>
+                            <li>extract only the ones that have the class <em>image</em>
+                            </li>
+                            <li>define functions to show and hide images. Functions provide a way of doing something repeatedly w/o having to copy code
+                            </li>
+                            <li>define a function to respond to mouse clicks on the arrow links
+                            </li>
+                            <li>hide all the images
+                            </li>
+                            <li>create the arrow links and configure them to point to the right place
+                            </li>
+                            <li>show the first image
+                            </li>
+                        </ol>
+                    </li>
+                </ul>
+            </li>
+            <li>Place the mouse pointer over one of the arrows, right click, and select <em>inspect element</em>
+            </li>
+            <li>Now click on the arrow and observe the changes to the code in the Firebug menu
+            </li>
+            <li>Open a window for <em><a href="http://flickr.com">Flickr</a></em>
+            </li>
+            <li>Search for a picture of a something, eg a panda, and click one of the pictures in the results
+                <ul>
+                    <li>On the right, you'll see two small images with left and right arrows
+                    </li>
+                </ul>
+            </li>
+            <li>Right click on one of the image and inspect it
+            </li>
+            <li>Click on the arrows and observe the changes in the code
+                <ul>
+                    <li>This is a much more complex piece of code, but it shares the common principle of using JavaScript to make changes to the information being displayed
+                    </li>
+                </ul>
+            </li>
+            <li>As a last exercise, click the "Console" button in Firebug
+            </li>
+            <li>At the bottom of the panel, click to the right of the 3 greater-than symbols, type <code>document.getElementsByTagName('div');</code>, and press enter
+                <ul>
+                    <li>Observe the results in the Firebug panel above where you typed
+                    </li>
+                    <li>It will output about a million results
+                    </li>
+                </ul>
+            </li>
+            <li>Hit the up arrow and edit your code to be <code>document.getElementsByTagName('div')[0];</code>
+                <ul>
+                    <li>This will select just the first div tag on the page
+                    </li>
+                </ul>
+            </li>
+            <li>Hit the up arrow and edit your code to be <code>document.getElementsByTagName('h1')[0];</code>
+                <ul>
+                    <li>This will select just the first h1 (<em>header</em>) tag on the page
+                    </li>
+                </ul>
+            </li>
+            <li>Place your mouse pointer over the result
+                <ul>
+                    <li>Observe the title of the image on the page be highlighted in blue and yellow
+                    </li>
+                </ul>
+            </li>
+            <li>Click back in the code input box, hit the up arrow again, and edit your code to be <code>document.getElementsByTagName('h1')[0].innerHTML = 'panda';</code>
+                <ul>
+                    <li>Observe the title change on the page
+                    </li>
+                    <li>Can you imagine how you might build a way to allow someone to change the title of their picture?
+                    </li>
+                </ul>
+            </li>
+        </ol>
+        <h2 id="learn_more">
+            Learn more
+        </h2>
+        <ul>
+            <li>
+                <a href="http://www.w3schools.com/html/">W3Schools' HTML tutorials</a>
+            </li>
+            <li>
+                <a href="http://www.w3schools.com/css/">W3Schools' CSS tutorials</a>
+            </li>
+            <li>
+                <a href="http://www.w3schools.com/js/">W3Schools' JavaScript tutorials</a>
+            </li>
+            <li>
+                <a href="http://getfirebug.com/">Firebug</a>
+            </li>
+        </ul>
+        <h2>
+            Software License
+        </h2>
+        All code in "An Introduction to Web Development" is covered by the BSD License as described below:
+        <ul>
+            <li>Software License Agreement (BSD License) Copyright (c) 2009, Yahoo! Inc. All rights reserved.
+            </li>
+            <li>Redistribution and use of this software in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+                <ul>
+                    <li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+                    </li>
+                    <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+                    </li>
+                    <li>Neither the name of Yahoo! Inc. nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission of Yahoo! Inc.
+                    </li>
+                </ul>
+            </li>
+            <li>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+            </li>
+        </ul>
+        <h2>Copyright</h2>
+<a href="http://creativecommons.org/licenses/by/3.0/" rel="license"><img src="http://i.creativecommons.org/l/by/3.0/88x31.png" style="border-width: 0pt;" alt="Creative Commons License"></a>
+        	<br/>
+        	All non-code content in <span rel="dc:type" property="dc:title" href="http://purl.org/dc/dcmitype/Text" xmlns:dc="http://purl.org/dc/elements/1.1/">"An Introduction to Web Development"</span> 
+        	by <a rel="cc:attributionURL" property="cc:attributionName" href="http://developer.yahoo.com/" xmlns:cc="http://creativecommons.org/ns#">Yahoo! Inc.</a> 
+        	is licensed under a <a href="http://creativecommons.org/licenses/by/3.0/" rel="license">Creative Commons Attribution 3.0 Unported License</a>.
+    </body>
+</html>
