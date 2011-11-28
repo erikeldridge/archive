@@ -1,0 +1,56 @@
+a img {
+    border:none;
+}
+.notice {
+    font-family: sans-serif;
+    border: 1px solid #FFAC00;
+    background-color: #FFFFD4;
+    padding: 1ex;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+}
+.red_notice {
+    border: 1px solid red;
+    background-color: #FFCFD1;
+}
+.yellow_notice {
+    border: 1px solid #FFAC00;
+    background-color: #FFFFD4;
+}
+.green_notice {
+    border: 1px solid green;
+    background-color: #B5DFB5;
+}
+.notice .button {    
+    background: url(https://s.yimg.com/lq/i/reg/oauth/si_btn_bg.png) repeat-x scroll rgb(255, 202, 57);
+    border: 1px solid rgb(252, 154, 17);
+    color: rgb(51, 51, 51);
+    display: inline-block;
+    font-size: 100%;
+    margin-left: 1ex;
+    padding: 0px 0.2em;
+    width: 120px;
+    text-align: center;
+    text-decoration: none;
+}
+.header {
+    font-family: sans-serif;
+    background-color: #ddd;
+    border: 1px solid #aaa;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    padding: 1ex;
+    text-align:right;
+}
+
+.profile img {
+    border: 3px solid #fff;
+    margin-right: 1ex;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+}
+.profile .name {
+    border-right: 1px solid #000;
+    padding-right: 1ex;
+    margin-right: 1ex;
+}
