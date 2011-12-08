@@ -13,6 +13,7 @@ Git
     1. save commit w/o message
 * Use .gitignore to avoid checking in files unnecessary for the project
 * Checkout individual file from external branch. The -- helps git avoid confusion by separating branch from paths). Also useful for git reset --hard on a single file. Note: this does not merge, ie history is lost: `git checkout <external branch> -- <path to file>`
+* Undo specific commit (w/o losing history): `git revert <sha>`
 * Diff w/ stash: `git diff stash@{0}`
 * Diff two branches: `git diff <branch 1>..<branch 2>`, e.g., `git diff master..head`
 * See branch details: `git branch -vv`
