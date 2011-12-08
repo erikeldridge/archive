@@ -2,6 +2,7 @@ Security
 ========
 
 * Sanitize all input from end-users to reduce XSS and DB corruption risks
+* Sanitize any input via window.location in JS
 * Sanitize all content sourced from end-users prior to display to reduce stored XSS risk
 * Validate all actions affecting privated data to reduce risks to session-fixation
 * Use dynamic config for secure settings
