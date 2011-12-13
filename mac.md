@@ -16,3 +16,4 @@ General Mac
 * Change volume/brightness silently: Shift + Volume/Brightness
 * Change volume/brightness incrementally: Options + Volume/Brightness
 * Increase Terminal responsiveness: `sudo rm -rf /private/var/log/asl/*.asl` See http://superuser.com/questions/31403/how-can-i-speed-up-terminal-app-or-iterm-on-mac-osx
+* Jumpcut clipboard buffer http://jumpcut.sourceforge.net/
