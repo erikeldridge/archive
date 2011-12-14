@@ -19,7 +19,7 @@ Git
 * See branch details: `git branch -vv`
 * Only show your commits: `git diff master..head --no-merges`
 * Use gui to only show your commits: `git difftool master..head --no-merges`
-* Run git stat against two branches: `git diff --name-status master..head`
+* See which files have changed between two branches: `git diff --name-only origin/master`
 * Unstage a single file: `git reset HEAD <file>`
 * View a single file in a given commit: `git show <commit>:<path>`
 * Revert single file to specific commit: `git checkout <hash> -- <path to file>`
