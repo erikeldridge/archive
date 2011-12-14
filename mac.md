@@ -5,6 +5,7 @@ General Mac
 * 1Password (+Dropbox) for password management
 * Skitch for screenshots
 * Clear terminal: cmd + K to
+* iTerm2
 * Copy pwd to clipboard: pwd | pbcopy
 * See folder nesting for current file: cmd + click on file name in header
 * Open force quit dialog: cmd + alt + escape
@@ -18,3 +19,4 @@ General Mac
 * Increase Terminal responsiveness: `sudo rm -rf /private/var/log/asl/*.asl` See http://superuser.com/questions/31403/how-can-i-speed-up-terminal-app-or-iterm-on-mac-osx
 * Jumpcut clipboard buffer http://jumpcut.sourceforge.net/
 * Alfred Power Pack adds clipboard buffer & file system navigation (among other things) to Alfred
+* iTerm 2 terminal emulator http://www.iterm2.com
