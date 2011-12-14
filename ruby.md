@@ -24,3 +24,4 @@ Ruby
 * Generate rails migration timestamp: `ruby -e "p Time.new.strftime('%Y%m%d%H%M%S')"`
 * Magic variable to last result: `_`, eg `x = 2 * 2; y = _`
 * Use `script/console` to load rails app in irb
+* Bundler uses the gem sources listed in the Gemfile, not necessarily those listed in `gem sources`
