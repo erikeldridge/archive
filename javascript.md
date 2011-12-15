@@ -31,3 +31,4 @@ JavaScript
 * JS learning tool: http://www.codecademy.com/
 * Recommended JS book: JavaScript: The Good Parts
 * Masonry, a dynamic layout plugin for jQuery: http://masonry.desandro.com/
+* Cheap & easy timestamp: `+new Date();`
