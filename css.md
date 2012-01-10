@@ -6,6 +6,7 @@ CSS
 * Twitter Bootstrap: http://twitter.github.com/bootstrap
 * CSS lint: https://github.com/stubbornella/csslint
 * Sprite generator: http://spritegen.website-performance.org/
+* Glue is a simple command line tool to generate CSS sprites https://github.com/jorgebastida/glue
 * Full page background: http://css-tricks.com/perfect-full-page-background-image/
 * Border-radius generator http://border-radius.com/
 * Gradient generator: http://www.colorzilla.com/gradient-editor/
