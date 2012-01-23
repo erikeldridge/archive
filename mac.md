@@ -20,3 +20,4 @@ General Mac
 * Jumpcut clipboard buffer http://jumpcut.sourceforge.net/
 * Alfred Power Pack adds clipboard buffer & file system navigation (among other things) to Alfred
 * iTerm 2 terminal emulator http://www.iterm2.com
+* Scroll reverser for Lion-like scrolling http://pilotmoon.com/scrollreverser/
