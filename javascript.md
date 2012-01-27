@@ -32,3 +32,4 @@ JavaScript
 * Recommended JS book: JavaScript: The Good Parts
 * Masonry, a dynamic layout plugin for jQuery: http://masonry.desandro.com/
 * Cheap & easy timestamp: `+new Date();`
+* JSON lint for validation and formatting: http://jsonlint.com/
