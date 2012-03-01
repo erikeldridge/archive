@@ -54,8 +54,11 @@ var template = '\
           {{/outbound}} \
         </tbody>\
       </table>\
-    </div>\
-    <div class="span12">\
+      <footer class="footer">\
+      <hr>\
+      <p>Designed and built with all the love in the world <a href="http://twitter.com/twitter">@twitter</a> by <a href="http://twitter.com/erikeldridge">@erikeldridge</a>.<br>\
+      Code licensed under the Apache License v2.0.</p>\
+      </footer>\
     </div>\
   </div>\
 </div>\
