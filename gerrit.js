@@ -56,7 +56,7 @@ var template = '\
       </table>\
       <footer class="footer">\
       <hr>\
-      <p>Designed and built with all the love in the world <a href="http://twitter.com/twitter">@twitter</a> by <a href="http://twitter.com/erikeldridge">@erikeldridge</a>.<br>\
+      <p>Designed and built with all the love in the world by <a href="http://twitter.com/erikeldridge">@erikeldridge</a>.<br>\
       Code licensed under the Apache License v2.0.</p>\
       </footer>\
     </div>\
@@ -64,27 +64,10 @@ var template = '\
 </div>\
 ';
 
-$.ajaxSetup({
-  type: 'post',
-  headers: {
-    'Accept': 'application/json,application/json,application/jsonrequest',
-    'Content-Type': 'application/json; charset=UTF-8'
-  }
-});
-
-function gerretXsrfKey(){
-  var matches;
-  $.each(document.cookie.split(';'), function(i, str){
-    matches = str.match(/GerritAccount=(.*)/);
-    if(matches) return true;
-  });
-  return matches[1];
-}
-
 function callChangeListService(callback){
   $.ajax({
     url: '/gerrit/rpc/ChangeListService',
-    data: '{"jsonrpc":"2.0","method":"forAccount","params":[{"id":1000128}],"id":1,"xsrfKey":"aScfprr3MHhGNTjBMWnb4lxOqTg.9fg7sW"}',
+    data: '{"jsonrpc":"2.0","method":"forAccount","params":[{"id":'+config.user.accountId.id+'}],"id":1,"xsrfKey":"'+config.xsrfKey+'"}',
     success: callback
   });
 }
@@ -101,15 +84,45 @@ function formatChangeListDataSet(data){
   return formatted;
 }
 
-callChangeListService(function(data){
+// init
+var config = {};
 
-  var view = {
-    'outbound': formatChangeListDataSet(data.result.byOwner),
-    'inbound': formatChangeListDataSet(data.result.forReview)
-  };
-  var html = Mustache.render(template, view);
+// get user and xsrf token so we can make requests
+var text = $('script').first().text();
+if(/gerrit_hostpagedata/.test(text)){
+  var json = text.replace(/var\sgerrit_hostpagedata=/,'').replace(/;/g, '').split(/gerrit_hostpagedata\.\w+=/)[1];
+  config.user = JSON.parse(json);
 
-  $('body').append(html);
+  console.log('user', config.user);
+}
 
-  console.log(data);
+var cookies = document.cookie.split(';');
+for(var i = 0; i < cookies.length; i++){
+  matches = cookies[i].match(/GerritAccount=(.*)/);
+  if(matches) {
+    config.xsrfKey = matches[1];
+  }
+}
+
+$.ajaxSetup({
+  type: 'post',
+  headers: {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json; charset=UTF-8'
+  }
 });
+
+if(config.user){
+  callChangeListService(function(data){
+
+    var view = {
+      'outbound': formatChangeListDataSet(data.result.byOwner),
+      'inbound': formatChangeListDataSet(data.result.forReview)
+    };
+    var html = Mustache.render(template, view);
+
+    $('body').append(html);
+
+    console.log('changes', data);
+  });
+}
