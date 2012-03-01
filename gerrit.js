@@ -3,26 +3,19 @@ $('head')
 
 var layout = '\
 <div class="container">\
+  <div class="navbar">\
+    <div class="navbar-inner">\
+      <div class="container">\
+        <ul class="nav">\
+          <li>\
+            <a href="#mine">Home</a>\
+          </li>\
+        </ul>\
+      </div>\
+    </div>\
+  </div>\
   <div class="row">\
     <div class="span12">\
-      <div class="navbar">\
-        <div class="navbar-inner">\
-          <div class="container">\
-            <ul class="nav">\
-              <li class="active">\
-                <a href="#">Home</a>\
-              </li>\
-              <li class="dropdown">\
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Account<b class="caret"></b></a>\
-                <ul class="dropdown-menu">\
-                ...lsdfjsdjfsdljlf\
-                </ul>\
-              </li>\
-              <li><a href="#">Admin</a></li>\
-            </ul>\
-          </div>\
-        </div>\
-      </div>\
     </div>\
     <div class="span12">\
     sdlfkjdfkljslkjlfjs\
@@ -33,12 +26,31 @@ var layout = '\
 
 $('body').append(layout);
 
-// load jquery and dropdown plugin in order
-var script = document.createElement('script');
+$.ajaxSetup({
+  type: 'post',
+  headers: {
+    'Accept': 'application/json,application/json,application/jsonrequest',
+    'Content-Type': 'application/json; charset=UTF-8'
+  }
+});
 
-script.setAttribute('src', 'http://twitter.github.com/bootstrap/assets/js/jquery.js');
-document.body.appendChild(script);
+function gerretXsrfKey(){
+  var matches;
+  $.each(document.cookie.split(';'), function(i, str){
+    matches = str.match(/GerritAccount=(.*)/);
+    if(matches) return true;
+  });
+  return matches[1];
+}
 
-script = document.createElement('script');
-script.setAttribute('src', 'http://twitter.github.com/bootstrap/assets/js/bootstrap-dropdown.js');
-document.body.appendChild(script);
+function callChangeListService(){
+  $.ajax({
+    url: '/gerrit/rpc/ChangeListService',
+    data: '{"jsonrpc":"2.0","method":"forAccount","params":[{"id":1000128}],"id":1,"xsrfKey":"aScfprr3MHhGNTjBMWnb4lxOqTg.9fg7sW"}',
+    success: function(a,s,d){
+      console.log(a,s,d);
+    }
+  });
+}
+
+callChangeListService();
