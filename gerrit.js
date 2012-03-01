@@ -11,9 +11,9 @@ var template = '\
     <div class="navbar-inner">\
       <div class="container">\
         <ul class="nav">\
-          <li class="active">\
-            <a href="#mine">Home</a>\
-          </li>\
+          <a class="brand" href="#mine">\
+            Gerrit\
+          </a>\
         </ul>\
       </div>\
     </div>\
