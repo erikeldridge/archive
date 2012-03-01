@@ -26,6 +26,7 @@ var template = '\
           <tr>\
             <th>ID</th>\
             <th>Subject</th>\
+            <th>Updated</th>\
             <th>Owner</th>\
           </tr>\
         </thead>\
@@ -34,6 +35,7 @@ var template = '\
           <tr>\
             <td>{{key}}</td>\
             <td><a href="/{{id}}">{{subject}}</a></td>\
+            <td>{{updated}}</td>\
             <td>{{owner}}</td>\
           </tr>\
           {{/inbound}} \
@@ -45,6 +47,7 @@ var template = '\
           <tr>\
             <th>ID</th>\
             <th>Subject</th>\
+            <th>Updated</th>\
           </tr>\
         </thead>\
         <tbody>\
@@ -52,6 +55,7 @@ var template = '\
           <tr>\
             <td>{{key}}</td>\
             <td><a href="/{{id}}">{{subject}}</a></td>\
+            <td>{{updated}}</td>\
           </tr>\
           {{/outbound}} \
         </tbody>\
@@ -77,10 +81,12 @@ function callChangeListService(callback){
 function formatChangeListDataForView(data){
   var formatted = [];
   $.each(data, function(i, row){
+    var updatedDate = new Date(row.lastUpdatedOn);
     formatted.push({
       id: row.id.id,
       key: row.key.id.substr(0,8),
       subject: row.subject,
+      updated: updatedDate.getMonth() + 1 + '/' + updatedDate.getDate(),
       owner: config.accounts[row.owner.id]
     });
   });
