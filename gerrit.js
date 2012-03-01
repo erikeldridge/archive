@@ -21,7 +21,7 @@ var template = '\
   </div>\
   <div class="row">\
     <div class="span12">\
-      <h2>Requests from you</h2>\
+      <h2>Review requests started by you</h2>\
       <table class="table table-striped table-bordered">\
         <thead>\
           <tr>\
@@ -36,6 +36,23 @@ var template = '\
             <td><a href="/{{id}}">{{subject}}</a></td>\
           </tr>\
           {{/outbound}} \
+        </tbody>\
+      </table>\
+      <h2>Review requests for you</h2>\
+      <table class="table table-striped table-bordered">\
+        <thead>\
+          <tr>\
+            <th>ID</th>\
+            <th>Subject</th>\
+          </tr>\
+        </thead>\
+        <tbody>\
+          {{#inbound}} \
+          <tr>\
+            <td>{{key}}</td>\
+            <td><a href="/{{id}}">{{subject}}</a></td>\
+          </tr>\
+          {{/inbound}} \
         </tbody>\
       </table>\
     </div>\
@@ -74,7 +91,7 @@ function formatChangeListDataSet(data){
   var formatted = [];
   $.each(data, function(i, row){
     formatted.push({
-      id: row.id,
+      id: row.id.id,
       key: row.key.id.substr(0,8),
       subject: row.subject
     });
@@ -90,7 +107,7 @@ callChangeListService(function(data){
   };
   var html = Mustache.render(template, view);
 
-  $('body').append(html);
+  $('body').prepend(html);
 
   console.log(data);
 });
