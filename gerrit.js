@@ -62,8 +62,7 @@ var template = '\
       </table>\
       <footer class="footer">\
       <hr>\
-      <p>Designed and built with all the love in the world by <a href="http://twitter.com/erikeldridge">@erikeldridge</a>.<br>\
-      Code licensed under the Apache License v2.0.</p>\
+      <p><a href="https://github.com/erikeldridge/gerrit.js">Gerrit.js</a></p>\
       </footer>\
     </div>\
   </div>\

@@ -10,4 +10,12 @@ Gerrit.js skins [Gerrit](http://code.google.com/p/gerrit/) using [Twitter Bootst
 
 ## Acknowledgements
 
-[@mattknox](https://twitter.com/#!/mattknox) for suggesting dotjs
+Thanks [@mattknox](https://twitter.com/#!/mattknox) for suggesting dotjs.
+
+## Author
+
+Gerrit.js was designed and built with all the love in the world by [@erikeldridge|http://twitter.com/erikeldridge].
+
+## License
+
+Code licensed under the Apache License v2.0.
