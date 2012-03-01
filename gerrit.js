@@ -26,6 +26,7 @@ var template = '\
           <tr>\
             <th>ID</th>\
             <th>Subject</th>\
+            <th>Owner</th>\
           </tr>\
         </thead>\
         <tbody>\
@@ -33,6 +34,7 @@ var template = '\
           <tr>\
             <td>{{key}}</td>\
             <td><a href="/{{id}}">{{subject}}</a></td>\
+            <td>{{owner}}</td>\
           </tr>\
           {{/inbound}} \
         </tbody>\
@@ -72,16 +74,28 @@ function callChangeListService(callback){
   });
 }
 
-function formatChangeListDataSet(data){
+function formatChangeListDataForView(data){
   var formatted = [];
   $.each(data, function(i, row){
     formatted.push({
       id: row.id.id,
       key: row.key.id.substr(0,8),
-      subject: row.subject
+      subject: row.subject,
+      owner: config.accounts[row.owner.id]
     });
   });
   return formatted;
+}
+
+function mapAccountIdsToNames(accounts){
+  var map = {};
+  $.each(accounts, function(i, account){
+    if(i % 2 == 0){
+      return 'continue';
+    }
+    map[account.id.id] = account.fullName;
+  });
+  return map;
 }
 
 // init
@@ -115,9 +129,13 @@ $.ajaxSetup({
 if(config.user){
   callChangeListService(function(data){
 
+    config.accounts = mapAccountIdsToNames(data.result.accounts.accounts);
+
+    console.log('accounts', config.accounts);
+
     var view = {
-      'outbound': formatChangeListDataSet(data.result.byOwner),
-      'inbound': formatChangeListDataSet(data.result.forReview)
+      'outbound': formatChangeListDataForView(data.result.byOwner),
+      'inbound': formatChangeListDataForView(data.result.forReview)
     };
     var html = Mustache.render(template, view);
 
