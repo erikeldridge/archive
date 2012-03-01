@@ -14,7 +14,7 @@ Thanks [@mattknox](https://twitter.com/#!/mattknox) for suggesting dotjs.
 
 ## Author
 
-Gerrit.js was designed and built with all the love in the world by [@erikeldridge|http://twitter.com/erikeldridge].
+Gerrit.js was designed and built with all the love in the world by [@erikeldridge](http://twitter.com/erikeldridge).
 
 ## License
 
