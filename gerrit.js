@@ -17,7 +17,7 @@
   /* ========== Lib ========== */
 
   // Mustache
-  var Mustache=(typeof module!=="undefined"&&module.exports)||{};(function(exports){exports.name="mustache.js";exports.version="0.5.0-dev";exports.tags=["{{","}}"];exports.parse=parse;exports.compile=compile;exports.render=render;exports.clearCache=clearCache;exports.to_html=function(template,view,partials,send){var result=render(template,view,partials);if(typeof send==="function"){send(result);}else{return result;}};var _toString=Object.prototype.toString;var _isArray=Array.isArray;var _forEach=Array.prototype.forEach;var _trim=String.prototype.trim;var isArray;if(_isArray){isArray=_isArray;}else{isArray=function(obj){return _toString.call(obj)==="[object Array]";};}var forEach;if(_forEach){forEach=function(obj,callback,scope){return _forEach.call(obj,callback,scope);};}else{forEach=function(obj,callback,scope){for(var i=0,len=obj.length;i<len;++i){callback.call(scope,obj[i],i,obj);}};}var spaceRe=/^\s*$/;function isWhitespace(string){return spaceRe.test(string);}var trim;if(_trim){trim=function(string){return string==null?"":_trim.call(string);};}else{var trimLeft,trimRight;if(isWhitespace("\xA0")){trimLeft=/^\s+/;trimRight=/\s+$/;}else{trimLeft=/^[\s\xA0]+/;trimRight=/[\s\xA0]+$/;}trim=function(string){return string==null?"":String(string).replace(trimLeft,"").replace(trimRight,"");};}var escapeMap={"&":"&amp;","<":"&lt;",">":"&gt;",'"':'&quot;',"'":'&#39;'};function escapeHTML(string){return String(string).replace(/&(?!\w+;)|[<>"']/g,function(s){return escapeMap[s]||s;});}function debug(e,template,line,file){file=file||"<template>";var lines=template.split("\n"),start=Math.max(line-3,0),end=Math.min(lines.length,line+3),context=lines.slice(start,end);var c;for(var i=0,len=context.length;i<len;++i){c=i+start+1;context[i]=(c===line?" >> ":"    ")+context[i];}e.template=template;e.line=line;e.file=file;e.message=[file+":"+line,context.join("\n"),"",e.message].join("\n");return e;}function lookup(name,stack,defaultValue){if(name==="."){return stack[stack.length-1];}var names=name.split(".");var lastIndex=names.length-1;var target=names[lastIndex];var value,context,i=stack.length,j,localStack;while(i){localStack=stack.slice(0);context=stack[--i];j=0;while(j<lastIndex){context=context[names[j++]];if(context==null){break;}localStack.push(context);}if(context&&typeof context==="object"&&target in context){value=context[target];break;}}if(typeof value==="function"){value=value.call(localStack[localStack.length-1]);}if(value==null){return defaultValue;}return value;}function renderSection(name,stack,callback,inverted){var buffer="";var value=lookup(name,stack);if(inverted){if(value==null||value===false||(isArray(value)&&value.length===0)){buffer+=callback();}}else if(isArray(value)){forEach(value,function(value){stack.push(value);buffer+=callback();stack.pop();});}else if(typeof value==="object"){stack.push(value);buffer+=callback();stack.pop();}else if(typeof value==="function"){var scope=stack[stack.length-1];var scopedRender=function(template){return render(template,scope);};buffer+=value.call(scope,callback(),scopedRender)||"";}else if(value){buffer+=callback();}return buffer;}function parse(template,options){options=options||{};var tags=options.tags||exports.tags,openTag=tags[0],closeTag=tags[tags.length-1];var code=['var buffer = "";',"\nvar line = 1;","\ntry {",'\nbuffer += "'];var spaces=[],hasTag=false,nonSpace=false;var stripSpace=function(){if(hasTag&&!nonSpace&&!options.space){while(spaces.length){code.splice(spaces.pop(),1);}}else{spaces=[];}hasTag=false;nonSpace=false;};var sectionStack=[],updateLine,nextOpenTag,nextCloseTag;var setTags=function(source){tags=trim(source).split(/\s+/);nextOpenTag=tags[0];nextCloseTag=tags[tags.length-1];};var includePartial=function(source){code.push('";',updateLine,'\nvar partial = partials["'+trim(source)+'"];','\nif (partial) {','\n  buffer += render(partial,stack[stack.length - 1],partials);','\n}','\nbuffer += "');};var openSection=function(source,inverted){var name=trim(source);if(name===""){throw debug(new Error("Section name may not be empty"),template,line,options.file);}sectionStack.push({name:name,inverted:inverted});code.push('";',updateLine,'\nvar name = "'+name+'";','\nvar callback = (function () {','\n  return function () {','\n    var buffer = "";','\nbuffer += "');};var openInvertedSection=function(source){openSection(source,true);};var closeSection=function(source){var name=trim(source);var openName=sectionStack.length!=0&&sectionStack[sectionStack.length-1].name;if(!openName||name!=openName){throw debug(new Error('Section named "'+name+'" was never opened'),template,line,options.file);}var section=sectionStack.pop();code.push('";','\n    return buffer;','\n  };','\n})();');if(section.inverted){code.push("\nbuffer += renderSection(name,stack,callback,true);");}else{code.push("\nbuffer += renderSection(name,stack,callback);");}code.push('\nbuffer += "');};var sendPlain=function(source){code.push('";',updateLine,'\nbuffer += lookup("'+trim(source)+'",stack,"");','\nbuffer += "');};var sendEscaped=function(source){code.push('";',updateLine,'\nbuffer += escapeHTML(lookup("'+trim(source)+'",stack,""));','\nbuffer += "');};var line=1,c,callback;for(var i=0,len=template.length;i<len;++i){if(template.slice(i,i+openTag.length)===openTag){i+=openTag.length;c=template.substr(i,1);updateLine='\nline = '+line+';';nextOpenTag=openTag;nextCloseTag=closeTag;hasTag=true;switch(c){case"!":i++;callback=null;break;case"=":i++;closeTag="="+closeTag;callback=setTags;break;case">":i++;callback=includePartial;break;case"#":i++;callback=openSection;break;case"^":i++;callback=openInvertedSection;break;case"/":i++;callback=closeSection;break;case"{":closeTag="}"+closeTag;case"&":i++;nonSpace=true;callback=sendPlain;break;default:nonSpace=true;callback=sendEscaped;}var end=template.indexOf(closeTag,i);if(end===-1){throw debug(new Error('Tag "'+openTag+'" was not closed properly'),template,line,options.file);}var source=template.substring(i,end);if(callback){callback(source);}var n=0;while(~(n=source.indexOf("\n",n))){line++;n++;}i=end+closeTag.length-1;openTag=nextOpenTag;closeTag=nextCloseTag;}else{c=template.substr(i,1);switch(c){case'"':case"\\":nonSpace=true;code.push("\\"+c);break;case"\r":break;case"\n":spaces.push(code.length);code.push("\\n");stripSpace();line++;break;default:if(isWhitespace(c)){spaces.push(code.length);}else{nonSpace=true;}code.push(c);}}}if(sectionStack.length!=0){throw debug(new Error('Section "'+sectionStack[sectionStack.length-1].name+'" was not closed properly'),template,line,options.file);}stripSpace();code.push('";',"\nreturn buffer;","\n} catch (e) { throw {error: e, line: line}; }");var body=code.join("").replace(/buffer \+= "";\n/g,"");if(options.debug){if(typeof console!="undefined"&&console.log){console.log(body);}else if(typeof print==="function"){print(body);}}return body;}function _compile(template,options){var args="view,partials,stack,lookup,escapeHTML,renderSection,render";var body=parse(template,options);var fn=new Function(args,body);return function(view,partials){partials=partials||{};var stack=[view];try{return fn(view,partials,stack,lookup,escapeHTML,renderSection,render);}catch(e){throw debug(e.error,template,e.line,options.file);}};}var _cache={};function clearCache(){_cache={};}function compile(template,options){options=options||{};if(options.cache!==false){if(!_cache[template]){_cache[template]=_compile(template,options);}return _cache[template];}return _compile(template,options);}function render(template,view,partials){return compile(template)(view,partials);}})(Mustache);
+  var Mustache=(typeof module!=="undefined"&&module.exports)||{};(function(w){w.name="mustache.js";w.version="0.5.0-dev";w.tags=["{{","}}"];w.parse=m;w.compile=e;w.render=v;w.clearCache=u;w.to_html=function(A,y,z,B){var x=v(A,y,z);if(typeof B==="function"){B(x)}else{return x}};var s=Object.prototype.toString;var f=Array.isArray;var b=Array.prototype.forEach;var g=String.prototype.trim;var i;if(f){i=f}else{i=function(x){return s.call(x)==="[object Array]"}}var r;if(b){r=function(y,z,x){return b.call(y,z,x)}}else{r=function(A,B,z){for(var y=0,x=A.length;y<x;++y){B.call(z,A[y],y,A)}}}var k=/^\s*$/;function c(x){return k.test(x)}var p;if(g){p=function(x){return x==null?"":g.call(x)}}else{var n,h;if(c("\xA0")){n=/^\s+/;h=/\s+$/}else{n=/^[\s\xA0]+/;h=/[\s\xA0]+$/}p=function(x){return x==null?"":String(x).replace(n,"").replace(h,"")}}var d={"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"};function o(x){return String(x).replace(/&(?!\w+;)|[<>"']/g,function(y){return d[y]||y})}function l(D,F,G,z){z=z||"<template>";var H=F.split("\n"),x=Math.max(G-3,0),A=Math.min(H.length,G+3),y=H.slice(x,A);var E;for(var B=0,C=y.length;B<C;++B){E=B+x+1;y[B]=(E===G?" >> ":"    ")+y[B]}D.template=F;D.line=G;D.file=z;D.message=[z+":"+G,y.join("\n"),"",D.message].join("\n");return D}function t(x,F,E){if(x==="."){return F[F.length-1]}var D=x.split(".");var B=D.length-1;var C=D[B];var G,y,A=F.length,z,H;while(A){H=F.slice(0);y=F[--A];z=0;while(z<B){y=y[D[z++]];if(y==null){break}H.push(y)}if(y&&typeof y==="object"&&C in y){G=y[C];break}}if(typeof G==="function"){G=G.call(H[H.length-1])}if(G==null){return E}return G}function j(A,x,E,z){var y="";var C=t(A,x);if(z){if(C==null||C===false||(i(C)&&C.length===0)){y+=E()}}else{if(i(C)){r(C,function(F){x.push(F);y+=E();x.pop()})}else{if(typeof C==="object"){x.push(C);y+=E();x.pop()}else{if(typeof C==="function"){var B=x[x.length-1];var D=function(F){return v(F,B)};y+=C.call(B,E(),D)||""}else{if(C){y+=E()}}}}}return y}function m(Z,B){B=B||{};var K=B.tags||w.tags,L=K[0],G=K[K.length-1];var y=['var buffer = "";',"\nvar line = 1;","\ntry {",'\nbuffer += "'];var F=[],aa=false,X=false;var V=function(){if(aa&&!X&&!B.space){while(F.length){y.splice(F.pop(),1)}}else{F=[]}aa=false;X=false};var S=[],P,C,M;var U=function(ab){K=p(ab).split(/\s+/);C=K[0];M=K[K.length-1]};var J=function(ab){y.push('";',P,'\nvar partial = partials["'+p(ab)+'"];',"\nif (partial) {","\n  buffer += render(partial,stack[stack.length - 1],partials);","\n}",'\nbuffer += "')};var x=function(ad,ab){var ac=p(ad);if(ac===""){throw l(new Error("Section name may not be empty"),Z,I,B.file)}S.push({name:ac,inverted:ab});y.push('";',P,'\nvar name = "'+ac+'";',"\nvar callback = (function () {","\n  return function () {",'\n    var buffer = "";','\nbuffer += "')};var E=function(ab){x(ab,true)};var T=function(ac){var ab=p(ac);var ae=S.length!=0&&S[S.length-1].name;if(!ae||ab!=ae){throw l(new Error('Section named "'+ab+'" was never opened'),Z,I,B.file)}var ad=S.pop();y.push('";',"\n    return buffer;","\n  };","\n})();");if(ad.inverted){y.push("\nbuffer += renderSection(name,stack,callback,true);")}else{y.push("\nbuffer += renderSection(name,stack,callback);")}y.push('\nbuffer += "')};var W=function(ab){y.push('";',P,'\nbuffer += lookup("'+p(ab)+'",stack,"");','\nbuffer += "')};var z=function(ab){y.push('";',P,'\nbuffer += escapeHTML(lookup("'+p(ab)+'",stack,""));','\nbuffer += "')};var I=1,Y,D;for(var Q=0,R=Z.length;Q<R;++Q){if(Z.slice(Q,Q+L.length)===L){Q+=L.length;Y=Z.substr(Q,1);P="\nline = "+I+";";C=L;M=G;aa=true;switch(Y){case"!":Q++;D=null;break;case"=":Q++;G="="+G;D=U;break;case">":Q++;D=J;break;case"#":Q++;D=x;break;case"^":Q++;D=E;break;case"/":Q++;D=T;break;case"{":G="}"+G;case"&":Q++;X=true;D=W;break;default:X=true;D=z}var A=Z.indexOf(G,Q);if(A===-1){throw l(new Error('Tag "'+L+'" was not closed properly'),Z,I,B.file)}var O=Z.substring(Q,A);if(D){D(O)}var N=0;while(~(N=O.indexOf("\n",N))){I++;N++}Q=A+G.length-1;L=C;G=M}else{Y=Z.substr(Q,1);switch(Y){case'"':case"\\":X=true;y.push("\\"+Y);break;case"\r":break;case"\n":F.push(y.length);y.push("\\n");V();I++;break;default:if(c(Y)){F.push(y.length)}else{X=true}y.push(Y)}}}if(S.length!=0){throw l(new Error('Section "'+S[S.length-1].name+'" was not closed properly'),Z,I,B.file)}V();y.push('";',"\nreturn buffer;","\n} catch (e) { throw {error: e, line: line}; }");var H=y.join("").replace(/buffer \+= "";\n/g,"");if(B.debug){if(typeof console!="undefined"&&console.log){console.log(H)}else{if(typeof print==="function"){print(H)}}}return H}function q(B,z){var y="view,partials,stack,lookup,escapeHTML,renderSection,render";var x=m(B,z);var A=new Function(y,x);return function(D,E){E=E||{};var C=[D];try{return A(D,E,C,t,o,j,v)}catch(F){throw l(F.error,B,F.line,z.file)}}}var a={};function u(){a={}}function e(y,x){x=x||{};if(x.cache!==false){if(!a[y]){a[y]=q(y,x)}return a[y]}return q(y,x)}function v(z,x,y){return e(z)(x,y)}})(Mustache);
 
   // jquery cookie
   // https://raw.github.com/carhartl/jquery-cookie/faa09dc38bd3c791212e8fca67ee661af55fa530/jquery.cookie.js
@@ -25,7 +25,8 @@
 
   /* ========== Template ========== */
 
-  var template = '\
+  var templates = {};
+  templates.app = '\
   <div class="container" style="">\
     <!-- start nav -->\
     <div class="navbar">\
@@ -40,55 +41,13 @@
       </div>\
     </div>\
     <!-- end nav -->\
-    <!-- start mine page -->\
-    <div class="row page" id="mine" style="display:none">\
-      <div class="span12">\
-        <h2>Inbound</h2>\
-        <table class="table table-striped table-bordered">\
-          <thead>\
-            <tr>\
-              <th>ID</th>\
-              <th>Subject</th>\
-              <th>Updated</th>\
-              <th>Owner</th>\
-            </tr>\
-          </thead>\
-          <tbody>\
-            {{#inbound}} \
-            <tr>\
-              <td>{{key}}</td>\
-              <td><a href="/{{id}}">{{subject}}</a></td>\
-              <td>{{updated}}</td>\
-              <td>{{owner}}</td>\
-            </tr>\
-            {{/inbound}} \
-          </tbody>\
-        </table>\
-        <h2>Outbound</h2>\
-        <table class="table table-striped table-bordered">\
-          <thead>\
-            <tr>\
-              <th>ID</th>\
-              <th>Subject</th>\
-              <th>Updated</th>\
-            </tr>\
-          </thead>\
-          <tbody>\
-            {{#outbound}} \
-            <tr>\
-              <td>{{key}}</td>\
-              <td><a href="/{{id}}">{{subject}}</a></td>\
-              <td>{{updated}}</td>\
-            </tr>\
-            {{/outbound}} \
-          </tbody>\
-        </table>\
+    <div class="row pages">\
+      <!-- start mine page -->\
+      <div class="span12 page" id="mine">\
       </div>\
-    </div>\
-    <!-- end mine page -->\
-    <!-- start sign in page -->\
-    <div class="row page" id="sign-in" style="display:none">\
-      <div class="span12">\
+      <!-- end mine page -->\
+      <!-- start sign in page -->\
+      <div class="span12 page" id="sign-in" style="display:none">\
         <form class="form-horizontal">\
           <fieldset>\
             <legend>Sign in</legend>\
@@ -110,8 +69,8 @@
           </fieldset>\
         </form>\
       </div>\
+      <!-- end sign in page -->\
     </div>\
-    <!-- end sign in page -->\
     <div class="row">\
       <div class="span12">\
         <footer class="footer">\
@@ -122,13 +81,54 @@
     </div>\
   </div>\
   ';
-
+  templates.mine = '\
+  <h2>Inbound</h2>\
+  <table class="table table-striped table-bordered">\
+    <thead>\
+      <tr>\
+        <th>ID</th>\
+        <th>Subject</th>\
+        <th>Updated</th>\
+        <th>Owner</th>\
+      </tr>\
+    </thead>\
+    <tbody>\
+      {{#inbound}} \
+      <tr>\
+        <td>{{key}}</td>\
+        <td><a href="/{{id}}">{{subject}}</a></td>\
+        <td>{{updated}}</td>\
+        <td>{{owner}}</td>\
+      </tr>\
+      {{/inbound}} \
+    </tbody>\
+  </table>\
+  <h2>Outbound</h2>\
+  <table class="table table-striped table-bordered">\
+    <thead>\
+      <tr>\
+        <th>ID</th>\
+        <th>Subject</th>\
+        <th>Updated</th>\
+      </tr>\
+    </thead>\
+    <tbody>\
+      {{#outbound}} \
+      <tr>\
+        <td>{{key}}</td>\
+        <td><a href="/{{id}}">{{subject}}</a></td>\
+        <td>{{updated}}</td>\
+      </tr>\
+      {{/outbound}} \
+    </tbody>\
+  </table>\
+  ';
   /* ========== RPC wrappers ========== */
 
   function callChangeListService(callback){
     $.ajax({
       url: '/gerrit/rpc/ChangeListService',
-      data: '{"jsonrpc":"2.0","method":"forAccount","params":[{"id":'+config.currentUser.id+'}],"id":1,"xsrfKey":"'+config.xsrfKey+'"}',
+      data: '{"jsonrpc":"2.0","method":"forAccount","params":[{"id":'+config.currentUser.accountId.id+'}],"id":1,"xsrfKey":"'+config.xsrfKey+'"}',
       success: callback
     });
   }
@@ -139,20 +139,13 @@
       error: function(jqXHR, textStatus, errorThrown){
         console.log('signIn request failure', jqXHR, textStatus, errorThrown);
       },
-      success: function(data){
+      success: function(data, textStatus, jqXHR){
         if(data.result.success){
-          callbacks.success(data);
+          callbacks.success(data, textStatus, jqXHR);
         }else{
           callbacks.error();
         }
       }
-    });
-  }
-  function getAccountInfo(callback){
-    $.ajax({
-      url: '/gerrit/rpc/AccountSecurity',
-      data: '{"jsonrpc":"2.0","method":"myExternalIds","params":[],"id":1,"xsrfKey":"'+config.xsrfKey+'"}',
-      success: callback
     });
   }
 
@@ -162,7 +155,7 @@
     '#mine': function(){
 
       if(!authenticated()){
-        location.hash = '#signin';
+        document.location.hash = '#signin';
         return;
       }
 
@@ -176,9 +169,9 @@
           'outbound': formatChangeListDataForView(data.result.byOwner),
           'inbound': formatChangeListDataForView(data.result.forReview)
         };
-        var html = Mustache.render(template, view);
+        var html = Mustache.render(templates.mine, view);
 
-        $('#mine').show();
+        $('#mine').html(html).show();
 
         console.log('changes', data);
       });
@@ -209,10 +202,8 @@
       }
     },
     '#change$': function(){
-      // debugger
     },
     '#change,[\d]+': function(){
-      // debugger
     },
     '#signin': function(){
 
@@ -226,17 +217,8 @@
         signIn(username, password, {
           success: function(){
 
-            config.xsrfKey = $.cookie('GerritAccount');
-
-            getAccountInfo(function(data){
-
-              config.currentUser = {
-                id: data.result[0].accountId.id,
-                email: data.result[0].emailAddress
-              };
-
-              location.hash = '#mine';
-            });
+            // Hard refresh to force re-init w/ account cookie set
+            document.location = '/';
 
           },
           error: function(){
@@ -269,7 +251,7 @@
   $('head').append('<link type="text/css" rel="stylesheet" href="http://twitter.github.com/bootstrap/assets/css/bootstrap.css">');
 
   // Apply template
-  var html = Mustache.render(template);
+  var html = Mustache.render(templates.app);
   $('body').append(html);
 
   // Attach nav
@@ -277,6 +259,17 @@
     routeTo(document.location.hash);
   };
 
+  // Scrape user info, and cache xsrf token, so we can make requests
+  var text = $('script').first().text();
+  if(/gerrit_hostpagedata/.test(text)){
+    var json = text.replace(/var\sgerrit_hostpagedata=/,'').replace(/;/g, '').split(/gerrit_hostpagedata\.\w+=/)[1];
+    config.currentUser = JSON.parse(json);
+
+    console.log('user', config.currentUser);
+  }
+  config.xsrfKey = $.cookie('GerritAccount');
+
+  // Default start view
   routeTo('#mine');
 
 })();
