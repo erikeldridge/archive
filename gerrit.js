@@ -128,7 +128,7 @@
   function callChangeListService(callback){
     $.ajax({
       url: '/gerrit/rpc/ChangeListService',
-      data: '{"jsonrpc":"2.0","method":"forAccount","params":[{"id":'+config.user.accountId.id+'}],"id":1,"xsrfKey":"'+config.xsrfKey+'"}',
+      data: '{"jsonrpc":"2.0","method":"forAccount","params":[{"id":'+config.currentUser.id+'}],"id":1,"xsrfKey":"'+config.xsrfKey+'"}',
       success: callback
     });
   }
@@ -148,35 +148,24 @@
       }
     });
   }
-  function formatChangeListDataForView(data){
-    var formatted = [];
-    $.each(data, function(i, row){
-      var updatedDate = new Date(row.lastUpdatedOn);
-      formatted.push({
-        id: row.id.id,
-        key: row.key.id.substr(0,8),
-        subject: row.subject,
-        updated: updatedDate.getMonth() + 1 + '/' + updatedDate.getDate(),
-        owner: config.accounts[row.owner.id]
-      });
+  function getAccountInfo(callback){
+    $.ajax({
+      url: '/gerrit/rpc/AccountSecurity',
+      data: '{"jsonrpc":"2.0","method":"myExternalIds","params":[],"id":1,"xsrfKey":"'+config.xsrfKey+'"}',
+      success: callback
     });
-    return formatted;
-  }
-  function mapAccountIdsToNames(accounts){
-    var map = {};
-    $.each(accounts, function(i, account){
-      if(i % 2 == 0){
-        return 'continue';
-      }
-      map[account.id.id] = account.fullName;
-    });
-    return map;
   }
 
   /* ========== Nav ========== */
 
   var routes = {
     '#mine': function(){
+
+      if(!authenticated()){
+        location.hash = '#signin';
+        return;
+      }
+
       callChangeListService(function(data){
 
         config.accounts = mapAccountIdsToNames(data.result.accounts.accounts);
@@ -189,11 +178,35 @@
         };
         var html = Mustache.render(template, view);
 
-        $('body').append(html);
+        $('#mine').show();
 
         console.log('changes', data);
       });
-      $('#mine').show();
+
+      function formatChangeListDataForView(data){
+        var formatted = [];
+        $.each(data, function(i, row){
+          var updatedDate = new Date(row.lastUpdatedOn);
+          formatted.push({
+            id: row.id.id,
+            key: row.key.id.substr(0,8),
+            subject: row.subject,
+            updated: updatedDate.getMonth() + 1 + '/' + updatedDate.getDate(),
+            owner: config.accounts[row.owner.id]
+          });
+        });
+        return formatted;
+      }
+      function mapAccountIdsToNames(accounts){
+        var map = {};
+        $.each(accounts, function(i, account){
+          if(i % 2 == 0){
+            return 'continue';
+          }
+          map[account.id.id] = account.fullName;
+        });
+        return map;
+      }
     },
     '#change$': function(){
       // debugger
@@ -202,13 +215,29 @@
       // debugger
     },
     '#signin': function(){
+
       $('#sign-in').show();
+
       $('#sign-in form').submit(function(){
+
         var username = $(this).find('input[name=username]').val();
         var password = $(this).find('input[name=password]').val();
+
         signIn(username, password, {
-          success: function(data){
-            location.hash = '#mine';
+          success: function(){
+
+            config.xsrfKey = $.cookie('GerritAccount');
+
+            getAccountInfo(function(data){
+
+              config.currentUser = {
+                id: data.result[0].accountId.id,
+                email: data.result[0].emailAddress
+              };
+
+              location.hash = '#mine';
+            });
+
           },
           error: function(){
             console.log('signIn input failure');
@@ -227,6 +256,9 @@
       }
     });
   }
+  function authenticated(){
+    return config.xsrfKey && config.currentUser;
+  }
 
   /* ========== Init ========== */
 
@@ -240,26 +272,11 @@
   var html = Mustache.render(template);
   $('body').append(html);
 
-  // Get user and xsrf token so we can make requests
-  var text = $('script').first().text();
-  if(/gerrit_hostpagedata/.test(text)){
-    var json = text.replace(/var\sgerrit_hostpagedata=/,'').replace(/;/g, '').split(/gerrit_hostpagedata\.\w+=/)[1];
-    config.user = JSON.parse(json);
-
-    console.log('user', config.user);
-  }
-  config.xsrfKey = $.cookie('GerritAccount');
-
   // Attach nav
   window.onhashchange = function(event) {
     routeTo(document.location.hash);
   };
 
-  // Redirect to sign in if necessary
-  if(config.xsrfKey){
-    location.hash = '#mine'
-  }else{
-    location.hash = '#signin'
-  }
+  routeTo('#mine');
 
 })();
