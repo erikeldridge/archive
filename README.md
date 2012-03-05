@@ -4,7 +4,7 @@ Gerrit.js skins [Gerrit](http://code.google.com/p/gerrit/) using [Twitter Bootst
 
 ## Status
 
-Rough. The gerrit.js can talk to the rpc service, but only the #mine page has rendering logic, and it's displayed on every page. Please check out the [issues](https://github.com/erikeldridge/gerrit.js/issues) list for more details.
+Rough. The gerrit.js can talk to the rpc service, but only the #mine & #signin pages have rendering logic. Please check out the [issues](https://github.com/erikeldridge/gerrit.js/issues) list for more details.
 
 ## Installation
 
