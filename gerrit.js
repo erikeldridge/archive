@@ -54,9 +54,11 @@
     <!-- end nav -->\
     <div class="row pages">\
       <!-- start mine page -->\
-      <div class="span12 page" id="mine">\
-      </div>\
+      <div class="span12 page" id="mine"></div>\
       <!-- end mine page -->\
+      <!-- start change page -->\
+      <div class="span12 page" id="change"></div>\
+      <!-- end change page -->\
       <!-- start sign in page -->\
       <div class="span12 page" id="sign-in" style="display:none">\
         <form class="form-horizontal">\
@@ -127,19 +129,100 @@
       {{#outbound}} \
       <tr>\
         <td>{{key}}</td>\
-        <td><a href="/{{id}}">{{subject}}</a></td>\
+        <td><a href="/#change,{{id}}">{{subject}}</a></td>\
         <td>{{updated}}</td>\
       </tr>\
       {{/outbound}} \
     </tbody>\
   </table>\
   ';
+  templates.change = '\
+  <h1>{{title}}</h1>\
+  <ul class="nav nav-pills">\
+    <li class="active"><a href="#change,{{changeWebId}},details">Details</a></li>\
+    <li><a href="#reviewers">Reviewers</a></li>\
+    <li><a href="#patch">Current patch</a></li>\
+    <li><a href="#comments">Comments</a></li>\
+  </ul>\
+  <div class="row">\
+    <div class="span6">\
+      <h2><a name="#change,{{changeId}},details"></a>Change details</h2>\
+      <ul>\
+        <li>Change-Id: {{changeShaId}}</li>\
+        <li>Owner: {{owner}}</li>\
+        <li>Project: {{project}}</li>\
+        <li>Uploaded: {{uploaded}}</li>\
+        <li>Updated: {{updated}}</li>\
+        <li>Patch count: {{patchCount}}</li>\
+        <li>Status: {{status}}</li>\
+        <li>Fetch current patch: <code>git fetch /refs/changes/{{changeWebIdSuffix}}/{{changeWebId}}/{{currentPatchId}}</code></li>\
+      </ul>\
+    </div>\
+    <div class="span6">\
+      <h2>Commit message</h2>\
+      <pre>{{message}}</pre>\
+    </div>\
+  </div>\
+  <div class="row">\
+    <div class="span6">\
+      <h2>Reviewers</h2>\
+      <table class="table table-striped table-bordered">\
+        <thead>\
+          <tr>\
+            <th>Name</th>\
+            <th>Review</th>\
+          </tr>\
+        </thead>\
+        <tbody>\
+          {{#reviewers}} \
+          <tr>\
+            <td>{{name}}</td>\
+            <td></td>\
+          </tr>\
+          {{/reviewers}} \
+        </tbody>\
+      </table>\
+    </div>\
+    <div class="span6"></div>\
+  </div>\
+  <div class="row">\
+    <div class="span12">\
+      <h2>Current patch</h2>\
+      <table class="table table-striped table-bordered">\
+        <thead>\
+          <tr>\
+            <th>Change type</th>\
+            <th>File path</th>\
+            <th>Comment count</th>\
+          </tr>\
+        </thead>\
+        <tbody>\
+          {{#patches}}\
+          <tr>\
+            <td>{{changeType}}</td>\
+            <td>{{file}}</td>\
+            <td>{{commentCount}}</td>\
+          </tr>\
+          {{/patches}} \
+        </tbody>\
+      </table>\
+    </div>\
+  </div>\
+  ';
+
   /* ========== RPC wrappers ========== */
 
   function callChangeListService(callback){
     $.ajax({
       url: '/gerrit/rpc/ChangeListService',
       data: '{"jsonrpc":"2.0","method":"forAccount","params":[{"id":'+config.currentUser.accountId.id+'}],"id":1,"xsrfKey":"'+config.xsrfKey+'"}',
+      success: callback
+    });
+  }
+  function getChangeDetails(id, callback){
+    $.ajax({
+      url: '/gerrit/rpc/ChangeDetailService',
+      data: '{"jsonrpc":"2.0","method":"changeDetail","params":[{"id":'+id+'}],"id":61,"xsrfKey":"'+config.xsrfKey+'"}',
       success: callback
     });
   }
@@ -162,12 +245,67 @@
 
   /* ========== Nav ========== */
 
+  function mapAccountIdsToNames(accounts){
+    var map = {};
+    $.each(accounts, function(i, account){
+      if(i % 2 == 0){
+        return 'continue';
+      }
+      map[account.id.id] = account.fullName;
+    });
+    return map;
+  }
+  function showChangeDetails(matches){
+    var id = matches[1];
+
+    getChangeDetails(id, function(response){
+
+      var view = {
+        title: response.result.change.subject,
+        changeShaId: response.result.change.changeKey.id,
+        changeWebId: id,
+        changeWebIdSuffix: String(id).substr(-2),
+        currentPatchId: response.result.currentDetail.patchSet.id.patchSetId,
+        patchCount: response.result.change.nbrPatchSets,
+        owner: response.result.currentDetail.info.author.name,
+        project: response.result.change.dest.projectName.name,
+        uploaded: response.result.change.createdOn,
+        updated: response.result.change.lastUpdatedOn,
+        status: response.result.change.status,
+        message: response.result.currentDetail.info.message,
+        reviewers: [],
+        patches: []
+      };
+
+      var names = mapAccountIdsToNames(response.result.accounts.accounts);
+      $.each(response.result.approvals, function(i, reviewer){
+        view.reviewers.push({
+          name: names[reviewer.account.id]
+        });
+      });
+      $.each(response.result.currentDetail.patches, function(i, patch){
+        view.patches.push({
+          file: patch.key.fileName,
+          changeType: patch.changeType,
+          commentCount: patch.nbrComments
+        });
+      });
+
+      var html = Mustache.render(templates.change, view);
+
+      $('#change').html(html).show();
+    });
+  }
+  function showSearchResults(){
+    // API "Change #, SHA-1, tr:id, owner:email or reviewer:email"
+  }
+
   var routes = {
     '#mine': function(){
 
       if(!authenticated()){
         document.location.hash = '#signin';
-        return;
+        returesponse.result.change.created;
       }
 
       callChangeListService(function(data){
@@ -201,21 +339,11 @@
         });
         return formatted;
       }
-      function mapAccountIdsToNames(accounts){
-        var map = {};
-        $.each(accounts, function(i, account){
-          if(i % 2 == 0){
-            return 'continue';
-          }
-          map[account.id.id] = account.fullName;
-        });
-        return map;
-      }
     },
-    '#change$': function(){
+    '#q': function(){
+
     },
-    '#change,[\d]+': function(){
-    },
+    '#change,(\\d+)': showChangeDetails,
     '#signin': function(){
 
       $('#sign-in').show();
@@ -242,12 +370,13 @@
   };
   function routeTo(hash){
     $('.container .page').hide();
-    $.each(routes, function(regex, action){
-      var matches = hash.match(new RegExp(regex));
+    for(route in routes) {
+      var matches = hash.match(new RegExp(route));
       if(matches){
-        action.call(matches);
+        routes[route].call(this, matches);
+        break;
       }
-    });
+    }
   }
   function authenticated(){
     return config.xsrfKey && config.currentUser;
@@ -282,6 +411,6 @@
   config.xsrfKey = $.cookie('GerritAccount');
 
   // Default start view
-  routeTo('#mine');
+  document.location.hash = '#mine';
 
 })();
