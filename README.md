@@ -11,6 +11,7 @@ The #mine, #change,{id}, and #signin pages are roughly functional. Please check 
 ### Dependencies
 
 * dotjs
+* yuicompressor (for development)
 
 ### General
 
