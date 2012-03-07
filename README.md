@@ -25,6 +25,8 @@ The #mine, #change,{id}, and #signin pages are roughly functional. Please check 
 
 Now you can develop, commit, repeat (loop, DCRL, anyone?), without copy/pasting
 
+All the libs used by this project are stashed in the _dev_ directory. Check out the rakefile for handy utils when working with these libs.
+
 ## Acknowledgements
 
 Thanks, [@mattknox](https://twitter.com/#!/mattknox), for suggesting dotjs.
