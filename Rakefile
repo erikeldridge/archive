@@ -82,7 +82,7 @@ task :gen do
       #{js['nav']}
       #{js['init']}
 
-    )();
+    })();
     END
   end
 
