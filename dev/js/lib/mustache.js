@@ -1,4 +1,4 @@
-/*!
+/*
   mustache.js — Logic-less templates in JavaScript
   version 0.4.2
   See http://mustache.github.com/ for more info.

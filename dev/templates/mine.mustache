@@ -1,0 +1,40 @@
+<h2>Inbound</h2>
+<table class="table table-striped table-bordered">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Subject</th>
+      <th>Updated</th>
+      <th>Owner</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#inbound}} \
+    <tr>
+      <td>{{key}}</td>
+      <td><a href="/{{id}}">{{subject}}</a></td>
+      <td>{{updated}}</td>
+      <td>{{owner}}</td>
+    </tr>
+    {{/inbound}} \
+  </tbody>
+</table>
+<h2>Outbound</h2>
+<table class="table table-striped table-bordered">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Subject</th>
+      <th>Updated</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#outbound}} \
+    <tr>
+      <td>{{key}}</td>
+      <td><a href="/#change,{{id}}">{{subject}}</a></td>
+      <td>{{updated}}</td>
+    </tr>
+    {{/outbound}} \
+  </tbody>
+</table>

@@ -1,4 +1,4 @@
-/*!
+/*
  * jQuery Cookie Plugin
  * https://github.com/carhartl/jquery-cookie
  *
