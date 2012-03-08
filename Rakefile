@@ -79,7 +79,7 @@ namespace :gen do
         templates.change = '#{templates['change']}';
 
         #{js['config']}
-        #{js['show']}
+        #{js['view']}
         #{js['rpc']}
         #{js['nav']}
         #{js['init']}
