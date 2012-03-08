@@ -41,52 +41,65 @@ namespace :js do
   end
 end
 
-desc "Generate gerrit.js"
-task :gen do
-  puts "generating gerrit.js from"
+namespace :gen do
 
-  puts "* dev/css/bootstrap-no-single-quotes-min.css"
-  css = File.readlines("dev/css/bootstrap-no-single-quotes-min.css")
+  desc "Generate gerrit.js"
+  task :once do
+    puts "generating gerrit.js from"
 
-  js = {}
-  Dir['dev/js/lib/*min.js', 'dev/js/*.js'].each do |path|
-    puts "* #{path}"
-    name = File.basename(path, '.js').sub('-min', '')
-    js[name] = File.readlines path
+    puts "* dev/css/bootstrap-no-single-quotes-min.css"
+    css = File.readlines("dev/css/bootstrap-no-single-quotes-min.css")
+
+    js = {}
+    Dir['dev/js/lib/*min.js', 'dev/js/*.js'].each do |path|
+      puts "* #{path}"
+      name = File.basename(path, '.js').sub('-min', '')
+      js[name] = File.readlines path
+    end
+
+    templates = {}
+    Dir['dev/templates/*'].each do |path|
+      puts "* #{path}"
+      name = File.basename path, '.mustache'
+      templates[name] = File.readlines(path).map {|line| line.gsub('\'', '"').chop}
+    end
+
+    File.open('gerrit.js', 'w') do |output|
+      output.write <<-END
+      (function(){
+
+        #{js['mustache']}
+        #{js['jquery.cookie']}
+
+        var bootstrap = '#{css}';
+
+        var templates = {};
+        templates.app = '#{templates['app']}';
+        templates.mine = '#{templates['mine']}';
+        templates.change = '#{templates['change']}';
+
+        #{js['config']}
+        #{js['show']}
+        #{js['rpc']}
+        #{js['nav']}
+        #{js['init']}
+
+      })();
+      END
+    end
+
+    puts "done", '='*50
   end
 
-  templates = {}
-  Dir['dev/templates/*'].each do |path|
-    puts "* #{path}"
-    name = File.basename path, '.mustache'
-    templates[name] = File.readlines(path).map {|line| line.gsub('\'', '"').chop}
+  desc 'Generate gerrit.js when dev files change'
+  task :auto do
+    require 'fssm'
+    puts 'Monitoring dev directory (ctrl+c to quit) ...'
+    FSSM.monitor('dev/', '**/*') do
+      update {|base, relative| Rake::Task['gen:once'].invoke}
+    end
   end
 
-  File.open('gerrit.js', 'w') do |output|
-    output.write <<-END
-    (function(){
-
-      #{js['mustache']}
-      #{js['jquery.cookie']}
-
-      var bootstrap = '#{css}';
-
-      var templates = {};
-      templates.app = '#{templates['app']}';
-      templates.mine = '#{templates['mine']}';
-      templates.change = '#{templates['change']}';
-
-      #{js['config']}
-      #{js['show']}
-      #{js['rpc']}
-      #{js['nav']}
-      #{js['init']}
-
-    })();
-    END
-  end
-
-  puts "done", '='*50
 end
 
-task :default => ['js:compress', 'css:strip', 'css:compress', 'gen']
+task :default => ['js:compress', 'css:strip', 'css:compress', 'gen:once']

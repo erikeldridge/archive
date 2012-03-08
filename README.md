@@ -11,7 +11,10 @@ The #mine, #change,{id}, and #signin pages are roughly functional. Please check 
 ### Dependencies
 
 * dotjs
-* yuicompressor (for development)
+* rake (development)
+* yuicompressor (development)
+* bundler (development)
+* fssm (development)
 
 ### General
 
@@ -22,10 +25,11 @@ The #mine, #change,{id}, and #signin pages are roughly functional. Please check 
 
 1. Fork & clone the gerrit.js repo
 1. Create a symlink named to match the host name of your gerrit installation, pointing at the _gerrit.js_file in the cloned repo
+1. Run `rake gen:auto` to regenerate _gerrit.js_ after each change
 
 Now you can develop, commit, repeat (loop, DCRL, anyone?), without copy/pasting
 
-All the libs used by this project are stashed in the _dev_ directory. Check out the rakefile for handy utils when working with these libs.
+All the libs used by this project are stashed in the _dev_ directory. Check out the rakefile (`$ rake -T`) for handy utils when working with these libs.
 
 ## Acknowledgements
 
