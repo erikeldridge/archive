@@ -43,16 +43,21 @@ end
 
 desc "Generate gerrit.js"
 task :gen do
+  puts "generating gerrit.js from"
+
+  puts "* dev/css/bootstrap-no-single-quotes-min.css"
   css = File.readlines("dev/css/bootstrap-no-single-quotes-min.css")
 
   js = {}
   Dir['dev/js/lib/*min.js', 'dev/js/*.js'].each do |path|
+    puts "* #{path}"
     name = File.basename(path, '.js').sub('-min', '')
     js[name] = File.readlines path
   end
 
   templates = {}
   Dir['dev/templates/*'].each do |path|
+    puts "* #{path}"
     name = File.basename path, '.mustache'
     templates[name] = File.readlines(path).map {|line| line.gsub('\'', '"').chop}
   end
@@ -80,4 +85,8 @@ task :gen do
     )();
     END
   end
+
+  puts "done", '='*50
 end
+
+task :default => ['js:compress', 'css:strip', 'css:compress', 'gen']
