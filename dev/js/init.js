@@ -14,6 +14,15 @@ window.onhashchange = function(event) {
   routeTo(document.location.hash);
 };
 
+// Attach search box handling
+$('.navbar form').submit(function(){
+  var q = $(this).find('input[name=q]').val();
+  var hash = '#q,'+q;
+  history.pushState(null, null, hash);
+  routeTo(hash);
+  return false;
+});
+
 // Scrape user info, and cache xsrf token, so we can make requests
 var text = $('script').first().text();
 if(/gerrit_hostpagedata/.test(text)){
