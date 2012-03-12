@@ -1,7 +1,7 @@
 function showDashboard(){
 
   if(!authenticated()){
-    document.location.hash = '#signin';
+    location.hash = '#signin';
     return;
   }
 
@@ -105,15 +105,48 @@ function showSignInPage(){
   });
 }
 
-function showSearchResults(){
+function showOwnerSearchResults(matches){
+
+  var query = matches[1];
+
+  if(!authenticated()){
+    location.hash = '#signin';
+    return;
+  }
+
+  searchByOwner(query, function(results){
+
+    var view = {
+      title: 'Search for '+query,
+      changes: []
+    };
+
+    var names = mapAccountIdsToNames(results.accounts.accounts);
+    $.each(results.changes, function(i, change){
+      view.changes.push({
+        id: change.id.id,
+        key: change.key.id.substr(0,8),
+        project: change.project.key.name,
+        branch: change.branch,
+        owner: names[change.owner.id],
+        status: change.status,
+        subject: change.subject,
+        updated: change.lastUpdatedOn
+      });
+    });
+
+    var html = Mustache.render(templates.search, view);
+
+    $('#search').html(html).show();
+
+  });
   // API "Change #, SHA-1, tr:id, owner:email or reviewer:email"
 }
-
-/* =============== Helpers =============== */
 
 function authenticated(){
   return config.xsrfKey && config.currentUser;
 }
+
 function mapAccountIdsToNames(accounts){
   var map = {};
   $.each(accounts, function(i, account){
