@@ -4,7 +4,7 @@ Gerrit.js skins [Gerrit](http://code.google.com/p/gerrit/) using [Twitter Bootst
 
 ## Status
 
-The #mine, #change,{id}, and #signin pages are roughly functional. Please check out the [issues](https://github.com/erikeldridge/gerrit.js/issues) list for more details.
+The #mine, #change,{id}, #q (search), and #signin pages are roughly functional. Please check out the [issues](https://github.com/erikeldridge/gerrit.js/issues) list for more details.
 
 ## Installation
 
