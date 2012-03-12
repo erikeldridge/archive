@@ -81,6 +81,7 @@ var templates = {};
 templates.app = '#{templates['app']}';
 templates.mine = '#{templates['mine']}';
 templates.change = '#{templates['change']}';
+templates.search = '#{templates['search']}';
 
 /* ===== dev/js/config.js ===== */
 #{js['config']}
@@ -108,9 +109,10 @@ END
   task :auto do
     require 'fssm'
     puts 'Monitoring dev directory (ctrl+c to quit) ...'
-    FSSM.monitor('dev/') do
-      update {|base, relative| Rake::Task['gen:once'].invoke}
+    FSSM.monitor('dev') do
+      update { Rake::Task['gen:once'].execute }
     end
+    puts "done", '='*50
   end
 
 end
