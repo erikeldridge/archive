@@ -18,7 +18,7 @@ The #mine, #change,{id}, #q (search), and #signin pages are roughly functional. 
 
 1. Install [dotjs](http://defunkt.io/dotjs/)
 1. Fork & clone the [gerrit.js repo](https://github.com/erikeldridge/gerrit.js)
-1. Create a symlink named to match the host name of your gerrit installation, pointing at the _gerrit.js_file in the cloned repo
+1. Create a symlink named to match the host name of your gerrit installation, pointing at the _gerrit.js_ file in the cloned repo
 1. Optional: install [rvm](https://rvm.beginrescueend.com/rvm/install/) if you want rvm to manage the gems installed by Bundler
 1. Install bundler: `gem install bundler`
 1. Run bundler: `bundle`
