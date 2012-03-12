@@ -1,6 +1,6 @@
 var routes = {
   '#mine': showDashboard,
-  '#q': function(){},
+  '#q,(owner\:[^,]+)': showOwnerSearchResults,
   '#change,(\\d+)': showChangeDetails,
   '#signin': showSignInPage
 };
