@@ -5,11 +5,19 @@ var routes = {
   '#signin': showSignInPage
 };
 function routeTo(hash){
-  $('.container .page').hide();
   for(route in routes) {
     var matches = hash.match(new RegExp(route));
     if(matches){
+
+      // Update URL.
+      history.pushState(null, null, hash);
+
+      // Hide all pages.
+      $('.container .page').hide();
+
+      // Route handler is responsible for showing page.
       routes[route].call(this, matches);
+
       break;
     }
   }

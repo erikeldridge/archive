@@ -11,14 +11,13 @@ $('body').append(html);
 
 // Attach nav
 window.onhashchange = function(event) {
-  routeTo(document.location.hash);
+  routeTo(location.hash);
 };
 
 // Attach search box handling
 $('.navbar form').submit(function(){
   var q = $(this).find('input[name=q]').val();
   var hash = '#q,'+q;
-  history.pushState(null, null, hash);
   routeTo(hash);
   return false;
 });
@@ -38,5 +37,6 @@ if(location.hash){
 }else{
 
   // Default start view
-  location.hash = '#mine';
+  routeTo(hash);
+
 }

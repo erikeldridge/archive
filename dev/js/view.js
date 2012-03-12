@@ -1,7 +1,7 @@
 function showDashboard(){
 
   if(!authenticated()){
-    location.hash = '#signin';
+    routeTo('#signin');
     return;
   }
 
@@ -94,7 +94,7 @@ function showSignInPage(){
       success: function(){
 
         // Hard refresh to force re-init w/ account cookie set
-        document.location = '/';
+        location = '/';
 
       },
       error: function(){
@@ -110,7 +110,7 @@ function showSearchResults(matches){
   var query = matches[1];
 
   if(!authenticated()){
-    location.hash = '#signin';
+    routeTo('#signin');
     return;
   }
 
