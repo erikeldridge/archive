@@ -1,21 +1,30 @@
 function callChangeListService(callback){
   $.ajax({
     url: '/gerrit/rpc/ChangeListService',
-    data: '{"jsonrpc":"2.0","method":"forAccount","params":[{"id":'+config.currentUser.accountId.id+'}],"id":1,"xsrfKey":"'+config.xsrfKey+'"}',
+    data: '{"jsonrpc":"2.0","method":"forAccount","params":[{"id":'+config.currentUser.accountId.id+'}],"xsrfKey":"'+config.xsrfKey+'"}',
     success: callback
   });
 }
 function getChangeDetails(id, callback){
   $.ajax({
     url: '/gerrit/rpc/ChangeDetailService',
-    data: '{"jsonrpc":"2.0","method":"changeDetail","params":[{"id":'+id+'}],"id":61,"xsrfKey":"'+config.xsrfKey+'"}',
+    data: '{"jsonrpc":"2.0","method":"changeDetail","params":[{"id":'+id+'}],"xsrfKey":"'+config.xsrfKey+'"}',
     success: callback
+  });
+}
+function searchByOwner(query, callback){
+  $.ajax({
+    url: '/gerrit/rpc/ChangeListService',
+    data: '{"jsonrpc":"2.0","method":"allQueryNext","params":["'+query+'","z",25],"xsrfKey":"'+config.xsrfKey+'"}',
+    success: function(response){
+      callback(response.result);
+    }
   });
 }
 function signIn(username, password, callbacks){
   $.ajax({
     url: '/gerrit/rpc/UserPassAuthService',
-    data: '{"jsonrpc":"2.0","method":"authenticate","params":["'+username+'","'+password+'"],"id":2}',
+    data: '{"jsonrpc":"2.0","method":"authenticate","params":["'+username+'","'+password+'"]}',
     error: function(jqXHR, textStatus, errorThrown){
       console.log('signIn request failure', jqXHR, textStatus, errorThrown);
     },
