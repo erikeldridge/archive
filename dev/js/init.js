@@ -24,5 +24,10 @@ if(/gerrit_hostpagedata/.test(text)){
 }
 config.xsrfKey = $.cookie('GerritAccount');
 
-// Default start view
-document.location.hash = '#mine';
+if(location.hash){
+  routeTo(location.hash);
+}else{
+
+  // Default start view
+  location.hash = '#mine';
+}
