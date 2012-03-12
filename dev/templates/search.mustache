@@ -10,7 +10,6 @@
       <th>Updated</th>
       <th>Status</th>
     </tr>
-
   </thead>
   <tbody>
     {{#changes}}
@@ -24,8 +23,9 @@
       <td>{{status}}</td>
     </tr>
     {{/changes}}
-    {{^changes}}
-    No changes matching query
-    {{/changes}}
   </tbody>
 </table>
+{{^changes}}
+No changes matching query
+{{/changes}}
+

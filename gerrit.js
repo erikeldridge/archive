@@ -17,7 +17,7 @@ var templates = {};
 templates.app = '<div class="container">  <!-- start nav -->  <div class="navbar">    <div class="navbar-inner">      <div class="container">        <a class="brand" href="#mine">Gerrit</a>        <form class="navbar-search pull-right">          <input type="text" class="span2 search-query" placeholder="Change #, SHA-1, tr:id, owner:email or reviewer:email" name="query">        </form>      </div>    </div>  </div>  <!-- end nav -->  <div class="row pages">    <!-- start mine page -->    <div class="span12 page" id="mine"></div>    <!-- end mine page -->    <!-- start change page -->    <div class="span12 page" id="change"></div>    <!-- end change page -->    <!-- start search page -->    <div class="span12 page" id="search"></div>    <!-- end search page -->    <!-- start sign in page -->    <div class="span12 page" id="sign-in" style="display:none">      <form class="form-horizontal">        <fieldset>          <legend>Sign in</legend>          <div class="control-group">            <label class="control-label" for="username">Username</label>            <div class="controls">              <input type="text" class="span3" placeholder="Username" name="username">            </div>          </div>          <div class="control-group">            <label class="control-label" for="password">Password</label>            <div class="controls">              <input type="password" class="span3" placeholder="Password" name="password">            </div>          </div>          <div class="form-actions">            <button type="submit" class="btn btn-primary">Submit</button>          </div>        </fieldset>      </form>    </div>    <!-- end sign in page -->  </div>  <div class="row">    <div class="span12">      <footer class="footer">      <hr>      <p><a href="https://github.com/erikeldridge/gerrit.js">Gerrit.js</a></p>      </footer>    </div>  </div></div';
 templates.mine = '<h2>Inbound</h2><table class="table table-striped table-bordered">  <thead>    <tr>      <th>ID</th>      <th>Subject</th>      <th>Updated</th>      <th>Owner</th>    </tr>  </thead>  <tbody>    {{#inbound}} \    <tr>      <td>{{key}}</td>      <td><a href="/{{id}}">{{subject}}</a></td>      <td>{{updated}}</td>      <td>{{owner}}</td>    </tr>    {{/inbound}} \  </tbody></table><h2>Outbound</h2><table class="table table-striped table-bordered">  <thead>    <tr>      <th>ID</th>      <th>Subject</th>      <th>Updated</th>    </tr>  </thead>  <tbody>    {{#outbound}} \    <tr>      <td>{{key}}</td>      <td><a href="/#change,{{id}}">{{subject}}</a></td>      <td>{{updated}}</td>    </tr>    {{/outbound}} \  </tbody></table';
 templates.change = '<h1>{{title}}</h1><ul class="nav nav-pills">  <li class="active"><a href="#change,{{changeWebId}},details">Details</a></li>  <li><a href="#reviewers">Reviewers</a></li>  <li><a href="#patch">Current patch</a></li>  <li><a href="#comments">Comments</a></li></ul><div class="row">  <div class="span6">    <h2><a name="#change,{{changeId}},details"></a>Change details</h2>    <ul>      <li>Change-Id: {{changeShaId}}</li>      <li>Owner: {{owner}}</li>      <li>Project: {{project}}</li>      <li>Uploaded: {{uploaded}}</li>      <li>Updated: {{updated}}</li>      <li>Patch count: {{patchCount}}</li>      <li>Status: {{status}}</li>      <li>Fetch current patch: <code>git fetch /refs/changes/{{changeWebIdSuffix}}/{{changeWebId}}/{{currentPatchId}}</code></li>    </ul>  </div>  <div class="span6">    <h2>Commit message</h2>    <pre>{{message}}</pre>  </div></div><div class="row">  <div class="span6">    <h2>Reviewers</h2>    <table class="table table-striped table-bordered">      <thead>        <tr>          <th>Name</th>          <th>Review</th>        </tr>      </thead>      <tbody>        {{#reviewers}} \        <tr>          <td>{{name}}</td>          <td></td>        </tr>        {{/reviewers}} \      </tbody>    </table>  </div>  <div class="span6"></div></div><div class="row">  <div class="span12">    <h2>Current patch</h2>    <table class="table table-striped table-bordered">      <thead>        <tr>          <th>Change type</th>          <th>File path</th>          <th>Comment count</th>        </tr>      </thead>      <tbody>        {{#patches}}\        <tr>          <td>{{changeType}}</td>          <td>{{file}}</td>          <td>{{commentCount}}</td>        </tr>        {{/patches}} \      </tbody>    </table>  </div></div';
-templates.search = '<h1>{{title}}</h1><table class="table table-striped table-bordered">  <thead>    <tr>      <th>ID</th>      <th>Subject</th>      <th>Owner</th>      <th>Project</th>      <th>Branch</th>      <th>Updated</th>      <th>Status</th>    </tr>  </thead>  <tbody>    {{#changes}}    <tr>      <td>{{key}}</td>      <td><a href="/#change,{{id}}">{{subject}}</a></td>      <td>{{owner}}</td>      <td>{{project}}</td>      <td>{{branch}}</td>      <td>{{updated}}</td>      <td>{{status}}</td>    </tr>    {{/changes}}    {{^changes}}    No changes matching query    {{/changes}}  </tbody></table';
+templates.search = '<h1>{{title}}</h1><table class="table table-striped table-bordered">  <thead>    <tr>      <th>ID</th>      <th>Subject</th>      <th>Owner</th>      <th>Project</th>      <th>Branch</th>      <th>Updated</th>      <th>Status</th>    </tr>  </thead>  <tbody>    {{#changes}}    <tr>      <td>{{key}}</td>      <td><a href="/#change,{{id}}">{{subject}}</a></td>      <td>{{owner}}</td>      <td>{{project}}</td>      <td>{{branch}}</td>      <td>{{updated}}</td>      <td>{{status}}</td>    </tr>    {{/changes}}  </tbody></table>{{^changes}}No changes matching query{{/changes}}';
 
 /* ===== dev/js/config.js ===== */
 // xhr
@@ -156,19 +156,21 @@ function showSearchResults(matches){
       changes: []
     };
 
-    var names = mapAccountIdsToNames(results.accounts.accounts);
-    $.each(results.changes, function(i, change){
-      view.changes.push({
-        id: change.id.id,
-        key: change.key.id.substr(0,8),
-        project: change.project.key.name,
-        branch: change.branch,
-        owner: names[change.owner.id],
-        status: change.status,
-        subject: change.subject,
-        updated: change.lastUpdatedOn
+    if(results){
+      var names = mapAccountIdsToNames(results.accounts.accounts);
+      $.each(results.changes, function(i, change){
+        view.changes.push({
+          id: change.id.id,
+          key: change.key.id.substr(0,8),
+          project: change.project.key.name,
+          branch: change.branch,
+          owner: names[change.owner.id],
+          status: change.status,
+          subject: change.subject,
+          updated: change.lastUpdatedOn
+        });
       });
-    });
+    }
 
     var html = Mustache.render(templates.search, view);
 

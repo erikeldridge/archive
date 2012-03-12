@@ -121,19 +121,21 @@ function showSearchResults(matches){
       changes: []
     };
 
-    var names = mapAccountIdsToNames(results.accounts.accounts);
-    $.each(results.changes, function(i, change){
-      view.changes.push({
-        id: change.id.id,
-        key: change.key.id.substr(0,8),
-        project: change.project.key.name,
-        branch: change.branch,
-        owner: names[change.owner.id],
-        status: change.status,
-        subject: change.subject,
-        updated: change.lastUpdatedOn
+    if(results){
+      var names = mapAccountIdsToNames(results.accounts.accounts);
+      $.each(results.changes, function(i, change){
+        view.changes.push({
+          id: change.id.id,
+          key: change.key.id.substr(0,8),
+          project: change.project.key.name,
+          branch: change.branch,
+          owner: names[change.owner.id],
+          status: change.status,
+          subject: change.subject,
+          updated: change.lastUpdatedOn
+        });
       });
-    });
+    }
 
     var html = Mustache.render(templates.search, view);
 
