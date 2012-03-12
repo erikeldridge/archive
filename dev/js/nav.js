@@ -1,7 +1,6 @@
 var routes = {
   '#mine': showDashboard,
-  '#q,(owner\:[^,]+)': showOwnerSearchResults,
-  '#q,(reviewer\:[^,]+)': showOwnerSearchResults,
+  '#q,([^,]+)': showSearchResults,
   '#change,(\\d+)': showChangeDetails,
   '#signin': showSignInPage
 };

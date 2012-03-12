@@ -12,7 +12,7 @@ function getChangeDetails(id, callback){
     success: callback
   });
 }
-function searchByOwner(query, callback){
+function search(query, callback){
   $.ajax({
     url: '/gerrit/rpc/ChangeListService',
     data: '{"jsonrpc":"2.0","method":"allQueryNext","params":["'+query+'","z",25],"xsrfKey":"'+config.xsrfKey+'"}',

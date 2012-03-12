@@ -140,7 +140,7 @@ function showSignInPage(){
   });
 }
 
-function showOwnerSearchResults(matches){
+function showSearchResults(matches){
 
   var query = matches[1];
 
@@ -149,10 +149,10 @@ function showOwnerSearchResults(matches){
     return;
   }
 
-  searchByOwner(query, function(results){
+  search(query, function(results){
 
     var view = {
-      title: 'Search for '+query,
+      title: 'Search results for '+query,
       changes: []
     };
 
@@ -175,7 +175,6 @@ function showOwnerSearchResults(matches){
     $('#search').html(html).show();
 
   });
-  // API "Change #, SHA-1, tr:id, owner:email or reviewer:email"
 }
 
 function authenticated(){
@@ -208,7 +207,7 @@ function getChangeDetails(id, callback){
     success: callback
   });
 }
-function searchByOwner(query, callback){
+function search(query, callback){
   $.ajax({
     url: '/gerrit/rpc/ChangeListService',
     data: '{"jsonrpc":"2.0","method":"allQueryNext","params":["'+query+'","z",25],"xsrfKey":"'+config.xsrfKey+'"}',
@@ -237,8 +236,7 @@ function signIn(username, password, callbacks){
 /* ===== dev/js/nav.js ===== */
 var routes = {
   '#mine': showDashboard,
-  '#q,(owner\:[^,]+)': showOwnerSearchResults,
-  '#q,(reviewer\:[^,]+)': showOwnerSearchResults,
+  '#q,([^,]+)': showSearchResults,
   '#change,(\\d+)': showChangeDetails,
   '#signin': showSignInPage
 };
