@@ -31,13 +31,15 @@ end
 namespace :js do
   desc "Compress js libs"
   task :compress do
-    Dir['dev/js/lib/*.js'].reject{|path| path =~ /min\.js/}.each do |input|
-      output = input.sub('.js', '-min.js')
-      cmd = "yuicompressor -o '#{output}' #{input}"
-      puts "compressing #{input}", "writing to #{output}"
+    output = 'dev/js/lib/min.js'
+    File.delete output rescue nil
+    Dir['dev/js/lib/prettify.js','dev/js/lib/lang*.js','dev/js/lib/mustache.js','dev/js/lib/jquery.cookie.js','dev/js/lib/diff_match_patch_uncompressed.js'].reject{|path| path =~ /min\.js/}.each do |input|
+      cmd = "yuicompressor #{input} >> #{output}"
+      puts "compressing #{input}"
       results = %x{#{cmd}}
-      puts "done", '='*50
     end
+    puts "writing to #{output}"
+    puts "done", '='*50
   end
 end
 
@@ -51,7 +53,7 @@ namespace :gen do
     css = File.readlines("dev/css/bootstrap-no-single-quotes-min.css")
 
     js = {}
-    Dir['dev/js/lib/*min.js', 'dev/js/*.js'].each do |path|
+    Dir['dev/js/lib/min.js', 'dev/js/*.js'].each do |path|
       puts "* #{path}"
       name = File.basename(path, '.js').sub('-min', '')
       js[name] = File.readlines path
@@ -70,8 +72,7 @@ namespace :gen do
 (function(){
 
 /* ===== dev/js/lib/ ===== */
-#{js['mustache']}
-#{js['jquery.cookie']}
+#{js['min']}
 
 /* ===== dev/css/ ===== */
 var bootstrap = '#{css}';
