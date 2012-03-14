@@ -1,29 +1,29 @@
 namespace :css do
 
+  desc "Compress css"
+  task :compress do
+    input = 'dev/css/bootstrap.css'
+    output = '/tmp/bootstrap-min.css'
+    puts "compressing #{input}", "writing to #{output}"
+    cmd = "yuicompressor -o '#{output}' #{input}"
+    results = %x{#{cmd}}
+    puts "done", '='*50
+  end
+
   desc "Strip css"
   task :strip do
-    input_path = 'dev/css/bootstrap.css'
-    output_path = '/tmp/bootstrap-no-single-quotes.css'
+    input_path = '/tmp/bootstrap-min.css'
+    output_path = 'dev/css/bootstrap-no-single-quotes-min.css'
     puts "stripping #{input_path}", "writing to #{output_path}"
     output = File.open(output_path, 'w')
     File.open(input_path) do |input|
       while line = input.gets
 
-        # strip double-quotes so we can assign css to var
+        # strip single-quotes so we can assign css to var
         output.write line.gsub('\'', '"')
 
       end
     end
-    puts "done", '='*50
-  end
-
-  desc "Compress css"
-  task :compress do
-    input = '/tmp/bootstrap-no-single-quotes.css'
-    output = 'dev/css/bootstrap-no-single-quotes-min.css'
-    puts "compressing #{input}", "writing to #{output}"
-    cmd = "yuicompressor -o '#{output}' #{input}"
-    results = %x{#{cmd}}
     puts "done", '='*50
   end
 end
@@ -82,6 +82,7 @@ templates.app = '#{templates['app']}';
 templates.mine = '#{templates['mine']}';
 templates.change = '#{templates['change']}';
 templates.search = '#{templates['search']}';
+templates.diff = '#{templates['diff']}';
 
 /* ===== dev/js/config.js ===== */
 #{js['config']}
