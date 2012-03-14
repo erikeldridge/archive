@@ -1,11 +1,12 @@
 var routes = {
   '#mine': showDashboard,
   '#q,([^,]+)': showSearchResults,
-  '#change,(\\d+)': showChangeDetails,
+  '#patch,sidebyside,([^,]+),([^,]+),(.+)': showDiff,
+  '#change,(\\d+)([,\\a]+)?': showChangeDetails,
   '#signin': showSignInPage
 };
 function routeTo(hash){
-  for(route in routes) {
+  for(var route in routes) {
     var matches = hash.match(new RegExp(route));
     if(matches){
 

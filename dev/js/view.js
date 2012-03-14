@@ -144,6 +144,30 @@ function showSearchResults(matches){
   });
 }
 
+function showDiff(matches){
+
+  if(!authenticated()){
+    routeTo('#signin');
+    return;
+  }
+
+  getPatchDetails(matches[3], matches[1], matches[2], function(results){
+
+    var view = {
+      title: ''
+    };
+
+    if(results){
+
+    }
+
+    var html = Mustache.render(templates.diff, view);
+
+    $('#diff').html(html).show();
+
+  });
+}
+
 function authenticated(){
   return config.xsrfKey && config.currentUser;
 }
@@ -151,7 +175,7 @@ function authenticated(){
 function mapAccountIdsToNames(accounts){
   var map = {};
   $.each(accounts, function(i, account){
-    if(i % 2 == 0){
+    if(i % 2 === 0){
       return 'continue';
     }
     map[account.id.id] = account.fullName;

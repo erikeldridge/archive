@@ -37,6 +37,6 @@ if(location.hash){
 }else{
 
   // Default start view
-  routeTo(hash);
+  routeTo('#mine');
 
 }

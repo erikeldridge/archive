@@ -12,6 +12,55 @@ function getChangeDetails(id, callback){
     success: callback
   });
 }
+function getPatchDetails(fileName, changeId, patchSetId, callback){
+  var data = {
+    "jsonrpc": "2.0",
+    "method": "patchScript",
+    "params": [
+      {
+        "fileName": fileName,
+        "patchSetId": {
+          "changeId": {
+            "id": changeId
+          },
+          "patchSetId": patchSetId
+        }
+      },
+      null,
+      {
+        "changeId": {
+          "id": changeId
+        },
+        "patchSetId": patchSetId
+      },
+      {
+        "accountId": {
+          "id": config.currentUser.accountId.id
+        },
+        "context": 10,
+        "expandAllComments": false,
+        "ignoreWhitespace": "N",
+        "intralineDifference": true,
+        "lineLength": 100,
+        "showTabs": true,
+        "showWhitespaceErrors": true,
+        "skipDeleted": false,
+        "skipUncommented": false,
+        "syntaxHighlighting": true,
+        "tabSize": 8
+      }
+    ],
+    "id": 5,
+    "xsrfKey": config.xsrfKey
+  };
+  $.ajax({
+    url: '/gerrit/rpc/PatchDetailService',
+    data: JSON.stringify(data),
+    success: function(response){
+      callback(response.result);
+    }
+  });
+}
 function search(query, callback){
   $.ajax({
     url: '/gerrit/rpc/ChangeListService',
