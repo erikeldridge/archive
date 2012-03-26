@@ -4,7 +4,12 @@ Gerrit.js skins [Gerrit](http://code.google.com/p/gerrit/) using [Twitter Bootst
 
 ## Status
 
+On hold indefinitely.
+
+The next step would be the diff page using the _prettify_ and _diff match patch_ Google code projects. The cost of building a difftool is relatively high, and Gerrits existing diff page is good, so the value to be gained is questionable.
+
 The #mine, #change,{id}, #q (search), and #signin pages are roughly functional. Please check out the [issues](https://github.com/erikeldridge/gerrit.js/issues) list for more details.
+
 
 ## Installation
 
