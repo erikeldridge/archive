@@ -1,0 +1,97 @@
+.slide.intro
+  %header
+    %h1= "SlideKit"
+  %section
+    .left
+      :textile
+        Ruby
+        + Haml
+        + HTML5
+        + CSS3
+        = WebKit-ready presentation
+    .right
+      :textile
+        !http://farm1.static.flickr.com/47/152459282_3c6c3ddfaa.jpg!:http://www.flickr.com/photos/captured-spirit_/152459282/
+
+.slide
+  %header
+    %h3= "Presentation Outline"
+  %section
+    :textile
+      # Credit
+      # Syntax
+      # Organization
+      # Haml
+      # Ruby
+      # HTML5
+      # CSS3
+      # Resources
+      
+.slide
+  %header
+    %h3= "Credit"
+  %section
+    :textile
+      * Inspired by Derek Gathrigh's talk on YQL.  He created this presentation UI & developed the HTML/CSS/JS 
+      
+    -#' #kludge: using -#' to terminate single quote for textmate's syntax highlighter
+    
+.slide
+  %header
+    %h3= "Syntax"
+  %section
+    :textile
+      * Slides are delimited by ".slide"
+      * The title slide is identified by ".intro"
+
+.slide
+  %header
+    %h3= "Organization"
+  %section
+    :textile
+      * main.html contains html required for basic functionality
+      * build.rb renders haml, parses the main html (& custom css/js) and maps the haml to main
+      * css/ contains css for preso display and syntax highlighting css
+      * js/ contains js for preso control and syntax highlighting js
+
+.slide
+  %header
+    %h3= "Haml"
+  %section
+    :textile
+      * Haml offers nice balance of minimalist syntax & expressibility (CSS/tag access, Textile/Markdown)
+      * Haml plays super-nice w/ Ruby
+      * Haml allows embedded JS for running script on slides
+
+.slide
+  %header
+    %h3= "Ruby"
+  %section
+    :textile
+      * Ruby is widely available
+      * Ruby is fun to work with
+
+.slide
+  %header
+    %h3= "HTML5"
+  %section
+    :textile
+      * &lt;header&gt; and &lt;section&gt; tags define rows well
+
+.slide
+  %header
+    %h3= "CSS3"
+  %section
+    :textile
+      * Powers the awesome transitions
+      * Gives us the awesome table layout control
+      * Everything exists to get content into CSS3 land
+      
+.slide
+  %header
+    %h3= "Resources"
+  %section
+    :textile
+      * "Derek Gathright's original YQL preso":http://drgath.github.com/talks/20100515_MusicHackday/
+      * "Haml":http://haml-lang.com/
+  

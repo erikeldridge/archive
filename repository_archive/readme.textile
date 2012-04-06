@@ -1,0 +1,87 @@
+h1. SlideKit
+
+h2. Ruby + Haml + HTML5 + CSS3 --> WebKit-ready presentation
+
+!http://farm1.static.flickr.com/47/152459282_3c6c3ddfaa.jpg!:http://www.flickr.com/photos/captured-spirit_/152459282/
+
+h3. Credit
+
+* Inspired by "Derek Gathright's talk on YQL":http://drgath.github.com/talks/20100515_MusicHackday/.  He created this presentation-style, developed the HTML/CSS/JS, and defined the UI
+
+h3. Usage
+
+# Download or clone this project
+# Run the build.rb build script
+# Open your WebKit browser and go to path/to/slidekit/index.html
+
+h3. Prerequisites
+
+* Ruby 1.8.6
+* Ruby gems: 
+** Haml, (_gem install haml_)
+** RedCloth, (_gem install RedCloth_)
+** Nokogiri, (_gem install nokogiri_)
+* Chrome or Safari
+
+h3. Syntax
+
+* Slides are delimited by ".slide"
+* The title slide is identified by ".intro"
+* The default CSS looks for &lt;header&gt; and &lt;section&gt; tags used like this:  
+  
+  <pre><code>
+  .slide.intro
+    %header
+      %h1= &quot;this is an h1&quot;
+    %section= &quot;this is content&quot;
+    </code></pre>
+    
+    which generates:  
+    
+    <pre><code>
+    &lt;div class=&quot;slide intro&quot;&gt;
+      &lt;header&gt;
+        &lt;h1&gt;this is an h1&lt;/h1&gt;
+      &lt;/header&gt;
+      &lt;section&gt;
+        this is content
+      &lt;/section&gt;
+    &lt;/div&gt;
+    </code></pre>
+    
+h3. Organization
+
+* main.html contains html required for basic functionality
+* build.rb renders haml, parses the main html (& custom css/js) and maps the haml to main
+* css/ contains css for preso display and syntax highlighting css
+* js/ contains js for preso control and syntax highlighting js
+
+h3. Components
+
+h4. Ruby
+
+* Ruby is widely available
+* Ruby is fun to work with
+
+h4. Haml
+
+* Haml offers nice balance of minimalist syntax & expressibility (CSS/tag access, Textile/Markdown)
+* Haml plays super-nice w/ Ruby
+* Haml allows embedded JS for running script on slides
+
+h4. HTML5
+
+* &lt;header&gt; and &lt;section&gt; tags define rows well
+
+h4. CSS3
+
+* Powers the awesome transitions
+* Gives us the awesome table layout control
+
+h3. Follow up
+
+Put your slides up on "Github pages":http://pages.github.com/ like "Gathright's YQL talk":http://drgath.github.com/talks/20100515_MusicHackday/
+
+h3. License
+
+The code I wrote is licensed under "Yahoo!'s BSD license":http://gist.github.com/375593.  Derek Gathright may have other licensing requirements for "his code":http://github.com/drgath/drgath.github.com/tree/master/talks/20100515_MusicHackday/.  "SyntaxHighlighter":http://alexgorbatchev.com/wiki/SyntaxHighlighter#License is licensed under LGPL 3
