@@ -1,0 +1,25 @@
+<!--
+/**
+ * Source: http://github.com/erikeldridge/iframeio/tree/master
+ * Copyright: (c) 2009, Erik Eldridge, all rights reserved
+ * License: BSD Open Source License http://gist.github.com/375593
+ **/
+-->
+<script>
+var queryString = document.location.search.substr(1);
+
+//parse query string
+var pairs = queryString.split('&'),
+	params = {};
+for (var i = 0; i < pairs.length; i++) {
+	pair = pairs[i].split('=');
+	params[pair[0]] = pair[1];
+}
+//pass values to calling file
+window.parent.parent.sdk.requests[params['id']].iframeCallback({
+    'total' : params['total'],
+    'index' : params['index'],
+    'chunk' : params['chunk']
+});
+
+</script>

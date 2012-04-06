@@ -1,0 +1,28 @@
+<!--
+/**
+ * Source: http://github.com/erikeldridge/iframeio/tree/master
+ * Copyright: (c) 2009, Erik Eldridge, all rights reserved
+ * License: BSD Open Source License http://gist.github.com/375593
+ **/
+-->
+<html>
+    <head></head>
+    <body>
+        <script src="../client/library.js"></script>
+        <script>
+        //example
+        sdk.serverUrl = 'http://localhost/~eldridge/github/erikeldridge/iframeio/server/';
+        sdk.makeRequest(
+            {                
+                'oauthConsumerKey': 'asd123',
+                'method':'get', 
+                'url':encodeURIComponent('http://localhost/~eldridge/github/erikeldridge/iframeio/example/data.txt'), 
+                'params':encodeURIComponent('foo=bar&boo=baz')
+            }, 
+            function (data) {
+                console.log(data);
+            }
+        );
+        </script>
+    </body>
+</html>
