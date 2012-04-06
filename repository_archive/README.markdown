@@ -4,22 +4,22 @@ Validates JavaScript function argument types
 
 ## Quickstart
 
-1. Get [`validate` code](https://github.com/erikeldridge/validate-arguments/blob/master/validate.js)
+1. Get [_validate_ code](https://github.com/erikeldridge/validate-arguments/blob/master/validate.js)
 1. Use it:
-    <pre><code>function foo(bar, baz, bax){
-      validate(arguments, 'number', (/[a-z]+/), function(arg){ return 'foo' === arg; } );
+    <pre><code>function foo(bar, baz){
+      validate(arguments, 'number', 'string');
       //...
     }</code></pre>
 
 ## Goal
 
-Catch errors early. `validate` belongs to the fail-fast-and-loud school of thought.
+Catch errors early. _validate_ belongs to the fail-fast-and-loud school of thought.
 
 ## Usage
 
-1. Include the [`validate` code](https://github.com/erikeldridge/validate-arguments/blob/master/validate.js)
+1. Include the [_validate_ code](https://github.com/erikeldridge/validate-arguments/blob/master/validate.js)
 1. Define your function
-1. Call `validate` inside your function, passing:
+1. Call _validate_ inside your function, passing:
   * the function's _arguments_ object
   * the type of each argument to validate, and/or
     a regexp to test the arg, and/or
@@ -41,14 +41,14 @@ Catch errors early. `validate` belongs to the fail-fast-and-loud school of thoug
 
 ### Example 3:
 
-    function foo(bar, baz){
-      validate(arguments, (/[\d]+/), function(arg){ return 'foo' === arg; });
+    function foo(bar, baz, bax){
+      validate(arguments, 'number', (/[a-z]+/), function(arg){ return 'foo' === arg; } );
       //...
     }
 
 ### Argument subset
 
-If _n_ arguments are passed into a function, but _m_ types are passed into `validate`, where _n_ > _m_, only the first _m_ arguments will be validated.
+If _n_ arguments are passed into a function, but _m_ types are passed into _validate_, where _n_ > _m_, only the first _m_ arguments will be validated.
 
 For example:
 
@@ -79,7 +79,7 @@ Set `validate.isActive = false;` to suppress validation.
 
 ## Output
 
-The `validate` function throws an error if an argument has an invalid type, and also pretty-prints the error's fields to the console for convenience. The error contains the following fields:
+The _validate_ function throws an error if an argument has an invalid type, and also pretty-prints the error's fields to the console for convenience. The error contains the following fields:
 
 * _name_. The name of the error object
 * _arguments_. The arguments passed into the validated function

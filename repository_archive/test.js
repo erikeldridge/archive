@@ -64,6 +64,24 @@ test('multiple args', function(){
   ok(true, "two numbers should pass");
 });
 
+test('prettyPrint', function(){
+
+  expect(2);
+
+  // mock validate.log
+  var cache = validate.log;
+  validate.log = function(key, value){
+    strictEqual(key, 'foo:', "should pass correct key");
+    strictEqual(value, 'bar', "should pass correct key");
+  };
+
+  validate.prettyPrint({'foo':'bar'});
+
+  // reset log
+  validate.log = cache;
+
+});
+
 test('isActive setting', function(){
 
   expect(1);
